@@ -222,8 +222,12 @@ claude-trello run`}</CodeBlock>
                 className="mt-0.5 shrink-0 text-[var(--lagoon)]"
               />
               <span>
-                The app server running (locally or deployed) so the CLI can
-                authenticate
+                <strong className="text-[var(--sea-ink)]">Claude Code</strong>{" "}
+                installed (
+                <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+                  npm i -g @anthropic-ai/claude-code
+                </code>
+                )
               </span>
             </li>
           </ul>
@@ -259,7 +263,7 @@ claude-trello run`}</CodeBlock>
               >{`npx claude-trello-cli login
 
 # Sign in to Claude Trello Bridge
-# Server: http://localhost:3000
+# Server: https://ct.joshualevine.me
 #
 # ? Email: you@example.com
 # ? Password: ********
@@ -345,7 +349,7 @@ claude-trello run`}</CodeBlock>
               flags={[
                 {
                   flag: "-s, --server <url>",
-                  desc: "Server URL (default: http://localhost:3000)",
+                  desc: "Server URL (default: https://ct.joshualevine.me)",
                 },
               ]}
             />
@@ -525,7 +529,7 @@ npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
 
 # Claude Trello Bridge — Status
 #
-#   Server:  http://localhost:3000
+#   Server:  https://ct.joshualevine.me
 #   Auth:    Signed in as Your Name
 #   Trello:  Connected
 #   API Key: Configured
@@ -586,12 +590,16 @@ npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5 --dir ~/projects/my-a
                 Can I use the CLI without the web server running?
               </summary>
               <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
-                No — the CLI authenticates against and fetches data from the web
-                app. You need either a local dev server (
+                The CLI connects to{" "}
+                <strong className="text-[var(--sea-ink)]">
+                  ct.joshualevine.me
+                </strong>{" "}
+                by default. If the site is down, the CLI won't work. You can
+                also self-host and point at your own instance with{" "}
                 <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
-                  pnpm dev
+                  --server
                 </code>
-                ) or a deployed instance running.
+                .
               </div>
             </details>
 

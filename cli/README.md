@@ -78,9 +78,8 @@ claude-trello run
 
 ## Prerequisites
 
-- **A Claude Trello Bridge account** — sign up at the web app, connect your Trello account, and save your Anthropic API key
+- **A Claude Trello Bridge account** — sign up at [ct.joshualevine.me](https://ct.joshualevine.me), connect your Trello account, and save your Anthropic API key
 - **Node.js 20+**
-- **The web app running** (locally via `pnpm dev` or deployed) — the CLI authenticates against it
 
 ## Commands
 
@@ -95,7 +94,7 @@ npx claude-trello-cli login --server https://your-app.vercel.app
 
 | Flag | Description |
 |------|-------------|
-| `-s, --server <url>` | Server URL (default: `http://localhost:3000`) |
+| `-s, --server <url>` | Server URL (default: `https://ct.joshualevine.me`) |
 
 ### `claude-trello-cli run`
 
@@ -135,7 +134,7 @@ npx claude-trello-cli status
 
 # Claude Trello Bridge — Status
 #
-#   Server:  http://localhost:3000
+#   Server:  https://ct.joshualevine.me
 #   Auth:    Signed in as Your Name
 #   Trello:  Connected
 #   API Key: Configured

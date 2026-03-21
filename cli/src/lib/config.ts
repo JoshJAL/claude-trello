@@ -52,7 +52,7 @@ export function getServerUrl(): string {
   return (
     config.serverUrl ||
     process.env.CLAUDE_TRELLO_URL ||
-    "http://localhost:3000"
+    "https://ct.joshualevine.me"
   );
 }
 

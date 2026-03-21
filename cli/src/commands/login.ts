@@ -7,7 +7,7 @@ import { saveConfig, getServerUrl } from "../lib/config.js";
 
 export const loginCommand = new Command("login")
   .description("Sign in to Claude Trello Bridge")
-  .option("-s, --server <url>", "Server URL (default: http://localhost:3000)")
+  .option("-s, --server <url>", "Server URL (default: https://ct.joshualevine.me)")
   .action(async (opts: { server?: string }) => {
     const serverUrl = opts.server || getServerUrl();
 
