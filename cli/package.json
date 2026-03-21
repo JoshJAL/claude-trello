@@ -1,6 +1,6 @@
 {
   "name": "claude-trello-cli",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "CLI for Claude Trello Bridge — point Claude Code at a Trello board and work through tasks from your terminal",
   "type": "module",
   "bin": {

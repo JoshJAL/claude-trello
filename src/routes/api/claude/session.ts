@@ -50,6 +50,7 @@ export const Route = createFileRoute("/api/claude/session")({
 
         const boardData = body.boardData as BoardData;
         const cwd = body.cwd as string | undefined;
+        const userMessage = body.userMessage as string | undefined;
 
         if (!boardData?.board?.id || !boardData?.cards) {
           return Response.json(
@@ -133,6 +134,7 @@ export const Route = createFileRoute("/api/claude/session")({
           trelloToken,
           boardData,
           cwd,
+          userMessage,
           abortController,
         });
 

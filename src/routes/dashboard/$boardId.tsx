@@ -24,6 +24,7 @@ function BoardPage() {
   const { isRunning, logs, error, pendingQuestion, start, stop, sendMessage } =
     useClaudeSession(boardId);
   const [cwd, setCwd] = useState("");
+  const [initialMessage, setInitialMessage] = useState("");
 
   const { data } = useBoardData(boardId, isRunning);
   const { data: boards } = useBoards();
@@ -40,6 +41,7 @@ function BoardPage() {
         doneListId: data.doneListId ?? undefined,
       },
       cwd.trim(),
+      initialMessage.trim() || undefined,
     );
   }
 
@@ -76,6 +78,28 @@ function BoardPage() {
                   className="w-full rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-50 dark:bg-white/5"
                 />
               </div>
+
+              {!isRunning && (
+                <div className="flex-1">
+                  <label
+                    htmlFor="initial-message"
+                    className="mb-1 block text-xs font-medium text-[var(--sea-ink-soft)]"
+                  >
+                    Initial instructions{" "}
+                    <span className="font-normal text-[var(--shore-line)]">
+                      (optional)
+                    </span>
+                  </label>
+                  <textarea
+                    id="initial-message"
+                    value={initialMessage}
+                    onChange={(e) => setInitialMessage(e.target.value)}
+                    placeholder='e.g. "Check the development branch for comparison" or "Focus on the API cards first"'
+                    rows={2}
+                    className="w-full resize-none rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 dark:bg-white/5"
+                  />
+                </div>
+              )}
 
               {isRunning ? (
                 <button

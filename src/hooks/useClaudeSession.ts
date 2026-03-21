@@ -28,7 +28,7 @@ export function useClaudeSession(boardId: string) {
   }, []);
 
   const start = useCallback(
-    async (boardData: BoardData, cwd: string) => {
+    async (boardData: BoardData, cwd: string, userMessage?: string) => {
       setIsRunning(true);
       setError(null);
       setLogs([]);
@@ -39,7 +39,7 @@ export function useClaudeSession(boardId: string) {
         const res = await fetch("/api/claude/session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ boardData, cwd }),
+          body: JSON.stringify({ boardData, cwd, userMessage }),
         });
 
         if (!res.ok) {

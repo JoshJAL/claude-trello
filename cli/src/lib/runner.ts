@@ -16,21 +16,29 @@ After completing ALL checklist items on a card, call move_card_to_done with the 
 Once a card is in Done, do not interact with it again — move on to the next card.
 Focus on one card at a time. Complete all its items, move it to Done, then proceed to the next.`;
 
-function buildUserPrompt(boardData: BoardData): string {
-  return `Here is the Trello board with tasks to complete:\n\n${JSON.stringify(boardData, null, 2)}`;
+function buildUserPrompt(
+  boardData: BoardData,
+  userMessage?: string,
+): string {
+  let prompt = `Here is the Trello board with tasks to complete:\n\n${JSON.stringify(boardData, null, 2)}`;
+  if (userMessage?.trim()) {
+    prompt += `\n\nAdditional instructions from the user:\n${userMessage.trim()}`;
+  }
+  return prompt;
 }
 
 export interface RunnerOptions {
   credentials: Credentials;
   boardData: BoardData;
   cwd: string;
+  userMessage?: string;
   abortController?: AbortController;
 }
 
 export type { Query };
 
 export function launchSession(options: RunnerOptions): Query {
-  const { credentials, boardData, cwd, abortController } = options;
+  const { credentials, boardData, cwd, userMessage, abortController } = options;
   const trello = createTrelloClient(
     credentials.trelloApiKey,
     credentials.trelloToken,
@@ -89,7 +97,7 @@ export function launchSession(options: RunnerOptions): Query {
   });
 
   return query({
-    prompt: buildUserPrompt(activeBoardData),
+    prompt: buildUserPrompt(activeBoardData, userMessage),
     options: {
       abortController,
       cwd,

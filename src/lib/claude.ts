@@ -20,12 +20,19 @@ export interface ClaudeSessionParams {
   trelloToken: string;
   boardData: BoardData;
   cwd: string;
+  userMessage?: string;
   abortController?: AbortController;
 }
 
 export function launchClaudeSession(params: ClaudeSessionParams): Query {
-  const { anthropicApiKey, trelloToken, boardData, cwd, abortController } =
-    params;
+  const {
+    anthropicApiKey,
+    trelloToken,
+    boardData,
+    cwd,
+    userMessage,
+    abortController,
+  } = params;
 
   // Filter out cards already in the done list
   const activeBoardData: BoardData = {
@@ -84,7 +91,7 @@ export function launchClaudeSession(params: ClaudeSessionParams): Query {
   });
 
   return query({
-    prompt: buildUserPrompt(activeBoardData),
+    prompt: buildUserPrompt(activeBoardData, userMessage),
     options: {
       abortController,
       cwd,

@@ -8,6 +8,13 @@ After completing ALL checklist items on a card, call move_card_to_done with the 
 Once a card is in Done, do not interact with it again — move on to the next card.
 Focus on one card at a time. Complete all its items, move it to Done, then proceed to the next.`;
 
-export function buildUserPrompt(boardData: BoardData): string {
-  return `Here is the Trello board with tasks to complete:\n\n${JSON.stringify(boardData, null, 2)}`;
+export function buildUserPrompt(
+  boardData: BoardData,
+  userMessage?: string,
+): string {
+  let prompt = `Here is the Trello board with tasks to complete:\n\n${JSON.stringify(boardData, null, 2)}`;
+  if (userMessage?.trim()) {
+    prompt += `\n\nAdditional instructions from the user:\n${userMessage.trim()}`;
+  }
+  return prompt;
 }

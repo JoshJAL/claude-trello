@@ -13,7 +13,8 @@ export const runCommand = new Command("run")
   .description("Select a Trello board and start a Claude Code session")
   .option("-b, --board <id>", "Board ID (skip interactive selection)")
   .option("-d, --dir <path>", "Working directory (default: current)")
-  .action(async (opts: { board?: string; dir?: string }) => {
+  .option("-m, --message <text>", "Initial instructions for Claude")
+  .action(async (opts: { board?: string; dir?: string; message?: string }) => {
     if (!isLoggedIn()) {
       console.log(
         chalk.red("Not logged in. Run `claude-trello login` first."),
@@ -140,6 +141,15 @@ export const runCommand = new Command("run")
       return;
     }
 
+    // ── Initial message ───────────────────────────────────────────────
+    let userMessage = opts.message;
+    if (!userMessage) {
+      userMessage = await input({
+        message:
+          "Instructions for Claude (optional — press Enter to skip):",
+      });
+    }
+
     // ── Load credentials ──────────────────────────────────────────────
     const credSpinner = ora("Loading credentials...").start();
     let credentials;
@@ -175,6 +185,7 @@ export const runCommand = new Command("run")
         credentials,
         boardData,
         cwd,
+        userMessage: userMessage || undefined,
         abortController,
       });
 
