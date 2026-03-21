@@ -1,6 +1,7 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { OnboardingSteps } from "#/components/OnboardingSteps";
 import { ConnectTrello } from "#/components/ConnectTrello";
+import { PageSkeleton } from "#/components/PageSkeleton";
 import { useIntegrationStatus } from "#/hooks/useIntegrationStatus";
 import { getSession } from "#/lib/auth.functions";
 
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/onboarding/trello")({
     }
   },
   component: OnboardingTrelloPage,
+  pendingComponent: PageSkeleton,
 });
 
 function OnboardingTrelloPage() {

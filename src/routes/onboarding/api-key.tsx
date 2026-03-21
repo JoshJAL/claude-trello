@@ -1,6 +1,7 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { OnboardingSteps } from "#/components/OnboardingSteps";
 import { ApiKeyForm } from "#/components/ApiKeyForm";
+import { PageSkeleton } from "#/components/PageSkeleton";
 import { getSession } from "#/lib/auth.functions";
 
 export const Route = createFileRoute("/onboarding/api-key")({
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/onboarding/api-key")({
     }
   },
   component: OnboardingApiKeyPage,
+  pendingComponent: PageSkeleton,
 });
 
 function OnboardingApiKeyPage() {

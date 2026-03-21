@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { ConnectTrello } from "#/components/ConnectTrello";
 import { ApiKeyForm } from "#/components/ApiKeyForm";
+import { PageSkeleton } from "#/components/PageSkeleton";
 import { useIntegrationStatus } from "#/hooks/useIntegrationStatus";
 import { getSession } from "#/lib/auth.functions";
 
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/settings/")({
     }
   },
   component: SettingsPage,
+  pendingComponent: PageSkeleton,
 });
 
 function SettingsPage() {

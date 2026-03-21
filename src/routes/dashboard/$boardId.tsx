@@ -3,6 +3,7 @@ import { useState } from "react";
 import { getSession } from "#/lib/auth.functions";
 import { BoardPanel } from "#/components/BoardPanel";
 import { SessionLog } from "#/components/SessionLog";
+import { PageSkeleton } from "#/components/PageSkeleton";
 import { useBoardData } from "#/hooks/useBoardData";
 import { useClaudeSession } from "#/hooks/useClaudeSession";
 
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/dashboard/$boardId")({
     return { user: session.user };
   },
   component: BoardPage,
+  pendingComponent: PageSkeleton,
 });
 
 function BoardPage() {

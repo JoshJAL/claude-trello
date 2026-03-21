@@ -19,7 +19,7 @@ export const auth = betterAuth({
     minPasswordLength: 8,
     sendResetPassword: async ({ user, url }) => {
       void resend.emails.send({
-        from: "onboarding@resend.dev",
+        from: "noreply@ct.joshualevine.me",
         to: user.email,
         subject: "Reset your password — Claude Trello Bridge",
         html: `<p>Hi ${user.name},</p><p>Click the link below to reset your password:</p><p><a href="${url}">Reset password</a></p><p>If you didn't request this, you can safely ignore this email.</p>`,

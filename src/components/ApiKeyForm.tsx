@@ -9,7 +9,9 @@ export function ApiKeyForm({ hasKey, onSaved }: ApiKeyFormProps) {
   const [apiKey, setApiKey] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(hasKey);
+  // Track local override only when user explicitly saves or revokes
+  const [localOverride, setLocalOverride] = useState<boolean | null>(null);
+  const saved = localOverride ?? hasKey;
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -33,7 +35,7 @@ export function ApiKeyForm({ hasKey, onSaved }: ApiKeyFormProps) {
         return;
       }
       setApiKey("");
-      setSaved(true);
+      setLocalOverride(true);
       onSaved?.();
     } catch {
       setError("Failed to save key");
@@ -51,7 +53,7 @@ export function ApiKeyForm({ hasKey, onSaved }: ApiKeyFormProps) {
         setError("Failed to remove key");
         return;
       }
-      setSaved(false);
+      setLocalOverride(false);
     } catch {
       setError("Failed to remove key");
     } finally {

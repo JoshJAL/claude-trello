@@ -1,6 +1,7 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { getSession } from "#/lib/auth.functions";
 import { useBoards } from "#/hooks/useBoardData";
+import { PageSkeleton } from "#/components/PageSkeleton";
 
 export const Route = createFileRoute("/dashboard/")({
   beforeLoad: async () => {
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/dashboard/")({
     return { user: session.user };
   },
   component: DashboardPage,
+  pendingComponent: PageSkeleton,
 });
 
 function DashboardPage() {
