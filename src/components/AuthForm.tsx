@@ -42,7 +42,19 @@ export function AuthForm({ mode }: AuthFormProps) {
           setError(signInError.message ?? "Sign in failed");
           return;
         }
-        // The onboarding/dashboard redirect is handled by the index route loader
+        // Check integration status to route correctly
+        const statusRes = await fetch("/api/settings/status");
+        if (statusRes.ok) {
+          const status = await statusRes.json();
+          if (!status.trelloLinked) {
+            navigate({ to: "/onboarding/trello" });
+            return;
+          }
+          if (!status.hasApiKey) {
+            navigate({ to: "/onboarding/api-key" });
+            return;
+          }
+        }
         navigate({ to: "/dashboard" });
       }
     } catch {

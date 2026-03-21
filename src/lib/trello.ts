@@ -24,8 +24,8 @@ async function trelloFetch<T>(
   });
 
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Trello API error ${res.status}: ${text}`);
+    // Do not include response body — it may contain tokens in error details
+    throw new Error(`Trello API error: ${res.status} ${res.statusText}`);
   }
 
   return res.json() as Promise<T>;

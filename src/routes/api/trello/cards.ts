@@ -43,20 +43,27 @@ export const Route = createFileRoute("/api/trello/cards")({
           );
         }
 
-        const [cards, lists] = await Promise.all([
-          getCards(trelloAccount.accessToken, boardId),
-          getLists(trelloAccount.accessToken, boardId),
-        ]);
+        try {
+          const [cards, lists] = await Promise.all([
+            getCards(trelloAccount.accessToken, boardId),
+            getLists(trelloAccount.accessToken, boardId),
+          ]);
 
-        const doneList = lists.find(
-          (l) => l.name.toLowerCase() === "done",
-        );
+          const doneList = lists.find(
+            (l) => l.name.toLowerCase() === "done",
+          );
 
-        return Response.json({
-          cards,
-          lists,
-          doneListId: doneList?.id ?? null,
-        });
+          return Response.json({
+            cards,
+            lists,
+            doneListId: doneList?.id ?? null,
+          });
+        } catch {
+          return Response.json(
+            { error: "Failed to fetch cards from Trello" },
+            { status: 502 },
+          );
+        }
       },
     },
   },

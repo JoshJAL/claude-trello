@@ -32,7 +32,7 @@ function SettingsPage() {
           </h2>
           <ConnectTrello
             isConnected={trelloLinked}
-            onConnected={() => refetch()}
+            onStatusChange={() => refetch()}
           />
         </section>
 

@@ -2,10 +2,10 @@ import { useState } from "react";
 
 interface ConnectTrelloProps {
   isConnected: boolean;
-  onConnected?: () => void;
+  onStatusChange?: () => void;
 }
 
-export function ConnectTrello({ isConnected, onConnected }: ConnectTrelloProps) {
+export function ConnectTrello({ isConnected, onStatusChange }: ConnectTrelloProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,7 +29,7 @@ export function ConnectTrello({ isConnected, onConnected }: ConnectTrelloProps) 
     try {
       const res = await fetch("/api/trello/connect", { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to disconnect");
-      onConnected?.();
+      onStatusChange?.();
     } catch {
       setError("Failed to disconnect Trello");
     } finally {

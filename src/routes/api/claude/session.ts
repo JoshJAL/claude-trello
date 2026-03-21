@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { existsSync, statSync } from "fs";
 import { auth } from "#/lib/auth";
 import { db } from "#/lib/db";
 import { account, userSettings } from "#/lib/db/schema";
@@ -37,13 +38,44 @@ export const Route = createFileRoute("/api/claude/session")({
           );
         }
 
-        const body = await request.json();
+        let body: Record<string, unknown>;
+        try {
+          body = await request.json();
+        } catch {
+          return Response.json(
+            { error: "Invalid JSON body" },
+            { status: 400 },
+          );
+        }
+
         const boardData = body.boardData as BoardData;
         const cwd = body.cwd as string | undefined;
 
         if (!boardData?.board?.id || !boardData?.cards) {
           return Response.json(
             { error: "boardData is required" },
+            { status: 400 },
+          );
+        }
+
+        // Validate cwd is an absolute path to an existing directory
+        if (!cwd || !cwd.startsWith("/")) {
+          return Response.json(
+            { error: "cwd must be an absolute path" },
+            { status: 400 },
+          );
+        }
+
+        try {
+          if (!existsSync(cwd) || !statSync(cwd).isDirectory()) {
+            return Response.json(
+              { error: "cwd is not a valid directory" },
+              { status: 400 },
+            );
+          }
+        } catch {
+          return Response.json(
+            { error: "cwd is not accessible" },
             { status: 400 },
           );
         }
@@ -84,18 +116,33 @@ export const Route = createFileRoute("/api/claude/session")({
           );
         }
 
-        const anthropicApiKey = decrypt(settings.encryptedAnthropicApiKey);
+        let anthropicApiKey: string;
+        try {
+          anthropicApiKey = decrypt(settings.encryptedAnthropicApiKey);
+        } catch {
+          return Response.json(
+            { error: "API key is corrupted. Please re-enter it in Settings." },
+            { status: 400 },
+          );
+        }
+
         const abortController = new AbortController();
 
         const claudeQuery = launchClaudeSession({
           anthropicApiKey,
           trelloToken,
           boardData,
-          cwd: cwd ?? process.cwd(),
+          cwd,
           abortController,
         });
 
         activeSessions.set(userId, { query: claudeQuery, abortController });
+
+        // Abort the Claude session if the client disconnects
+        request.signal.addEventListener("abort", () => {
+          abortController.abort();
+          activeSessions.delete(userId);
+        });
 
         // Stream SSE response
         const stream = new ReadableStream({
@@ -154,9 +201,17 @@ export const Route = createFileRoute("/api/claude/session")({
           );
         }
 
-        const body = await request.json();
-        const message = body.message as string;
+        let body: Record<string, unknown>;
+        try {
+          body = await request.json();
+        } catch {
+          return Response.json(
+            { error: "Invalid JSON body" },
+            { status: 400 },
+          );
+        }
 
+        const message = body.message as string;
         if (!message) {
           return Response.json(
             { error: "message is required" },
@@ -164,7 +219,7 @@ export const Route = createFileRoute("/api/claude/session")({
           );
         }
 
-        // Feed user input into the running query as a single-item async iterable
+        // Feed user input into the running query
         async function* userInput() {
           yield {
             type: "user" as const,

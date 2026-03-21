@@ -34,8 +34,15 @@ export const Route = createFileRoute("/api/trello/boards")({
           );
         }
 
-        const boards = await getBoards(trelloAccount.accessToken);
-        return Response.json(boards);
+        try {
+          const boards = await getBoards(trelloAccount.accessToken);
+          return Response.json(boards);
+        } catch {
+          return Response.json(
+            { error: "Failed to fetch boards from Trello" },
+            { status: 502 },
+          );
+        }
       },
     },
   },

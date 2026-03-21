@@ -35,7 +35,7 @@ export default function Header() {
                 Settings
               </Link>
               <button
-                onClick={() => signOut()}
+                onClick={() => signOut().then(() => { window.location.href = "/"; })}
                 className="nav-link cursor-pointer border-none bg-transparent"
               >
                 Sign out

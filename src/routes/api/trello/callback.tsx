@@ -23,8 +23,17 @@ function TrelloCallbackPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token }),
     })
-      .then((res) => {
+      .then(async (res) => {
         if (!res.ok) throw new Error("Failed to save Trello token");
+        // Check where to redirect — settings reconnect vs onboarding
+        const statusRes = await fetch("/api/settings/status");
+        if (statusRes.ok) {
+          const status = await statusRes.json();
+          if (status.hasApiKey) {
+            navigate({ to: "/settings" });
+            return;
+          }
+        }
         navigate({ to: "/onboarding/api-key" });
       })
       .catch(() => {

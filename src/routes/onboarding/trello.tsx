@@ -33,7 +33,7 @@ function OnboardingTrelloPage() {
         </p>
         <ConnectTrello
           isConnected={trelloLinked}
-          onConnected={() => navigate({ to: "/onboarding/api-key" })}
+          onStatusChange={() => navigate({ to: "/onboarding/api-key" })}
         />
       </div>
     </main>

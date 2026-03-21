@@ -52,8 +52,9 @@ export function useClaudeSession(boardId: string) {
 
         const decoder = new TextDecoder();
         let buffer = "";
+        let streamEnded = false;
 
-        while (true) {
+        while (!streamEnded) {
           const { done, value } = await reader.read();
           if (done) break;
 
@@ -71,12 +72,14 @@ export function useClaudeSession(boardId: string) {
 
               if (message.type === "done") {
                 addLog("system", "Session complete");
+                streamEnded = true;
                 break;
               }
 
               if (message.type === "error") {
                 setError(message.error);
                 addLog("error", message.error);
+                streamEnded = true;
                 break;
               }
 

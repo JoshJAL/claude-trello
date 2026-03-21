@@ -4,7 +4,7 @@ import { getSession } from "#/lib/auth.functions";
 import { BoardPanel } from "#/components/BoardPanel";
 import { SessionLog } from "#/components/SessionLog";
 import { PageSkeleton } from "#/components/PageSkeleton";
-import { useBoardData } from "#/hooks/useBoardData";
+import { useBoardData, useBoards } from "#/hooks/useBoardData";
 import { useClaudeSession } from "#/hooks/useClaudeSession";
 
 export const Route = createFileRoute("/dashboard/$boardId")({
@@ -26,6 +26,8 @@ function BoardPage() {
   const [cwd, setCwd] = useState("");
 
   const { data } = useBoardData(boardId, isRunning);
+  const { data: boards } = useBoards();
+  const boardName = boards?.find((b) => b.id === boardId)?.name ?? boardId;
 
   function handleStartSession() {
     if (!data?.cards) return;
@@ -33,7 +35,7 @@ function BoardPage() {
 
     start(
       {
-        board: { id: boardId, name: boardId },
+        board: { id: boardId, name: boardName },
         cards: data.cards,
         doneListId: data.doneListId ?? undefined,
       },
@@ -115,7 +117,7 @@ function BoardPage() {
           onSendMessage={sendMessage}
         />
 
-        <BoardPanel boardId={boardId} boardName={boardId} polling={isRunning} />
+        <BoardPanel boardId={boardId} boardName={boardName} polling={isRunning} />
       </div>
     </main>
   );
