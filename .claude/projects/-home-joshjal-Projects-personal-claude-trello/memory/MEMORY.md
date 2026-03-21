@@ -1,0 +1,1 @@
+- [feedback_reread_claude_md.md](./feedback_reread_claude_md.md) — Always re-read CLAUDE.md in full before any implementation; spec changes frequently
