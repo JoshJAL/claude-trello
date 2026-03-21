@@ -31,6 +31,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
     ...options,
     headers: {
       "Content-Type": "application/json",
+      Origin: serverUrl,
       Cookie: cookie,
       ...((options?.headers as Record<string, string>) ?? {}),
     },
@@ -65,7 +66,10 @@ export async function signIn(
 ): Promise<{ cookies: string; user: { name: string; email: string } }> {
   const res = await fetch(`${serverUrl}/api/auth/sign-in/email`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Origin: serverUrl,
+    },
     body: JSON.stringify({ email, password }),
     redirect: "manual",
   });
