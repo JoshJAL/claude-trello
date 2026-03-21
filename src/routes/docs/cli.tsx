@@ -33,7 +33,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="absolute right-2 top-2 rounded-md border border-[var(--shore-line)] bg-[var(--surface)] p-1.5 text-[var(--sea-ink-soft)] opacity-0 transition group-hover:opacity-100 hover:text-[var(--sea-ink)]"
+      className="absolute right-3 top-3 rounded-md border border-white/10 bg-white/5 p-1.5 text-white/40 opacity-0 transition group-hover:opacity-100 hover:text-white/80"
       title="Copy to clipboard"
     >
       {copied ? <Check size={14} /> : <Copy size={14} />}
@@ -56,7 +56,7 @@ function CodeBlock({
 
   return (
     <div className="group relative">
-      <pre className="overflow-x-auto rounded-xl border border-[var(--line)] bg-[var(--sea-ink)] p-4 text-sm leading-relaxed text-[var(--sand)]">
+      <pre className="overflow-x-auto rounded-xl border border-[var(--line)] bg-[var(--code-bg)] p-5 text-sm leading-relaxed text-[var(--code-text)]">
         <code>{children}</code>
       </pre>
       {text && <CopyButton text={text} />}
@@ -103,9 +103,9 @@ function CommandRef({
   flags?: Array<{ flag: string; desc: string }>;
 }) {
   return (
-    <div className="rounded-xl border border-[var(--line)] bg-[var(--surface)] p-4">
-      <div className="flex items-baseline gap-3">
-        <code className="rounded-md bg-[var(--sea-ink)] px-2.5 py-1 text-sm font-semibold text-[var(--sand)]">
+    <div className="island-shell rounded-xl p-5">
+      <div className="flex flex-wrap items-baseline gap-3">
+        <code className="rounded-md bg-[var(--code-bg)] px-2.5 py-1 text-sm font-semibold text-[var(--code-text)]">
           {command}
         </code>
         <span className="text-sm text-[var(--sea-ink-soft)]">
@@ -113,7 +113,7 @@ function CommandRef({
         </span>
       </div>
       {flags && flags.length > 0 && (
-        <div className="mt-3 space-y-1.5 border-t border-[var(--line)] pt-3">
+        <div className="mt-4 space-y-2 border-t border-[var(--line)] pt-4">
           {flags.map((f) => (
             <div key={f.flag} className="flex items-baseline gap-2 text-sm">
               <code className="shrink-0 text-[var(--lagoon)]">{f.flag}</code>
@@ -166,7 +166,7 @@ function CliDocsPage() {
           </h2>
           <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
             Run instantly with{" "}
-            <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs font-semibold">
+            <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs font-semibold">
               npx
             </code>{" "}
             — no install required:
@@ -230,7 +230,7 @@ claude-trello run`}</CodeBlock>
               <span>
                 <strong className="text-[var(--sea-ink)]">Claude Code</strong>{" "}
                 installed (
-                <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
                   npm i -g @anthropic-ai/claude-code
                 </code>
                 )
@@ -246,11 +246,11 @@ claude-trello run`}</CodeBlock>
           </h2>
           <p className="mb-4 text-sm text-[var(--sea-ink-soft)]">
             All examples use{" "}
-            <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+            <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
               npx claude-trello-cli
             </code>
             . If you installed globally, replace with just{" "}
-            <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+            <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
               claude-trello
             </code>
             .
@@ -356,10 +356,10 @@ npx claude-trello-cli login`}</CodeBlock>
 
         {/* ── Commands Reference ────────────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-5 text-xl font-bold text-[var(--sea-ink)]">
             Commands
           </h2>
-          <div className="space-y-3">
+          <div className="space-y-4">
             <CommandRef
               command="npx claude-trello-cli register"
               description="Create a new account (email, password, name)"
@@ -526,7 +526,7 @@ npx claude-trello-cli login`}</CodeBlock>
               </h3>
               <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
                 Get the board ID from{" "}
-                <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
                   npx claude-trello-cli boards
                 </code>{" "}
                 and pass it directly:
@@ -579,7 +579,7 @@ npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
               <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
                 Pass initial instructions so Claude knows how to approach the
                 work. Without{" "}
-                <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
                   --message
                 </code>
                 , the CLI will prompt you interactively (press Enter to skip).
@@ -629,7 +629,7 @@ npx claude-trello-cli run \\
               </summary>
               <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
                 Your login session has expired. Run{" "}
-                <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
                   npx claude-trello-cli login
                 </code>{" "}
                 again to re-authenticate.
@@ -658,7 +658,7 @@ npx claude-trello-cli run \\
                 </strong>{" "}
                 by default. If the site is down, the CLI won't work. You can
                 also self-host and point at your own instance with{" "}
-                <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
                   --server
                 </code>
                 .
@@ -671,15 +671,15 @@ npx claude-trello-cli run \\
               </summary>
               <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
                 Your session cookie and server URL are stored at{" "}
-                <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
                   ~/.config/claude-trello/config.json
                 </code>{" "}
                 with restricted file permissions (
-                <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
                   600
                 </code>
                 ). Run{" "}
-                <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
                   npx claude-trello-cli logout
                 </code>{" "}
                 to clear it.
@@ -693,7 +693,7 @@ npx claude-trello-cli run \\
               <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
                 Sometimes Claude needs clarification before proceeding. The
                 question will appear in yellow in your terminal with a{" "}
-                <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
                   &gt;
                 </code>{" "}
                 prompt. Type your answer and press Enter — Claude will continue
@@ -756,7 +756,7 @@ npx claude-trello-cli run \\
                 />
                 <span>
                   Claude Code runs with{" "}
-                  <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+                  <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
                     acceptEdits
                   </code>{" "}
                   permission mode — it can read and edit files but won't run
