@@ -5,10 +5,10 @@ import {
   FolderOpen,
   Play,
   CheckCircle2,
-  Settings,
   ArrowRight,
   Copy,
   Check,
+  ExternalLink,
 } from "lucide-react";
 import { useState, useCallback } from "react";
 
@@ -147,7 +147,41 @@ function CliDocsPage() {
             terminal. Navigate to any project directory, pick a board, and let
             Claude work through your tasks — checking off items as it goes.
           </p>
+          <a
+            href="https://www.npmjs.com/package/claude-trello-cli"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-[var(--shore-line)] px-3 py-1.5 text-sm font-semibold text-[var(--sea-ink)] no-underline transition hover:bg-[var(--foam)]"
+          >
+            View on npm
+            <ExternalLink size={14} />
+          </a>
         </div>
+
+        {/* ── Install ───────────────────────────────────────────────── */}
+        <section className="island-shell mb-6 rounded-2xl p-6">
+          <h2 className="mb-3 text-lg font-semibold text-[var(--sea-ink)]">
+            Install
+          </h2>
+          <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
+            Run instantly with{" "}
+            <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs font-semibold">
+              npx
+            </code>{" "}
+            — no install required:
+          </p>
+          <CodeBlock copyText="npx claude-trello-cli login">
+            npx claude-trello-cli login
+          </CodeBlock>
+          <p className="mt-4 mb-3 text-sm text-[var(--sea-ink-soft)]">
+            Or install globally for a shorter command:
+          </p>
+          <CodeBlock copyText="npm install -g claude-trello-cli">{`npm install -g claude-trello-cli
+
+# Then use anywhere:
+claude-trello login
+claude-trello run`}</CodeBlock>
+        </section>
 
         {/* ── Prerequisites ────────────────────────────────────────── */}
         <section className="island-shell mb-6 rounded-2xl p-6">
@@ -200,16 +234,19 @@ function CliDocsPage() {
           <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
             Quick Start
           </h2>
+          <p className="mb-4 text-sm text-[var(--sea-ink-soft)]">
+            All examples use{" "}
+            <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+              npx claude-trello-cli
+            </code>
+            . If you installed globally, replace with just{" "}
+            <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+              claude-trello
+            </code>
+            .
+          </p>
           <div className="space-y-4">
-            <StepCard number={1} icon={Settings} title="Install dependencies">
-              <p>
-                From the project root, install the CLI dependencies and run it
-                via pnpm:
-              </p>
-              <CodeBlock copyText="pnpm install">pnpm install</CodeBlock>
-            </StepCard>
-
-            <StepCard number={2} icon={LogIn} title="Sign in">
+            <StepCard number={1} icon={LogIn} title="Sign in">
               <p>
                 Authenticate with the same email and password you use on the web
                 app. Your session is stored locally at{" "}
@@ -218,8 +255,8 @@ function CliDocsPage() {
                 </code>
               </p>
               <CodeBlock
-                copyText="pnpm cli login"
-              >{`pnpm cli login
+                copyText="npx claude-trello-cli login"
+              >{`npx claude-trello-cli login
 
 # Sign in to Claude Trello Bridge
 # Server: http://localhost:3000
@@ -234,12 +271,12 @@ function CliDocsPage() {
                 </code>{" "}
                 flag:
               </p>
-              <CodeBlock copyText="pnpm cli login --server https://your-app.vercel.app">
-                pnpm cli login --server https://your-app.vercel.app
+              <CodeBlock copyText="npx claude-trello-cli login --server https://your-app.vercel.app">
+                npx claude-trello-cli login --server https://your-app.vercel.app
               </CodeBlock>
             </StepCard>
 
-            <StepCard number={3} icon={FolderOpen} title="Navigate to your project">
+            <StepCard number={2} icon={FolderOpen} title="Navigate to your project">
               <p>
                 Open your terminal in the codebase you want Claude to work on:
               </p>
@@ -247,7 +284,7 @@ function CliDocsPage() {
             </StepCard>
 
             <StepCard
-              number={4}
+              number={3}
               icon={Play}
               title="Run a session"
             >
@@ -255,8 +292,8 @@ function CliDocsPage() {
                 Select a Trello board, review the cards, and launch Claude Code:
               </p>
               <CodeBlock
-                copyText="pnpm cli run"
-              >{`pnpm cli run
+                copyText="npx claude-trello-cli run"
+              >{`npx claude-trello-cli run
 
 # ? Select a board:
 # ❯ My Project Board
@@ -303,7 +340,7 @@ function CliDocsPage() {
           </h2>
           <div className="space-y-3">
             <CommandRef
-              command="pnpm cli login"
+              command="npx claude-trello-cli login"
               description="Sign in with your email and password"
               flags={[
                 {
@@ -313,11 +350,11 @@ function CliDocsPage() {
               ]}
             />
             <CommandRef
-              command="pnpm cli logout"
+              command="npx claude-trello-cli logout"
               description="Clear your stored session"
             />
             <CommandRef
-              command="pnpm cli run"
+              command="npx claude-trello-cli run"
               description="Select a board and start a Claude Code session"
               flags={[
                 {
@@ -331,11 +368,11 @@ function CliDocsPage() {
               ]}
             />
             <CommandRef
-              command="pnpm cli boards"
+              command="npx claude-trello-cli boards"
               description="List all your Trello boards with their IDs"
             />
             <CommandRef
-              command="pnpm cli status"
+              command="npx claude-trello-cli status"
               description="Check auth and integration status"
             />
           </div>
@@ -451,15 +488,15 @@ function CliDocsPage() {
               <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
                 Get the board ID from{" "}
                 <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
-                  pnpm cli boards
+                  npx claude-trello-cli boards
                 </code>{" "}
                 and pass it directly:
               </p>
-              <CodeBlock copyText='pnpm cli run --board 60d5e2a3f1a2b40017c3d4e5'>{`pnpm cli boards
+              <CodeBlock copyText='npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5'>{`npx claude-trello-cli boards
 #   My Project Board  60d5e2a3f1a2b40017c3d4e5
 #   Side Project      507f1f77bcf86cd799439011
 
-pnpm cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
+npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
             </div>
 
             <div>
@@ -470,8 +507,8 @@ pnpm cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
                 Point Claude Code at a specific project without navigating there
                 first:
               </p>
-              <CodeBlock copyText="pnpm cli run --dir ~/projects/my-api">
-                pnpm cli run --dir ~/projects/my-api
+              <CodeBlock copyText="npx claude-trello-cli run --dir ~/projects/my-api">
+                npx claude-trello-cli run --dir ~/projects/my-api
               </CodeBlock>
             </div>
 
@@ -483,8 +520,8 @@ pnpm cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
                 Verify everything is set up correctly before starting a session:
               </p>
               <CodeBlock
-                copyText="pnpm cli status"
-              >{`pnpm cli status
+                copyText="npx claude-trello-cli status"
+              >{`npx claude-trello-cli status
 
 # Claude Trello Bridge — Status
 #
@@ -504,12 +541,12 @@ pnpm cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
                 Combine flags for a non-interactive launch:
               </p>
               <CodeBlock
-                copyText="pnpm cli run --board 60d5e2a3f1a2b40017c3d4e5 --dir ~/projects/my-api"
+                copyText="npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5 --dir ~/projects/my-api"
               >{`# Login once
-pnpm cli login --server https://your-app.vercel.app
+npx claude-trello-cli login --server https://your-app.vercel.app
 
 # Then run from anywhere
-pnpm cli run --board 60d5e2a3f1a2b40017c3d4e5 --dir ~/projects/my-api`}</CodeBlock>
+npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5 --dir ~/projects/my-api`}</CodeBlock>
             </div>
           </div>
         </section>
@@ -527,7 +564,7 @@ pnpm cli run --board 60d5e2a3f1a2b40017c3d4e5 --dir ~/projects/my-api`}</CodeBlo
               <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
                 Your login session has expired. Run{" "}
                 <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
-                  pnpm cli login
+                  npx claude-trello-cli login
                 </code>{" "}
                 again to re-authenticate.
               </div>
@@ -573,7 +610,7 @@ pnpm cli run --board 60d5e2a3f1a2b40017c3d4e5 --dir ~/projects/my-api`}</CodeBlo
                 </code>
                 ). Run{" "}
                 <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
-                  pnpm cli logout
+                  npx claude-trello-cli logout
                 </code>{" "}
                 to clear it.
               </div>
