@@ -16,7 +16,7 @@ export function OnboardingSteps({ currentStep }: OnboardingStepsProps) {
             <div
               className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold transition ${
                 step.number < currentStep
-                  ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
+                  ? "bg-green-100 text-green-900 dark:bg-green-900/40 dark:text-green-300"
                   : step.number === currentStep
                     ? "bg-[var(--lagoon)] text-white"
                     : "bg-[var(--foam)] text-[var(--sea-ink-soft)]"

@@ -30,7 +30,7 @@ function RootLayout() {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="min-h-screen bg-[var(--sand)] font-sans antialiased text-[var(--sea-ink)] [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
+      <body className="min-h-screen bg-[var(--sand)] font-sans antialiased text-[var(--sea-ink)] [overflow-wrap:anywhere] selection:bg-blue-slate-200/40">
         <Header />
         <Outlet />
         <Scripts />

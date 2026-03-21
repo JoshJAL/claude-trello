@@ -39,10 +39,10 @@ export function ConnectTrello({ isConnected, onConnected }: ConnectTrelloProps) 
 
   if (isConnected) {
     return (
-      <div className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 px-4 py-3 dark:border-green-800 dark:bg-green-950/30">
+      <div className="flex items-center justify-between rounded-lg border border-green-300 bg-green-200 px-4 py-3 dark:border-green-800 dark:bg-green-950/30">
         <div className="flex items-center gap-2">
-          <span className="text-green-600 dark:text-green-400">&#10003;</span>
-          <span className="text-sm font-medium text-green-700 dark:text-green-300">
+          <span className="text-green-900 dark:text-green-400">&#10003;</span>
+          <span className="text-sm font-medium text-green-900 dark:text-green-300">
             Trello connected
           </span>
         </div>

@@ -29,7 +29,7 @@ export function CardItem({ card, onCheckToggle, done }: CardItemProps) {
     >
       <div className="mb-2 flex items-start justify-between gap-2">
         <h3
-          className={`text-sm font-semibold ${done ? "text-green-600 line-through dark:text-green-400" : "text-[var(--sea-ink)]"}`}
+          className={`text-sm font-semibold ${done ? "text-green-800 line-through dark:text-green-400" : "text-[var(--sea-ink)]"}`}
         >
           {done && <span className="mr-1.5 no-underline">&#10003;</span>}
           {card.name}
@@ -38,7 +38,7 @@ export function CardItem({ card, onCheckToggle, done }: CardItemProps) {
           <span
             className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
               done
-                ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
+                ? "bg-green-100 text-green-900 dark:bg-green-900/40 dark:text-green-300"
                 : "bg-[var(--foam)] text-[var(--sea-ink-soft)]"
             }`}
           >

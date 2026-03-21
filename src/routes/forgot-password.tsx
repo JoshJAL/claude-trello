@@ -47,7 +47,7 @@ function ForgotPasswordPage() {
 
         {sent ? (
           <div className="flex flex-col items-center gap-4">
-            <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-800 dark:bg-green-950/30 dark:text-green-300">
+            <div className="rounded-lg border border-green-300 bg-green-100 px-4 py-3 text-sm text-green-900 dark:border-green-800 dark:bg-green-950/30 dark:text-green-300">
               If an account with that email exists, a reset link has been sent.
               Check your inbox.
             </div>

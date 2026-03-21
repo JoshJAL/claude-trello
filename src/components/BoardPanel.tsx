@@ -26,9 +26,9 @@ export function BoardPanel({
   if (isLoading) {
     return (
       <div className="space-y-3">
-        {[1, 2, 3].map((i) => (
+        {["skeleton-1", "skeleton-2", "skeleton-3"].map((id) => (
           <div
-            key={i}
+            key={id}
             className="island-shell h-24 animate-pulse rounded-xl"
           />
         ))}
@@ -83,7 +83,7 @@ export function BoardPanel({
 
       {doneCards.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-green-600 dark:text-green-400">
+          <h3 className="text-sm font-semibold text-green-900 dark:text-green-400">
             Done ({doneCards.length})
           </h3>
           {doneCards.map((card) => (

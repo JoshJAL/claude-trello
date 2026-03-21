@@ -33,9 +33,9 @@ function DashboardPage() {
 
           {isLoading && (
             <div className="space-y-2">
-              {[1, 2, 3].map((i) => (
+              {["skeleton-1", "skeleton-2", "skeleton-3"].map((id) => (
                 <div
-                  key={i}
+                  key={id}
                   className="h-14 animate-pulse rounded-xl bg-[var(--foam)]"
                 />
               ))}

@@ -12,7 +12,7 @@ const typeStyles: Record<string, string> = {
   assistant: "text-[var(--sea-ink)]",
   tool: "text-blue-600 dark:text-blue-400",
   system: "text-[var(--sea-ink-soft)] italic",
-  result: "text-green-600 dark:text-green-400 font-medium",
+  result: "text-green-900 dark:text-green-400 font-medium",
   error: "text-red-600 dark:text-red-400",
   question:
     "text-amber-700 dark:text-amber-300 font-medium bg-amber-50 dark:bg-amber-950/30 rounded px-2 py-1 border border-amber-200 dark:border-amber-800",
@@ -55,7 +55,7 @@ export function SessionLog({
           Session Log
         </h3>
         {isRunning && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/40 dark:text-green-300">
+          <span className="inline-flex items-center gap-1 rounded-full bg-green-200 px-2 py-0.5 text-xs font-medium text-green-900 dark:bg-green-900/40 dark:text-green-300">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
             Running
           </span>

@@ -1,55 +1,88 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useReducer } from "react";
 import { authClient } from "#/lib/auth-client";
 
 export const Route = createFileRoute("/reset-password")({
   component: ResetPasswordPage,
 });
 
+interface FormState {
+  password: string;
+  confirm: string;
+  loading: boolean;
+  error: string | null;
+  success: boolean;
+}
+
+type FormAction =
+  | { type: "SET_FIELD"; field: "password" | "confirm"; value: string }
+  | { type: "SUBMIT" }
+  | { type: "ERROR"; message: string }
+  | { type: "SUCCESS" }
+  | { type: "DONE" };
+
+function formReducer(state: FormState, action: FormAction): FormState {
+  switch (action.type) {
+    case "SET_FIELD":
+      return { ...state, [action.field]: action.value };
+    case "SUBMIT":
+      return { ...state, loading: true, error: null };
+    case "ERROR":
+      return { ...state, loading: false, error: action.message };
+    case "SUCCESS":
+      return { ...state, loading: false, success: true };
+    case "DONE":
+      return { ...state, loading: false };
+  }
+}
+
+const initialState: FormState = {
+  password: "",
+  confirm: "",
+  loading: false,
+  error: null,
+  success: false,
+};
+
 function ResetPasswordPage() {
   const navigate = useNavigate();
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [state, dispatch] = useReducer(formReducer, initialState);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
 
-    if (password !== confirm) {
-      setError("Passwords do not match");
+    if (state.password !== state.confirm) {
+      dispatch({ type: "ERROR", message: "Passwords do not match" });
       return;
     }
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters");
+    if (state.password.length < 8) {
+      dispatch({ type: "ERROR", message: "Password must be at least 8 characters" });
       return;
     }
 
     const token = new URLSearchParams(window.location.search).get("token");
     if (!token) {
-      setError("Invalid or missing reset token");
+      dispatch({ type: "ERROR", message: "Invalid or missing reset token" });
       return;
     }
 
-    setLoading(true);
+    dispatch({ type: "SUBMIT" });
     try {
       const { error: resetError } = await authClient.resetPassword({
-        newPassword: password,
+        newPassword: state.password,
         token,
       });
       if (resetError) {
-        setError(resetError.message ?? "Failed to reset password");
+        dispatch({ type: "ERROR", message: resetError.message ?? "Failed to reset password" });
         return;
       }
-      setSuccess(true);
+      dispatch({ type: "SUCCESS" });
       setTimeout(() => navigate({ to: "/" }), 2000);
     } catch {
-      setError("An unexpected error occurred");
+      dispatch({ type: "ERROR", message: "An unexpected error occurred" });
     } finally {
-      setLoading(false);
+      dispatch({ type: "DONE" });
     }
   }
 
@@ -63,9 +96,9 @@ function ResetPasswordPage() {
           Enter your new password below.
         </p>
 
-        {success ? (
+        {state.success ? (
           <div className="flex flex-col items-center gap-4">
-            <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-800 dark:bg-green-950/30 dark:text-green-300">
+            <div className="rounded-lg border border-green-300 bg-green-100 px-4 py-3 text-sm text-green-900 dark:border-green-800 dark:bg-green-950/30 dark:text-green-300">
               Password reset successfully. Redirecting to sign in...
             </div>
           </div>
@@ -83,8 +116,10 @@ function ResetPasswordPage() {
                 type="password"
                 required
                 minLength={8}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={state.password}
+                onChange={(e) =>
+                  dispatch({ type: "SET_FIELD", field: "password", value: e.target.value })
+                }
                 className="rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 dark:bg-white/5"
                 placeholder="Min. 8 characters"
               />
@@ -102,23 +137,25 @@ function ResetPasswordPage() {
                 type="password"
                 required
                 minLength={8}
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
+                value={state.confirm}
+                onChange={(e) =>
+                  dispatch({ type: "SET_FIELD", field: "confirm", value: e.target.value })
+                }
                 className="rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 dark:bg-white/5"
                 placeholder="Repeat password"
               />
             </div>
 
-            {error && (
-              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            {state.error && (
+              <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>
             )}
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={state.loading}
               className="mt-2 rounded-lg bg-[var(--lagoon)] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
             >
-              {loading ? "Resetting..." : "Reset password"}
+              {state.loading ? "Resetting..." : "Reset password"}
             </button>
           </form>
         )}
