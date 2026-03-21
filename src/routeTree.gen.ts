@@ -17,6 +17,7 @@ import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as OnboardingTrelloRouteImport } from './routes/onboarding/trello'
 import { Route as OnboardingApiKeyRouteImport } from './routes/onboarding/api-key'
+import { Route as DocsCliRouteImport } from './routes/docs/cli'
 import { Route as DashboardBoardIdRouteImport } from './routes/dashboard/$boardId'
 import { Route as ApiTrelloConnectRouteImport } from './routes/api/trello/connect'
 import { Route as ApiTrelloChecklistRouteImport } from './routes/api/trello/checklist'
@@ -26,6 +27,7 @@ import { Route as ApiTrelloBoardsRouteImport } from './routes/api/trello/boards'
 import { Route as ApiTrelloAuthorizeRouteImport } from './routes/api/trello/authorize'
 import { Route as ApiSettingsStatusRouteImport } from './routes/api/settings/status'
 import { Route as ApiSettingsApikeyRouteImport } from './routes/api/settings/apikey'
+import { Route as ApiCliCredentialsRouteImport } from './routes/api/cli/credentials'
 import { Route as ApiClaudeSessionRouteImport } from './routes/api/claude/session'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
@@ -67,6 +69,11 @@ const OnboardingTrelloRoute = OnboardingTrelloRouteImport.update({
 const OnboardingApiKeyRoute = OnboardingApiKeyRouteImport.update({
   id: '/onboarding/api-key',
   path: '/onboarding/api-key',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsCliRoute = DocsCliRouteImport.update({
+  id: '/docs/cli',
+  path: '/docs/cli',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardBoardIdRoute = DashboardBoardIdRouteImport.update({
@@ -114,6 +121,11 @@ const ApiSettingsApikeyRoute = ApiSettingsApikeyRouteImport.update({
   path: '/api/settings/apikey',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCliCredentialsRoute = ApiCliCredentialsRouteImport.update({
+  id: '/api/cli/credentials',
+  path: '/api/cli/credentials',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiClaudeSessionRoute = ApiClaudeSessionRouteImport.update({
   id: '/api/claude/session',
   path: '/api/claude/session',
@@ -131,12 +143,14 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard/$boardId': typeof DashboardBoardIdRoute
+  '/docs/cli': typeof DocsCliRoute
   '/onboarding/api-key': typeof OnboardingApiKeyRoute
   '/onboarding/trello': typeof OnboardingTrelloRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/claude/session': typeof ApiClaudeSessionRoute
+  '/api/cli/credentials': typeof ApiCliCredentialsRoute
   '/api/settings/apikey': typeof ApiSettingsApikeyRoute
   '/api/settings/status': typeof ApiSettingsStatusRoute
   '/api/trello/authorize': typeof ApiTrelloAuthorizeRoute
@@ -152,12 +166,14 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard/$boardId': typeof DashboardBoardIdRoute
+  '/docs/cli': typeof DocsCliRoute
   '/onboarding/api-key': typeof OnboardingApiKeyRoute
   '/onboarding/trello': typeof OnboardingTrelloRoute
   '/dashboard': typeof DashboardIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/claude/session': typeof ApiClaudeSessionRoute
+  '/api/cli/credentials': typeof ApiCliCredentialsRoute
   '/api/settings/apikey': typeof ApiSettingsApikeyRoute
   '/api/settings/status': typeof ApiSettingsStatusRoute
   '/api/trello/authorize': typeof ApiTrelloAuthorizeRoute
@@ -174,12 +190,14 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard/$boardId': typeof DashboardBoardIdRoute
+  '/docs/cli': typeof DocsCliRoute
   '/onboarding/api-key': typeof OnboardingApiKeyRoute
   '/onboarding/trello': typeof OnboardingTrelloRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/claude/session': typeof ApiClaudeSessionRoute
+  '/api/cli/credentials': typeof ApiCliCredentialsRoute
   '/api/settings/apikey': typeof ApiSettingsApikeyRoute
   '/api/settings/status': typeof ApiSettingsStatusRoute
   '/api/trello/authorize': typeof ApiTrelloAuthorizeRoute
@@ -197,12 +215,14 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/dashboard/$boardId'
+    | '/docs/cli'
     | '/onboarding/api-key'
     | '/onboarding/trello'
     | '/dashboard/'
     | '/settings/'
     | '/api/auth/$'
     | '/api/claude/session'
+    | '/api/cli/credentials'
     | '/api/settings/apikey'
     | '/api/settings/status'
     | '/api/trello/authorize'
@@ -218,12 +238,14 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/dashboard/$boardId'
+    | '/docs/cli'
     | '/onboarding/api-key'
     | '/onboarding/trello'
     | '/dashboard'
     | '/settings'
     | '/api/auth/$'
     | '/api/claude/session'
+    | '/api/cli/credentials'
     | '/api/settings/apikey'
     | '/api/settings/status'
     | '/api/trello/authorize'
@@ -239,12 +261,14 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/dashboard/$boardId'
+    | '/docs/cli'
     | '/onboarding/api-key'
     | '/onboarding/trello'
     | '/dashboard/'
     | '/settings/'
     | '/api/auth/$'
     | '/api/claude/session'
+    | '/api/cli/credentials'
     | '/api/settings/apikey'
     | '/api/settings/status'
     | '/api/trello/authorize'
@@ -261,12 +285,14 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   DashboardBoardIdRoute: typeof DashboardBoardIdRoute
+  DocsCliRoute: typeof DocsCliRoute
   OnboardingApiKeyRoute: typeof OnboardingApiKeyRoute
   OnboardingTrelloRoute: typeof OnboardingTrelloRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiClaudeSessionRoute: typeof ApiClaudeSessionRoute
+  ApiCliCredentialsRoute: typeof ApiCliCredentialsRoute
   ApiSettingsApikeyRoute: typeof ApiSettingsApikeyRoute
   ApiSettingsStatusRoute: typeof ApiSettingsStatusRoute
   ApiTrelloAuthorizeRoute: typeof ApiTrelloAuthorizeRoute
@@ -335,6 +361,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingApiKeyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/docs/cli': {
+      id: '/docs/cli'
+      path: '/docs/cli'
+      fullPath: '/docs/cli'
+      preLoaderRoute: typeof DocsCliRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/$boardId': {
       id: '/dashboard/$boardId'
       path: '/dashboard/$boardId'
@@ -398,6 +431,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSettingsApikeyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cli/credentials': {
+      id: '/api/cli/credentials'
+      path: '/api/cli/credentials'
+      fullPath: '/api/cli/credentials'
+      preLoaderRoute: typeof ApiCliCredentialsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/claude/session': {
       id: '/api/claude/session'
       path: '/api/claude/session'
@@ -421,12 +461,14 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   DashboardBoardIdRoute: DashboardBoardIdRoute,
+  DocsCliRoute: DocsCliRoute,
   OnboardingApiKeyRoute: OnboardingApiKeyRoute,
   OnboardingTrelloRoute: OnboardingTrelloRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiClaudeSessionRoute: ApiClaudeSessionRoute,
+  ApiCliCredentialsRoute: ApiCliCredentialsRoute,
   ApiSettingsApikeyRoute: ApiSettingsApikeyRoute,
   ApiSettingsStatusRoute: ApiSettingsStatusRoute,
   ApiTrelloAuthorizeRoute: ApiTrelloAuthorizeRoute,

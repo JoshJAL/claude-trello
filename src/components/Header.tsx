@@ -34,6 +34,13 @@ export default function Header() {
               >
                 Settings
               </Link>
+              <Link
+                to="/docs/cli"
+                className="nav-link"
+                activeProps={{ className: "nav-link is-active" }}
+              >
+                CLI Docs
+              </Link>
               <button
                 onClick={() => signOut().then(() => { window.location.href = "/"; })}
                 className="nav-link cursor-pointer border-none bg-transparent"
@@ -56,6 +63,13 @@ export default function Header() {
                 activeProps={{ className: "nav-link is-active" }}
               >
                 Register
+              </Link>
+              <Link
+                to="/docs/cli"
+                className="nav-link"
+                activeProps={{ className: "nav-link is-active" }}
+              >
+                CLI Docs
               </Link>
             </>
           )}
