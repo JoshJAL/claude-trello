@@ -369,6 +369,10 @@ claude-trello run`}</CodeBlock>
                   flag: "-d, --dir <path>",
                   desc: "Working directory (default: current directory)",
                 },
+                {
+                  flag: "-m, --message <text>",
+                  desc: 'Initial instructions for Claude (e.g. "check the dev branch for comparison")',
+                },
               ]}
             />
             <CommandRef
@@ -539,18 +543,45 @@ npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
 
             <div>
               <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+                Give Claude extra context with --message
+              </h3>
+              <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
+                Pass initial instructions so Claude knows how to approach the
+                work. Without{" "}
+                <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
+                  --message
+                </code>
+                , the CLI will prompt you interactively (press Enter to skip).
+              </p>
+              <CodeBlock
+                copyText={'npx claude-trello-cli run --message "Check the development branch for comparison"'}
+              >{`# Give Claude context before it starts
+npx claude-trello-cli run --message "Check the development branch for comparison"
+
+# Or be more specific
+npx claude-trello-cli run --message "Focus on the API cards first, skip frontend for now"
+
+# Without --message, you'll be prompted interactively:
+# ? Instructions for Claude (optional — press Enter to skip):`}</CodeBlock>
+            </div>
+
+            <div>
+              <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
                 Full scripted workflow
               </h3>
               <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
                 Combine flags for a non-interactive launch:
               </p>
               <CodeBlock
-                copyText="npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5 --dir ~/projects/my-api"
+                copyText={'npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5 --dir ~/projects/my-api --message "Just go"'}
               >{`# Login once
-npx claude-trello-cli login --server https://your-app.vercel.app
+npx claude-trello-cli login
 
-# Then run from anywhere
-npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5 --dir ~/projects/my-api`}</CodeBlock>
+# Then run from anywhere with all options
+npx claude-trello-cli run \\
+  --board 60d5e2a3f1a2b40017c3d4e5 \\
+  --dir ~/projects/my-api \\
+  --message "Just go"`}</CodeBlock>
             </div>
           </div>
         </section>

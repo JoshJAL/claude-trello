@@ -104,12 +104,16 @@ The main command. Select a board interactively, review the cards, and launch a C
 npx claude-trello-cli run
 npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5
 npx claude-trello-cli run --dir ~/projects/my-api
+npx claude-trello-cli run --message "Check the development branch for comparison"
 ```
+
+Without `--message`, you'll be prompted interactively before the session starts. Press Enter to skip.
 
 | Flag | Description |
 |------|-------------|
 | `-b, --board <id>` | Board ID — skip interactive selection |
 | `-d, --dir <path>` | Working directory (default: current directory) |
+| `-m, --message <text>` | Initial instructions for Claude (e.g. "focus on API cards first") |
 
 ### `claude-trello-cli boards`
 
