@@ -849,11 +849,154 @@ Work through these phases in order. Check them off as you go.
   - [ ] `SessionLog.tsx` to render live output
   - [ ] Register `check_trello_item` tool and handle callbacks
 
-- [ ] **Phase 8 — Polish**
-  - [ ] Error boundaries on all async routes
-  - [ ] Loading skeletons for board panel
-  - [ ] Session history (store past runs)
-  - [ ] Webhook support for real-time Trello updates
+- [x] **Phase 8 — Polish**
+  - [x] Error boundaries on all async routes
+  - [x] Loading skeletons for board panel
+  - [x] Session history (store past runs)
+  - [x] Webhook support for real-time Trello updates
+
+- [x] **Phase 9 — CLI Tool** (`claude-trello-cli` npm package)
+  - [x] Standalone npm package — `npx claude-trello-cli` (no project install needed)
+  - [x] `register` — create account from terminal
+  - [x] `login` / `logout` — session stored at `~/.config/claude-trello/`
+  - [x] `setup` — connect Trello (opens browser, polls) + save API key
+  - [x] `run` — interactive board select → Claude Code session with live output
+  - [x] `boards` / `status` — list boards, check integrations
+  - [x] `--message` flag for initial instructions
+  - [x] Descriptive tool output (file paths, commands, search patterns)
+  - [x] MCP tools run locally via Trello API
+  - [x] Default server: `https://ct.joshualevine.me`
+
+- [x] **Phase 10 — Documentation**
+  - [x] `/docs/cli` page on web app with full CLI reference
+  - [x] npm README with quick start, commands, examples, security notes
+  - [x] Landing page (`claude-trello-frontend` repo) — hero, how it works, features, CLI docs, CTA
+
+- [ ] **Phase 11 — Parallel Agents**
+  - [ ] Phase 11a: Types — `ParallelSessionConfig`, `AgentStatus`, `ParallelEvent`, `ParallelSessionSummary`
+  - [ ] Phase 11b: Prompts — `PARALLEL_AGENT_SYSTEM_PROMPT`, `buildParallelCardPrompt()`
+  - [ ] Phase 11c: Git helpers — `src/lib/git.ts` (worktree create/remove/merge, diff stats, branch/sha utils)
+  - [ ] Phase 11d: Per-card agent launcher — `launchCardAgent()` in `src/lib/claude.ts`
+  - [ ] Phase 11e: Orchestrator — `src/lib/parallel.ts` (`launchParallelSession()` → `AsyncGenerator<ParallelEvent>`)
+  - [ ] Phase 11f: Web API — extend `session.ts` POST with `mode: 'parallel'`, multiplexed SSE
+  - [ ] Phase 11g: Web UI — mode toggle, concurrency slider, `ParallelSessionView.tsx`, `AgentStatusRow.tsx`
+  - [ ] Phase 11h: CLI parallel — `--parallel` / `--concurrency` flags, multi-agent status display
+  - [ ] Phase 11i: Safety — per-agent cost budget, cost estimate warning, global subprocess cap
+
+---
+
+## Parallel Agents Architecture (Phase 11)
+
+### Overview
+
+Instead of a single Claude Code session working through cards sequentially, parallel mode launches **one agent per card**, each in its own **git worktree**. After all agents finish, branches merge back and the user gets a unified summary with diffs.
+
+### Design Decisions
+
+| Decision | Rationale |
+|----------|-----------|
+| One agent per card | Cards are coherent work units; checklist items within a card are usually dependent |
+| Git worktrees for isolation | Each agent gets its own branch + working copy, preventing file conflicts |
+| Configurable `maxConcurrency` (default 3) | Bounds subprocess count, API rate limits, and memory |
+| Merge sequentially after completion | Conflicts are detected and reported, not auto-resolved |
+
+### Key Types (`src/lib/types.ts`)
+
+```typescript
+interface ParallelSessionConfig {
+  mode: 'sequential' | 'parallel';
+  maxConcurrency: number;  // default 3
+}
+
+interface AgentStatus {
+  cardId: string;
+  cardName: string;
+  state: 'queued' | 'running' | 'completed' | 'failed' | 'merging' | 'conflict';
+  branch?: string;
+  worktreePath?: string;
+  checklistTotal: number;
+  checklistDone: number;
+  error?: string;
+  costUsd?: number;
+  durationMs?: number;
+}
+
+// Discriminated union streamed via SSE (web) or yielded (CLI)
+type ParallelEvent =
+  | { type: 'agent_queued'; cardId: string; cardName: string }
+  | { type: 'agent_started'; cardId: string; branch: string; worktreePath: string }
+  | { type: 'agent_message'; cardId: string; message: SDKMessage }
+  | { type: 'agent_completed'; cardId: string; status: AgentStatus }
+  | { type: 'agent_failed'; cardId: string; error: string }
+  | { type: 'merge_started'; cardId: string }
+  | { type: 'merge_completed'; cardId: string; success: boolean; conflicts?: string[] }
+  | { type: 'summary'; summary: ParallelSessionSummary }
+
+interface ParallelSessionSummary {
+  agents: AgentStatus[];
+  totalCostUsd: number;
+  totalDurationMs: number;
+  integrationBranch: string;
+  mergeConflicts: Array<{ cardId: string; files: string[] }>;
+  diffStats: { filesChanged: number; insertions: number; deletions: number };
+}
+```
+
+### Orchestration Flow (`src/lib/parallel.ts`)
+
+```
+launchParallelSession(params) → AsyncGenerator<ParallelEvent>
+```
+
+1. **Snapshot git state** — record current branch + HEAD SHA as baseline for diffs
+2. **Create worktrees** — `git worktree add -b parallel/<session>/<card-id> <path> HEAD` per card
+3. **Launch agents with concurrency limit** — semaphore pattern, `maxConcurrency` simultaneous `query()` calls
+4. **Stream tagged events** — each `ParallelEvent` carries a `cardId` so consumers can demux
+5. **Merge after completion** — `git merge --no-ff <agent-branch>` sequentially into an integration branch
+6. **Generate summary** — per-card status, diff stats (`git diff --stat`), merge conflict list
+7. **Cleanup** — remove worktrees and agent branches (keep integration branch)
+
+### Per-Card Agent (`src/lib/claude.ts` → `launchCardAgent()`)
+
+Each agent gets:
+- **System prompt**: `PARALLEL_AGENT_SYSTEM_PROMPT` — "You are assigned ONE card. Focus exclusively on it. Commit your changes."
+- **User prompt**: `buildParallelCardPrompt()` — only the assigned card's data, not the whole board
+- **MCP tools**: Same `check_trello_item` + `move_card_to_done`, scoped to the card
+- **Working directory**: The agent's worktree path
+- **Lower `maxTurns`**: 30 (single card is scoped work)
+
+### Git Worktree Helpers (`src/lib/git.ts`)
+
+```typescript
+createWorktree(cwd, branchName): Promise<string>     // returns worktree path
+removeWorktree(path): Promise<void>
+mergeWorktreeBranch(cwd, branch, target): Promise<{ success: boolean; conflicts: string[] }>
+getDiffStats(cwd, base, head): Promise<{ filesChanged, insertions, deletions }>
+getCurrentBranch(cwd): Promise<string>
+getCurrentSha(cwd): Promise<string>
+```
+
+Worktrees symlink `node_modules` to avoid reinstalling dependencies per agent.
+
+### Web App Changes
+
+- **API route** (`session.ts`): Accept `mode: 'parallel'` + `maxConcurrency`. Stream `ParallelEvent` via SSE.
+- **Hook**: New `useParallelSession` — per-agent log maps (`Map<cardId, logs[]>`), agent status tracking, summary state.
+- **UI**: Mode toggle (Sequential/Parallel), concurrency slider. `ParallelSessionView.tsx` with agent status grid + tabbed log panels. Summary panel with diff stats after completion.
+
+### CLI Changes
+
+- **Flags**: `--parallel` / `-p`, `--concurrency <n>` / `-c <n>`
+- **Output**: Multi-line status rows updated in place (card name, progress bar, state). Full summary with diff stats at the end.
+- **Runner**: `runParallelSession()` in `cli/src/lib/runner.ts` mirrors the server-side orchestrator.
+
+### Safety
+
+- One orchestration per user (parallel counts as one unit)
+- Per-agent cost budget (default $2) via `maxCostUsd` option
+- Cost estimate warning before launch: "This will launch N agents"
+- Global subprocess cap: max 5 concurrent Claude Code processes per user
+- Merge conflicts reported in summary, branch left unmerged for manual resolution
 
 ---
 
