@@ -272,7 +272,7 @@ async function handleMessage(
               await session.streamInput(userInput());
             }
           } else {
-            console.log(chalk.dim(`  [${name}]`));
+            console.log(formatToolUse(name, toolInput));
           }
         }
       }
@@ -284,5 +284,41 @@ async function handleMessage(
       console.log(chalk.dim(`\n  Result: ${result}`));
       break;
     }
+  }
+}
+
+function formatToolUse(
+  name: string,
+  toolInput: Record<string, unknown>,
+): string {
+  const path = (toolInput.file_path ?? toolInput.path ?? toolInput.pattern ?? "") as string;
+  const shortPath = path ? ` ${chalk.cyan(path)}` : "";
+
+  switch (name) {
+    case "Read":
+      return chalk.dim(`  Reading${shortPath}`);
+    case "Edit":
+      return chalk.dim(`  Editing${shortPath}`);
+    case "Write":
+      return chalk.dim(`  Writing${shortPath}`);
+    case "Glob":
+      return chalk.dim(`  Searching files${shortPath}`);
+    case "Grep":
+      return chalk.dim(
+        `  Searching for ${chalk.cyan((toolInput.pattern as string) || "...")}${toolInput.path ? ` in ${chalk.cyan(toolInput.path as string)}` : ""}`,
+      );
+    case "Bash": {
+      const cmd = (toolInput.command as string) || "";
+      const preview = cmd.length > 80 ? cmd.slice(0, 77) + "..." : cmd;
+      return chalk.dim(`  Running ${chalk.cyan(preview)}`);
+    }
+    case "TodoWrite":
+      return chalk.dim("  Updating task list");
+    case "Agent":
+      return chalk.dim(
+        `  Spawning agent${toolInput.description ? `: ${toolInput.description as string}` : ""}`,
+      );
+    default:
+      return chalk.dim(`  [${name}]${shortPath}`);
   }
 }
