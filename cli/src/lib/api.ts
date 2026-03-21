@@ -100,6 +100,60 @@ export async function signIn(
   return { cookies, user: data.user };
 }
 
+export async function signUp(
+  serverUrl: string,
+  name: string,
+  email: string,
+  password: string,
+): Promise<{ cookies: string; user: { name: string; email: string } }> {
+  const res = await fetch(`${serverUrl}/api/auth/sign-up/email`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Origin: serverUrl,
+    },
+    body: JSON.stringify({ name, email, password }),
+    redirect: "manual",
+  });
+
+  if (!res.ok) {
+    let errorMsg = "Registration failed";
+    try {
+      const body = (await res.json()) as Record<string, string>;
+      errorMsg = body.message || body.error || errorMsg;
+    } catch {
+      // Use default error message
+    }
+    throw new ApiError(res.status, errorMsg);
+  }
+
+  const setCookieHeaders = res.headers.getSetCookie?.() ?? [];
+  const cookies = setCookieHeaders
+    .map((c: string) => c.split(";")[0])
+    .join("; ");
+
+  if (!cookies) {
+    throw new ApiError(500, "No session cookie received from server");
+  }
+
+  const data = (await res.json()) as {
+    user: { name: string; email: string };
+  };
+  return { cookies, user: data.user };
+}
+
+export async function getTrelloAuthUrl(): Promise<string> {
+  const data = await apiFetch<{ url: string }>("/api/trello/authorize");
+  return data.url;
+}
+
+export async function saveApiKey(apiKey: string): Promise<void> {
+  await apiFetch<{ success: boolean }>("/api/settings/apikey", {
+    method: "POST",
+    body: JSON.stringify({ apiKey }),
+  });
+}
+
 export async function getIntegrationStatus(): Promise<IntegrationStatus> {
   return apiFetch<IntegrationStatus>("/api/settings/status");
 }

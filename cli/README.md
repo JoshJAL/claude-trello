@@ -5,12 +5,13 @@ Point [Claude Code](https://docs.anthropic.com/en/docs/claude-code) at a Trello 
 ## Quick Start
 
 ```bash
-npx claude-trello-cli login
+npx claude-trello-cli register   # create an account (or `login` if you have one)
+npx claude-trello-cli setup      # connect Trello + save your Anthropic API key
 cd ~/my-project
-npx claude-trello-cli run
+npx claude-trello-cli run        # pick a board and start working
 ```
 
-That's it. No config files, no setup scripts — just sign in and go.
+Everything happens in your terminal — no web app required.
 
 ## What It Does
 
@@ -78,10 +79,24 @@ claude-trello run
 
 ## Prerequisites
 
-- **A Claude Trello Bridge account** — sign up at [ct.joshualevine.me](https://ct.joshualevine.me), connect your Trello account, and save your Anthropic API key
+- **A Trello account** — you'll connect it during `setup`
+- **An Anthropic API key** — get one from [console.anthropic.com](https://console.anthropic.com/settings/keys)
 - **Node.js 20+**
 
 ## Commands
+
+### `claude-trello-cli register`
+
+Create a new account. You'll be prompted for your name, email, and password.
+
+```bash
+npx claude-trello-cli register
+npx claude-trello-cli register --server https://your-self-hosted-instance.com
+```
+
+| Flag | Description |
+|------|-------------|
+| `-s, --server <url>` | Server URL (default: `https://ct.joshualevine.me`) |
 
 ### `claude-trello-cli login`
 
@@ -95,6 +110,14 @@ npx claude-trello-cli login --server https://your-app.vercel.app
 | Flag | Description |
 |------|-------------|
 | `-s, --server <url>` | Server URL (default: `https://ct.joshualevine.me`) |
+
+### `claude-trello-cli setup`
+
+Interactive wizard that walks you through connecting Trello and saving your Anthropic API key. Opens your browser for Trello authorization and polls until complete.
+
+```bash
+npx claude-trello-cli setup
+```
 
 ### `claude-trello-cli run`
 

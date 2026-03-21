@@ -5,6 +5,7 @@ import {
   FolderOpen,
   Play,
   CheckCircle2,
+  Settings,
   ArrowRight,
   Copy,
   Check,
@@ -195,15 +196,20 @@ claude-trello run`}</CodeBlock>
                 className="mt-0.5 shrink-0 text-[var(--lagoon)]"
               />
               <span>
-                An account on this app with{" "}
-                <strong className="text-[var(--sea-ink)]">
-                  Trello connected
-                </strong>{" "}
+                A <strong className="text-[var(--sea-ink)]">Trello account</strong>{" "}
                 and an{" "}
                 <strong className="text-[var(--sea-ink)]">
                   Anthropic API key
                 </strong>{" "}
-                saved (complete onboarding first)
+                from{" "}
+                <a
+                  href="https://console.anthropic.com/settings/keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--lagoon)] hover:underline"
+                >
+                  console.anthropic.com
+                </a>
               </span>
             </li>
             <li className="flex items-start gap-2">
@@ -250,37 +256,48 @@ claude-trello run`}</CodeBlock>
             .
           </p>
           <div className="space-y-4">
-            <StepCard number={1} icon={LogIn} title="Sign in">
+            <StepCard number={1} icon={LogIn} title="Register or sign in">
               <p>
-                Authenticate with the same email and password you use on the web
-                app. Your session is stored locally at{" "}
-                <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
-                  ~/.config/claude-trello/
-                </code>
+                Create a new account, or sign in if you already have one:
               </p>
               <CodeBlock
-                copyText="npx claude-trello-cli login"
-              >{`npx claude-trello-cli login
+                copyText="npx claude-trello-cli register"
+              >{`# New user — create an account
+npx claude-trello-cli register
 
-# Sign in to Claude Trello Bridge
-# Server: https://ct.joshualevine.me
-#
-# ? Email: you@example.com
-# ? Password: ********
-# ✓ Signed in as Your Name (you@example.com)`}</CodeBlock>
-              <p>
-                Connecting to a deployed server? Use the{" "}
-                <code className="rounded bg-[var(--foam)] px-1.5 py-0.5 text-xs">
-                  --server
-                </code>{" "}
-                flag:
-              </p>
-              <CodeBlock copyText="npx claude-trello-cli login --server https://your-app.vercel.app">
-                npx claude-trello-cli login --server https://your-app.vercel.app
-              </CodeBlock>
+# Returning user — sign in
+npx claude-trello-cli login`}</CodeBlock>
             </StepCard>
 
-            <StepCard number={2} icon={FolderOpen} title="Navigate to your project">
+            <StepCard number={2} icon={Settings} title="Connect Trello and API key">
+              <p>
+                The setup wizard walks you through connecting Trello (opens your
+                browser) and saving your Anthropic API key:
+              </p>
+              <CodeBlock
+                copyText="npx claude-trello-cli setup"
+              >{`npx claude-trello-cli setup
+
+# Claude Trello Bridge — Setup
+#
+#   1. Trello Not connected
+#
+# ? Open your browser to connect Trello? Yes
+#   Opening: https://trello.com/1/authorize?...
+#   ⠋ Waiting for Trello connection...
+#   ✓ Trello connected!
+#
+#   2. Anthropic API Key Not set
+#
+#   Get your key from https://console.anthropic.com/settings/keys
+#
+# ? Paste your Anthropic API key: sk-ant-api03-••••••
+#   ✓ API key saved (encrypted on server)
+#
+#   All set! Run \`claude-trello run\` to start a session.`}</CodeBlock>
+            </StepCard>
+
+            <StepCard number={3} icon={FolderOpen} title="Navigate to your project">
               <p>
                 Open your terminal in the codebase you want Claude to work on:
               </p>
@@ -288,7 +305,7 @@ claude-trello run`}</CodeBlock>
             </StepCard>
 
             <StepCard
-              number={3}
+              number={4}
               icon={Play}
               title="Run a session"
             >
@@ -344,14 +361,28 @@ claude-trello run`}</CodeBlock>
           </h2>
           <div className="space-y-3">
             <CommandRef
-              command="npx claude-trello-cli login"
-              description="Sign in with your email and password"
+              command="npx claude-trello-cli register"
+              description="Create a new account (email, password, name)"
               flags={[
                 {
                   flag: "-s, --server <url>",
                   desc: "Server URL (default: https://ct.joshualevine.me)",
                 },
               ]}
+            />
+            <CommandRef
+              command="npx claude-trello-cli login"
+              description="Sign in to an existing account"
+              flags={[
+                {
+                  flag: "-s, --server <url>",
+                  desc: "Server URL (default: https://ct.joshualevine.me)",
+                },
+              ]}
+            />
+            <CommandRef
+              command="npx claude-trello-cli setup"
+              description="Connect Trello and save your Anthropic API key (interactive wizard)"
             />
             <CommandRef
               command="npx claude-trello-cli logout"
