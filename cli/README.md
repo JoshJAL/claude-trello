@@ -145,6 +145,9 @@ Without `--message`, you'll be prompted interactively before the session starts.
 | `-P, --provider <name>` | AI provider: `claude`, `openai`, or `groq` (default: `claude`) |
 | `-p, --parallel` | Run one agent per card/issue in parallel (uses git worktrees) |
 | `-c, --concurrency <n>` | Max concurrent agents in parallel mode (1-5, default: 3) |
+| `--pr` | Create a PR/MR after session completes |
+| `--no-pr` | Skip PR/MR creation even if automation is enabled |
+| `--no-deps` | Skip dependency detection, process tasks in original order |
 
 ### `taskpilot-cli boards`
 
@@ -190,6 +193,32 @@ npx taskpilot-cli status
 #   API Key: Configured
 #
 #   Ready to go! Run `taskpilot run` to start.
+```
+
+### `taskpilot-cli history`
+
+View past AI agent sessions. Run without arguments to list recent sessions, or pass a session ID for a detail view.
+
+```bash
+npx taskpilot-cli history
+npx taskpilot-cli history --source github --status completed
+npx taskpilot-cli history abc123
+npx taskpilot-cli history abc123 --events
+```
+
+| Flag | Description |
+|------|-------------|
+| `--all` | List all sessions |
+| `--source <source>` | Filter: `trello`, `github`, `gitlab` |
+| `--status <status>` | Filter: `completed`, `failed`, `cancelled` |
+| `--events` | Show full event log for a session |
+
+### `taskpilot-cli usage`
+
+Show current month spending and usage summary.
+
+```bash
+npx taskpilot-cli usage
 ```
 
 ### `taskpilot-cli logout`

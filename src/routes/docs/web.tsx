@@ -873,6 +873,451 @@ The token refresh flow is broken. Fix the following:
             </ul>
           </div>
         </section>
+
+        {/* ── Session History ──────────────────────────────────────── */}
+        <section className="mb-10">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
+            Session History
+          </h2>
+          <div className="island-shell rounded-2xl p-6">
+            <div className="space-y-4 text-sm text-(--sea-ink-soft)">
+              <p>
+                The{" "}
+                <strong className="text-(--sea-ink)">/history</strong> page
+                keeps a complete record of every session you have run. Each
+                entry captures the task source, provider, duration, cost, and
+                final status.
+              </p>
+
+              <div>
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
+                  Filters &amp; Sorting
+                </h3>
+                <ul className="list-inside list-disc space-y-1">
+                  <li>
+                    <strong className="text-(--sea-ink)">Source</strong> —
+                    filter by Trello, GitHub, or GitLab
+                  </li>
+                  <li>
+                    <strong className="text-(--sea-ink)">Status</strong> —
+                    show only completed, failed, or cancelled sessions
+                  </li>
+                  <li>
+                    <strong className="text-(--sea-ink)">Sort</strong> — order
+                    by date, cost, or duration
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
+                  Session Detail View
+                </h3>
+                <p>
+                  Click any session to open the detail view. It shows the full
+                  event log — you can replay every step the agent took,
+                  including file edits, tool calls, and task source updates.
+                  For parallel sessions, use the agent filter dropdown to
+                  isolate events from a specific agent.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
+                  Actions
+                </h3>
+                <ul className="list-inside list-disc space-y-1">
+                  <li>
+                    <strong className="text-(--sea-ink)">Delete</strong> —
+                    permanently remove a session record
+                  </li>
+                  <li>
+                    <strong className="text-(--sea-ink)">Retry</strong> —
+                    re-launch a failed or partially completed session with the
+                    same configuration
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Cost Tracking & Analytics ────────────────────────────── */}
+        <section className="mb-10">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
+            Cost Tracking &amp; Analytics
+          </h2>
+          <div className="island-shell rounded-2xl p-6">
+            <div className="space-y-4 text-sm text-(--sea-ink-soft)">
+              <p>
+                The{" "}
+                <strong className="text-(--sea-ink)">/analytics</strong> page
+                gives you a clear picture of how your AI spend breaks down
+                across sessions, providers, and time.
+              </p>
+
+              <div>
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
+                  Summary Cards
+                </h3>
+                <div className="rounded-lg border border-(--line) p-3">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-(--line)">
+                        <th className="pb-2 text-left font-semibold text-(--sea-ink)">
+                          Card
+                        </th>
+                        <th className="pb-2 text-left font-semibold text-(--sea-ink)">
+                          Shows
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-(--sea-ink-soft)">
+                      <tr className="border-b border-(--line)">
+                        <td className="py-1.5">Total Spend</td>
+                        <td>Cumulative API cost across all sessions</td>
+                      </tr>
+                      <tr className="border-b border-(--line)">
+                        <td className="py-1.5">Sessions</td>
+                        <td>Number of completed, failed, and total sessions</td>
+                      </tr>
+                      <tr className="border-b border-(--line)">
+                        <td className="py-1.5">Tasks Completed</td>
+                        <td>
+                          Checklist items and issues resolved by the agent
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="py-1.5">Tokens Used</td>
+                        <td>Total input and output tokens consumed</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
+                  Charts
+                </h3>
+                <ul className="list-inside list-disc space-y-1">
+                  <li>
+                    <strong className="text-(--sea-ink)">
+                      Daily spend chart
+                    </strong>{" "}
+                    — bar chart showing cost per day over the selected time range
+                  </li>
+                  <li>
+                    <strong className="text-(--sea-ink)">
+                      Provider breakdown
+                    </strong>{" "}
+                    — pie chart splitting spend by Claude, OpenAI, and Groq
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
+                  Monthly Budget
+                </h3>
+                <p>
+                  In{" "}
+                  <strong className="text-(--sea-ink)">Settings</strong>, set
+                  a monthly budget and an alert threshold (e.g. 80%). When
+                  your spend crosses the threshold, a warning banner appears on
+                  the dashboard. The analytics page shows a progress bar
+                  against your configured budget.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Task Dependencies ────────────────────────────────────── */}
+        <section className="mb-10">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
+            Task Dependencies
+          </h2>
+          <div className="island-shell rounded-2xl p-6">
+            <div className="space-y-4 text-sm text-(--sea-ink-soft)">
+              <p>
+                TaskPilot automatically detects dependency markers in card
+                descriptions and issue bodies. When the agent encounters
+                these markers, it reorders tasks to respect the dependency
+                graph.
+              </p>
+
+              <div>
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
+                  Supported Markers
+                </h3>
+                <CodeBlock
+                  copyText={
+                    "Depends on #12\nBlocked by #7"
+                  }
+                >{`Depends on #12
+Blocked by #7`}</CodeBlock>
+                <p className="mt-2">
+                  Both formats are recognized. The{" "}
+                  <code className="rounded border border-(--line) bg-(--surface) px-1 text-xs">
+                    #N
+                  </code>{" "}
+                  refers to the card number (Trello) or issue number
+                  (GitHub/GitLab) within the same board or project.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
+                  How It Works
+                </h3>
+                <ul className="list-inside list-disc space-y-1">
+                  <li>
+                    Tasks are reordered topologically so dependencies are
+                    always processed first
+                  </li>
+                  <li>
+                    In parallel mode, an agent will wait for its dependency to
+                    finish before starting
+                  </li>
+                  <li>
+                    Circular dependencies are detected and flagged — the
+                    session log warns you so you can fix the task descriptions
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
+                  UI Indicators
+                </h3>
+                <p>
+                  Cards and issues with dependencies show{" "}
+                  <strong className="text-(--sea-ink)">
+                    "Blocked by #N"
+                  </strong>{" "}
+                  chips on the dashboard. Blocked cards appear dimmed until
+                  their dependencies are resolved.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── PR/MR Automation ─────────────────────────────────────── */}
+        <section className="mb-10">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
+            PR/MR Automation
+          </h2>
+          <div className="island-shell rounded-2xl p-6">
+            <div className="space-y-4 text-sm text-(--sea-ink-soft)">
+              <p>
+                TaskPilot can automatically create pull requests (GitHub) or
+                merge requests (GitLab) after a session completes. Configure
+                this from{" "}
+                <strong className="text-(--sea-ink)">
+                  Settings &gt; PR Automation
+                </strong>
+                .
+              </p>
+
+              <div>
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
+                  Configuration Options
+                </h3>
+                <div className="rounded-lg border border-(--line) p-3">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-(--line)">
+                        <th className="pb-2 text-left font-semibold text-(--sea-ink)">
+                          Option
+                        </th>
+                        <th className="pb-2 text-left font-semibold text-(--sea-ink)">
+                          Description
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-(--sea-ink-soft)">
+                      <tr className="border-b border-(--line)">
+                        <td className="py-1.5">Enable</td>
+                        <td>
+                          Toggle PR/MR creation on or off globally
+                        </td>
+                      </tr>
+                      <tr className="border-b border-(--line)">
+                        <td className="py-1.5">Draft mode</td>
+                        <td>
+                          Create PRs/MRs as drafts so you can review before
+                          merging
+                        </td>
+                      </tr>
+                      <tr className="border-b border-(--line)">
+                        <td className="py-1.5">Auto-link issues</td>
+                        <td>
+                          Automatically reference the source issue in the
+                          PR/MR description with closing keywords
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="py-1.5">Branch pattern</td>
+                        <td>
+                          Template for branch names (e.g.{" "}
+                          <code className="rounded border border-(--line) bg-(--surface) px-1 text-xs">
+                            taskpilot/issue-{"{{number}}"}
+                          </code>
+                          )
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
+                  Behavior
+                </h3>
+                <ul className="list-inside list-disc space-y-1">
+                  <li>
+                    After a session finishes, the agent's changes are pushed to
+                    a new branch and a PR/MR is created automatically
+                  </li>
+                  <li>
+                    Works with both GitHub (pull requests) and GitLab (merge
+                    requests)
+                  </li>
+                  <li>
+                    For Trello-sourced tasks, the PR URL is attached to the
+                    card as a comment
+                  </li>
+                  <li>
+                    PR/MR descriptions include a summary of what the agent
+                    changed and which tasks were completed
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Real-Time Updates ────────────────────────────────────── */}
+        <section className="mb-10">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
+            Real-Time Updates
+          </h2>
+          <div className="island-shell rounded-2xl p-6">
+            <div className="space-y-4 text-sm text-(--sea-ink-soft)">
+              <p>
+                TaskPilot uses webhooks to push task source changes to the UI
+                as they happen, so the dashboard stays in sync without manual
+                refreshes.
+              </p>
+
+              <div>
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
+                  Webhook Setup by Source
+                </h3>
+                <ul className="list-inside list-disc space-y-1">
+                  <li>
+                    <strong className="text-(--sea-ink)">Trello</strong> —
+                    webhooks are registered automatically when you connect your
+                    account. No manual configuration needed.
+                  </li>
+                  <li>
+                    <strong className="text-(--sea-ink)">GitHub</strong> —
+                    add a webhook in your repository settings pointing to your
+                    TaskPilot instance. Select "Issues" and "Pull request"
+                    events.
+                  </li>
+                  <li>
+                    <strong className="text-(--sea-ink)">GitLab</strong> —
+                    add a project webhook in Settings &gt; Webhooks pointing to
+                    your TaskPilot instance. Enable "Issues events" and "Merge
+                    request events".
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
+                  Connection Status
+                </h3>
+                <p>
+                  The sidebar shows a connection status dot next to each linked
+                  source:
+                </p>
+                <ul className="list-inside list-disc space-y-1">
+                  <li>
+                    <span className="inline-block h-2.5 w-2.5 rounded-full bg-green-500" />{" "}
+                    <strong className="text-(--sea-ink)">Green</strong> —
+                    webhook active, receiving events
+                  </li>
+                  <li>
+                    <span className="inline-block h-2.5 w-2.5 rounded-full bg-amber-500" />{" "}
+                    <strong className="text-(--sea-ink)">Amber</strong> —
+                    connected but webhook not configured (polling fallback
+                    active)
+                  </li>
+                  <li>
+                    <span className="inline-block h-2.5 w-2.5 rounded-full bg-gray-400" />{" "}
+                    <strong className="text-(--sea-ink)">Gray</strong> —
+                    source not connected
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
+                  Polling Fallback
+                </h3>
+                <p>
+                  When webhooks are unavailable, TaskPilot falls back to
+                  polling. During an active session, the board panel polls
+                  every 5 seconds. When idle, polling is disabled to minimize
+                  API usage.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── What's New ───────────────────────────────────────────── */}
+        <section className="mb-10">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
+            What's New
+          </h2>
+          <div className="island-shell rounded-2xl p-6">
+            <div className="space-y-4 text-sm text-(--sea-ink-soft)">
+              <p>
+                The{" "}
+                <strong className="text-(--sea-ink)">/updates</strong>{" "}
+                changelog page tracks every notable change to TaskPilot.
+                Visit it any time to see what has been added, improved, or
+                fixed.
+              </p>
+
+              <ul className="list-inside list-disc space-y-1">
+                <li>
+                  A{" "}
+                  <strong className="text-(--sea-ink)">
+                    notification banner
+                  </strong>{" "}
+                  appears at the top of the dashboard when there are updates
+                  you haven't seen yet
+                </li>
+                <li>
+                  The sidebar shows a{" "}
+                  <strong className="text-(--sea-ink)">badge</strong> on the
+                  "What's New" link with a count of unread entries
+                </li>
+                <li>
+                  Dismiss the banner or visit the page to mark updates as
+                  read
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
       </div>
     </main>
   );

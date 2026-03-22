@@ -449,6 +449,18 @@ npx taskpilot-cli login`}</CodeBlock>
                   flag: "-c, --concurrency <n>",
                   desc: "Max concurrent agents in parallel mode (1-5, default: 3)",
                 },
+                {
+                  flag: "--pr",
+                  desc: "Create a PR/MR after session completes",
+                },
+                {
+                  flag: "--no-pr",
+                  desc: "Skip PR/MR creation even if automation is enabled",
+                },
+                {
+                  flag: "--no-deps",
+                  desc: "Skip dependency detection, process tasks in original order",
+                },
               ]}
             />
             <CommandRef
@@ -462,6 +474,38 @@ npx taskpilot-cli login`}</CodeBlock>
             <CommandRef
               command="npx taskpilot-cli status"
               description="Check auth and integration status"
+            />
+            <CommandRef
+              command="npx taskpilot-cli history"
+              description="View past AI agent sessions"
+              flags={[
+                {
+                  flag: "--all",
+                  desc: "List all sessions",
+                },
+                {
+                  flag: "--source <source>",
+                  desc: "Filter: trello, github, gitlab",
+                },
+                {
+                  flag: "--status <status>",
+                  desc: "Filter: completed, failed, cancelled",
+                },
+                {
+                  flag: "--events",
+                  desc: "Show full event log for a session",
+                },
+              ]}
+            />
+            <p className="ml-1 text-sm text-(--sea-ink-soft)">
+              Pass a session ID for a detail view:{" "}
+              <code className="rounded-md bg-(--code-bg) px-2 py-0.5 text-xs font-semibold text-(--code-text)">
+                npx taskpilot-cli history &lt;sessionId&gt;
+              </code>
+            </p>
+            <CommandRef
+              command="npx taskpilot-cli usage"
+              description="Show current month spending and usage summary"
             />
           </div>
         </section>
@@ -691,6 +735,25 @@ npx taskpilot-cli run --parallel --concurrency 5
 
 # Combine with other flags
 npx taskpilot-cli run --source github --provider openai --parallel`}</CodeBlock>
+            </div>
+
+            <div>
+              <h3 className="mb-2 text-sm font-semibold text-(--sea-ink)">
+                Session History
+              </h3>
+              <p className="mb-3 text-sm text-(--sea-ink-soft)">
+                Review past sessions, filter by source or status, and inspect
+                individual session event logs:
+              </p>
+              <CodeBlock
+                copyText={`taskpilot history
+taskpilot history --source github --status completed
+taskpilot history abc123 --events
+taskpilot usage`}
+              >{`taskpilot history
+taskpilot history --source github --status completed
+taskpilot history abc123 --events
+taskpilot usage`}</CodeBlock>
             </div>
 
             <div>
