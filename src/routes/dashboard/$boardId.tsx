@@ -39,6 +39,23 @@ function BoardPage() {
       : data.cards
     : [];
 
+  const handleWorkOnThis = (card: TrelloCard) => {
+    if (!data) return;
+    
+    const singleCardBoardData = {
+      board: { id: boardId, name: boardName },
+      cards: [card],
+      doneListId: data.doneListId ?? undefined,
+    };
+
+    // Start a sequential session with just this card (web mode for simplicity)
+    sequential.start(singleCardBoardData, "", undefined, { 
+      providerId: "claude", 
+      source: "trello", 
+      webMode: true 
+    });
+  };
+
   return (
     <main className="page-wrap px-4 py-8">
       <div className="mx-auto max-w-4xl space-y-6">
