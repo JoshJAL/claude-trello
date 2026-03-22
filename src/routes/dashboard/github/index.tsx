@@ -68,6 +68,8 @@ function GitHubDashboardPage() {
     () =>
       repos
         ? repos.filter((repo) => {
+          if (visibilityFilter === 'Public' && repo.private) return false;
+          if (visibilityFilter === 'Private' && !repo.private) return false;
             const query = debouncedQ.toLowerCase();
             return (
               repo.full_name.toLowerCase().includes(query) ||
