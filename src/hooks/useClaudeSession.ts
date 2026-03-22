@@ -135,9 +135,15 @@ export function useClaudeSession(boardId: string) {
                           setPendingQuestion(questionText);
                         }
                       } else {
+                        const toolName = block.name;
+                        const toolInput = block.input ?? {};
+                        
+                        // Store tool input for potential diff generation
+                        pendingToolInputs.current.set(toolName, toolInput);
+                        
                         addLog(
                           "tool",
-                          `Using tool: ${block.name}(${JSON.stringify(block.input)})`,
+                          `Using tool: ${toolName}(${JSON.stringify(toolInput)})`,
                         );
                       }
                     }
