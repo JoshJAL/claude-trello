@@ -32,6 +32,7 @@ function IssueItem({
 }) {
   const totalTasks = issue.tasks.length;
   const doneTasks = issue.tasks.filter((t) => t.checked).length;
+  const hasIncompleteTask = issue.tasks.some((t) => !t.checked);
 
   return (
     <div className="island-shell rounded-xl p-4">
