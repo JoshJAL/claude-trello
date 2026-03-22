@@ -23,11 +23,16 @@ import {
   WEB_TRELLO_ADVISORY_PROMPT,
 } from "#/lib/providers/prompts";
 import { buildUserPrompt } from "#/lib/prompts";
-import type { Query } from "#/lib/claude";
 import type { BoardData } from "#/lib/types";
 
+/** Minimal shape of a Claude Agent SDK Query — avoids importing the SDK at module level */
+interface StreamableQuery {
+  streamInput(input: AsyncIterable<unknown>): Promise<void>;
+  close(): void;
+}
+
 interface ActiveSession {
-  query?: Query;
+  query?: StreamableQuery;
   abortController: AbortController;
   mode: "sequential" | "parallel";
 }
@@ -404,7 +409,7 @@ export const Route = createFileRoute("/api/claude/session")({
           mode: "sequential",
           // Only Claude's Agent SDK supports streamInput for interactive Q&A
           query: providerId === "claude"
-            ? (providerSession as unknown as Query)
+            ? (providerSession as unknown as StreamableQuery)
             : undefined,
         });
 

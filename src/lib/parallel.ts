@@ -1,5 +1,4 @@
 import { randomBytes } from "crypto";
-import { launchCardAgent } from "#/lib/claude";
 import { getProvider } from "#/lib/providers";
 import type { AiProviderId } from "#/lib/providers/types";
 import {
@@ -139,25 +138,10 @@ export async function* launchParallelSession(
         abortController,
       };
 
-      const useProviderAdapter =
-        params.providerId && params.providerId !== "claude";
-      const agentSession = useProviderAdapter
-        ? (await getProvider(params.providerId!)).launchCardAgent(agentCardParams)
-        : launchCardAgent({
-            anthropicApiKey,
-            trelloToken,
-            card,
-            boardId: boardData.board.id,
-            boardName: boardData.board.name,
-            cwd: worktreePath,
-            userMessage,
-            abortController,
-            source: params.source,
-            sourceToken: params.sourceToken,
-            githubOwner: params.githubOwner,
-            githubRepo: params.githubRepo,
-            gitlabProjectId: params.gitlabProjectId,
-          });
+      // Use provider adapter for all providers — lazy-import Claude SDK
+      // only when actually needed to avoid loading the binary on deployed instances
+      const provider = await getProvider(params.providerId ?? "claude", "local");
+      const agentSession = provider.launchCardAgent(agentCardParams);
 
       // Stream agent messages
       for await (const message of agentSession) {
