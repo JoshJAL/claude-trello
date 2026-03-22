@@ -140,11 +140,16 @@ function GitLabProjectPage() {
       }],
     };
 
+    // Determine if we're in a deployed environment (cloud mode)
+    const isDeployed = typeof window !== "undefined" &&
+      !window.location.hostname.startsWith("localhost") &&
+      !window.location.hostname.startsWith("127.0.0.1");
+
     const opts = {
       providerId: "claude" as const,
       source: "gitlab" as const,
       gitlabProjectId: numericProjectId,
-      webMode: true,
+      webMode: isDeployed || true, // GitLab always uses cloud mode for remote repos
     };
 
     sequential.start(singleIssueBoardData, "", undefined, opts);
