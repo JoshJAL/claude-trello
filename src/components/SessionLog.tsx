@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { SessionLogEntry } from "#/hooks/useClaudeSession";
+import { DiffViewer } from "./DiffViewer";
 
 interface SessionLogProps {
   logs: SessionLogEntry[];
@@ -82,6 +83,7 @@ export function SessionLog({
             <span className="whitespace-pre-wrap break-words">
               {entry.content}
             </span>
+            {entry.diff && <DiffViewer diff={entry.diff} />}
           </div>
         ))}
         <div ref={bottomRef} />
