@@ -280,7 +280,12 @@ function GitLabProjectPage() {
         {activeIssues.length > 0 && (
           <div className="space-y-3">
             {activeIssues.map((issue) => (
-              <IssueItem key={issue.iid} issue={issue} />
+              <IssueItem 
+                key={issue.iid} 
+                issue={issue}
+                onWorkOnThis={handleWorkOnThis}
+                isSessionRunning={isRunning}
+              />
             ))}
           </div>
         )}
