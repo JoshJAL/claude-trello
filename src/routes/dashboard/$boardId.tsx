@@ -8,6 +8,7 @@ import { PageSkeleton } from "#/components/PageSkeleton";
 import { useBoardData, useBoards } from "#/hooks/useBoardData";
 import { useClaudeSession } from "#/hooks/useClaudeSession";
 import { useParallelSession } from "#/hooks/useParallelSession";
+import type { TrelloCard } from "#/lib/types";
 
 export const Route = createFileRoute("/dashboard/$boardId")({
   beforeLoad: async () => {
@@ -37,6 +38,35 @@ function BoardPage() {
       ? data.cards.filter((c) => c.idList !== data.doneListId)
       : data.cards
     : [];
+
+  const handleWorkOnThis = (card: TrelloCard) => {
+    if (!data) return;
+    
+    // Check if card has any incomplete tasks
+    const hasIncompleteTask = card.checklists.some(checklist =>
+      checklist.checkItems.some(item => item.state !== "complete")
+    );
+    
+    if (!hasIncompleteTask) return;
+    
+    const singleCardBoardData = {
+      board: { id: boardId, name: boardName },
+      cards: [card],
+      doneListId: data.doneListId ?? undefined,
+    };
+
+    // Determine if we're in a deployed environment (cloud mode)
+    const isDeployed = typeof window !== "undefined" &&
+      !window.location.hostname.startsWith("localhost") &&
+      !window.location.hostname.startsWith("127.0.0.1");
+
+    // Start a sequential session with just this card (use cloud mode if deployed)
+    sequential.start(singleCardBoardData, "", undefined, { 
+      providerId: "claude", 
+      source: "trello", 
+      webMode: isDeployed 
+    });
+  };
 
   return (
     <main className="page-wrap px-4 py-8">
@@ -109,7 +139,13 @@ function BoardPage() {
           />
         ) : null}
 
-        <BoardPanel boardId={boardId} boardName={boardName} polling={isRunning} />
+        <BoardPanel 
+          boardId={boardId} 
+          boardName={boardName} 
+          polling={isRunning}
+          onWorkOnThis={handleWorkOnThis}
+          isSessionRunning={isRunning}
+        />
       </div>
     </main>
   );

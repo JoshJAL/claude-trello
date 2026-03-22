@@ -21,9 +21,18 @@ export const Route = createFileRoute("/dashboard/github/$owner/$repo")({
   pendingComponent: PageSkeleton,
 });
 
-function IssueItem({ issue }: { issue: GitHubIssueWithTasks }) {
+function IssueItem({ 
+  issue, 
+  onWorkOnThis, 
+  isSessionRunning 
+}: { 
+  issue: GitHubIssueWithTasks;
+  onWorkOnThis?: (issue: GitHubIssueWithTasks) => void;
+  isSessionRunning?: boolean;
+}) {
   const totalTasks = issue.tasks.length;
   const doneTasks = issue.tasks.filter((t) => t.checked).length;
+  const hasIncompleteTask = issue.tasks.some((t) => !t.checked);
 
   return (
     <div className="island-shell rounded-xl p-4">
@@ -45,11 +54,23 @@ function IssueItem({ issue }: { issue: GitHubIssueWithTasks }) {
             </div>
           )}
         </div>
-        {totalTasks > 0 && (
-          <span className="shrink-0 text-xs text-[var(--sea-ink-soft)]">
-            {doneTasks}/{totalTasks} tasks
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {onWorkOnThis && hasIncompleteTask && (
+            <button
+              onClick={() => onWorkOnThis(issue)}
+              disabled={isSessionRunning}
+              className="shrink-0 rounded-md bg-[var(--lagoon)] px-2 py-1 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-50"
+              title={isSessionRunning ? "Stop current session first" : "Work on this issue only"}
+            >
+              Work on this
+            </button>
+          )}
+          {totalTasks > 0 && (
+            <span className="shrink-0 text-xs text-[var(--sea-ink-soft)]">
+              {doneTasks}/{totalTasks} tasks
+            </span>
+          )}
+        </div>
       </div>
       {totalTasks > 0 && (
         <div className="mt-3 space-y-1">
@@ -92,6 +113,49 @@ function GitHubRepoPage() {
   );
 
   const activeIssues = issues?.filter((i) => i.state === "open") ?? [];
+
+  const handleWorkOnThis = (issue: GitHubIssueWithTasks) => {
+    // Only include this single issue that has at least one incomplete task
+    const hasIncompleteTask = issue.tasks.some((t) => !t.checked);
+    if (!hasIncompleteTask) return;
+
+    const singleIssueBoardData = {
+      board: { id: `${owner}/${repo}`, name: `${owner}/${repo}` },
+      cards: [{
+        id: String(issue.number),
+        name: issue.title,
+        desc: issue.body ?? "",
+        checklists: issue.tasks.length > 0
+          ? [
+              {
+                id: "tasks",
+                name: "Tasks",
+                checkItems: issue.tasks.map((t) => ({
+                  id: `task-${t.index}`,
+                  name: t.text,
+                  state: t.checked ? "complete" : "incomplete",
+                })),
+              },
+            ]
+          : [],
+      }],
+    };
+
+    // Determine if we're in a deployed environment (cloud mode)
+    const isDeployed = typeof window !== "undefined" &&
+      !window.location.hostname.startsWith("localhost") &&
+      !window.location.hostname.startsWith("127.0.0.1");
+
+    const opts = {
+      providerId: "claude" as const,
+      source: "github" as const,
+      githubOwner: owner,
+      githubRepo: repo,
+      webMode: isDeployed || true, // GitHub always uses cloud mode for remote repos
+    };
+
+    sequential.start(singleIssueBoardData, "", undefined, opts);
+  };
 
   return (
     <main className="page-wrap px-4 py-8">
@@ -224,7 +288,12 @@ function GitHubRepoPage() {
         {activeIssues.length > 0 && (
           <div className="space-y-3">
             {activeIssues.map((issue) => (
-              <IssueItem key={issue.number} issue={issue} />
+              <IssueItem 
+                key={issue.number} 
+                issue={issue}
+                onWorkOnThis={handleWorkOnThis}
+                isSessionRunning={isRunning}
+              />
             ))}
           </div>
         )}

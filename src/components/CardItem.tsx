@@ -10,9 +10,11 @@ interface CardItemProps {
     state: "complete" | "incomplete",
   ) => void;
   done?: boolean;
+  onWorkOnThis?: (card: TrelloCard) => void;
+  isSessionRunning?: boolean;
 }
 
-export function CardItem({ card, onCheckToggle, done }: CardItemProps) {
+export function CardItem({ card, onCheckToggle, done, onWorkOnThis, isSessionRunning }: CardItemProps) {
   const totalItems = card.checklists.reduce(
     (sum, cl) => sum + cl.checkItems.length,
     0,
@@ -21,6 +23,10 @@ export function CardItem({ card, onCheckToggle, done }: CardItemProps) {
     (sum, cl) =>
       sum + cl.checkItems.filter((i) => i.state === "complete").length,
     0,
+  );
+  
+  const hasIncompleteTask = card.checklists.some(checklist =>
+    checklist.checkItems.some(item => item.state !== "complete")
   );
 
   return (
@@ -34,17 +40,29 @@ export function CardItem({ card, onCheckToggle, done }: CardItemProps) {
           {done && <span className="mr-1.5 no-underline">&#10003;</span>}
           {card.name}
         </h3>
-        {totalItems > 0 && (
-          <span
-            className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
-              done
-                ? "bg-green-100 text-green-900 dark:bg-green-900/40 dark:text-green-300"
-                : "bg-[var(--foam)] text-[var(--sea-ink-soft)]"
-            }`}
-          >
-            {completedItems}/{totalItems}
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {!done && onWorkOnThis && hasIncompleteTask && (
+            <button
+              onClick={() => onWorkOnThis(card)}
+              disabled={isSessionRunning}
+              className="shrink-0 rounded-md bg-[var(--lagoon)] px-2 py-1 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-50"
+              title={isSessionRunning ? "Stop current session first" : "Work on this card only"}
+            >
+              Work on this
+            </button>
+          )}
+          {totalItems > 0 && (
+            <span
+              className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
+                done
+                  ? "bg-green-100 text-green-900 dark:bg-green-900/40 dark:text-green-300"
+                  : "bg-[var(--foam)] text-[var(--sea-ink-soft)]"
+              }`}
+            >
+              {completedItems}/{totalItems}
+            </span>
+          )}
+        </div>
       </div>
 
       {card.desc && !done && (

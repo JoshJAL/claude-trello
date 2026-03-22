@@ -1,16 +1,21 @@
 import { useBoardData, useCheckItem } from "#/hooks/useBoardData";
 import { CardItem } from "#/components/CardItem";
+import type { TrelloCard } from "#/lib/types";
 
 interface BoardPanelProps {
   boardId: string;
   boardName: string;
   polling?: boolean;
+  onWorkOnThis?: (card: TrelloCard) => void;
+  isSessionRunning?: boolean;
 }
 
 export function BoardPanel({
   boardId,
   boardName,
   polling = false,
+  onWorkOnThis,
+  isSessionRunning,
 }: BoardPanelProps) {
   const { data, isLoading, error } = useBoardData(boardId, polling);
   const checkMutation = useCheckItem();
@@ -76,6 +81,8 @@ export function BoardPanel({
               boardId={boardId}
               onCheckToggle={handleCheckToggle}
               done={false}
+              onWorkOnThis={onWorkOnThis}
+              isSessionRunning={isSessionRunning}
             />
           ))}
         </div>
