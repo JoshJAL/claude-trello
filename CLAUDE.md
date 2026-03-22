@@ -1701,6 +1701,253 @@ Not every change touches all three — use judgement. A CLI-only flag doesn't ne
 
 ---
 
+## Phase 21 — Cloud Storage Workspaces (Google Drive & OneDrive)
+
+TaskPilot currently operates on codebases — either local directories or GitHub/GitLab repos. But Trello boards aren't only for code. This phase adds **Google Drive** and **OneDrive** as workspace targets, letting AI agents read, write, and modify files in cloud storage folders. Users can point an agent at a folder of spreadsheets, documents, or any other files and use Trello cards to describe tasks like "update the Q3 revenue column," "create a summary doc from these CSVs," or "reformat all the spreadsheets to match this template."
+
+### Core Concept: Workspaces
+
+A **workspace** is the target directory an agent operates on. Currently workspaces are:
+- **Local**: a filesystem path (local mode)
+- **GitHub repo**: owner/repo accessed via GitHub API (cloud mode)
+- **GitLab project**: project ID accessed via GitLab API (cloud mode)
+
+This phase adds:
+- **Google Drive folder**: a folder ID accessed via Google Drive API
+- **OneDrive folder**: a folder path or ID accessed via Microsoft Graph API
+
+The workspace determines which **tool set** the agent gets. Just as GitHub cloud mode gives the agent `read_file`, `write_file`, `edit_file`, `list_files`, and `search_files` backed by the GitHub API, cloud storage mode gives the agent equivalent tools backed by the Drive/OneDrive API.
+
+### Authentication
+
+Both providers use OAuth 2.0, following the same pattern as GitHub and GitLab:
+
+| Provider | OAuth Flow | Scopes | Token Storage |
+|----------|-----------|--------|---------------|
+| **Google Drive** | OAuth 2.0 (authorization code) | `https://www.googleapis.com/auth/drive` | `account` table, `providerId: "google"` |
+| **OneDrive** | OAuth 2.0 (authorization code via Microsoft Identity) | `Files.ReadWrite.All`, `User.Read` | `account` table, `providerId: "onedrive"` |
+
+Both tokens are stored in the existing `account` table. Google tokens expire and need refresh (same pattern as GitLab). Microsoft tokens also expire and need refresh.
+
+### Environment Variables
+
+```bash
+# Google Drive — from Google Cloud Console (APIs & Services > Credentials)
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+# OneDrive — from Azure Portal (App registrations)
+ONEDRIVE_CLIENT_ID=
+ONEDRIVE_CLIENT_SECRET=
+ONEDRIVE_TENANT_ID=              # "common" for multi-tenant, or a specific tenant ID
+```
+
+### API Clients
+
+#### Google Drive (`src/lib/google/client.ts`)
+
+```typescript
+const GOOGLE_API = "https://www.googleapis.com";
+
+export async function listFiles(token: string, folderId: string): Promise<DriveFile[]>;
+export async function getFile(token: string, fileId: string): Promise<{ name: string; mimeType: string; content: string }>;
+export async function updateFile(token: string, fileId: string, content: string, mimeType: string): Promise<void>;
+export async function createFile(token: string, folderId: string, name: string, content: string, mimeType: string): Promise<{ id: string }>;
+export async function deleteFile(token: string, fileId: string): Promise<void>;
+export async function searchFiles(token: string, folderId: string, query: string): Promise<DriveFile[]>;
+
+// Google Sheets specific
+export async function getSpreadsheet(token: string, spreadsheetId: string): Promise<SpreadsheetData>;
+export async function updateCells(token: string, spreadsheetId: string, range: string, values: string[][]): Promise<void>;
+export async function appendRows(token: string, spreadsheetId: string, range: string, values: string[][]): Promise<void>;
+
+// Folder navigation
+export async function getFolders(token: string, parentId?: string): Promise<DriveFolder[]>;
+
+// OAuth
+export async function exchangeCodeForToken(code: string): Promise<GoogleTokenSet>;
+export async function refreshGoogleToken(refreshToken: string): Promise<GoogleTokenSet>;
+```
+
+**Key API endpoints:**
+- `GET /drive/v3/files` — list files in a folder (with `q` parameter for folder scoping)
+- `GET /drive/v3/files/{fileId}?alt=media` — download file content
+- `PATCH /upload/drive/v3/files/{fileId}` — update file content
+- `POST /upload/drive/v3/files` — create new file
+- `GET /v4/spreadsheets/{id}` — read spreadsheet structure and values (Sheets API)
+- `PUT /v4/spreadsheets/{id}/values/{range}` — update cells (Sheets API)
+
+#### OneDrive (`src/lib/onedrive/client.ts`)
+
+```typescript
+const GRAPH_API = "https://graph.microsoft.com/v1.0";
+
+export async function listFiles(token: string, folderPath: string): Promise<DriveItem[]>;
+export async function getFile(token: string, itemPath: string): Promise<{ name: string; mimeType: string; content: string }>;
+export async function updateFile(token: string, itemPath: string, content: string): Promise<void>;
+export async function createFile(token: string, folderPath: string, name: string, content: string): Promise<{ id: string }>;
+export async function deleteFile(token: string, itemPath: string): Promise<void>;
+export async function searchFiles(token: string, query: string): Promise<DriveItem[]>;
+
+// Excel specific (via Graph API Excel endpoints)
+export async function getWorkbook(token: string, itemId: string): Promise<WorkbookData>;
+export async function updateRange(token: string, itemId: string, worksheet: string, range: string, values: string[][]): Promise<void>;
+export async function appendRows(token: string, itemId: string, worksheet: string, values: string[][]): Promise<void>;
+
+// Folder navigation
+export async function getFolders(token: string, parentPath?: string): Promise<DriveItem[]>;
+
+// OAuth
+export async function exchangeCodeForToken(code: string): Promise<OneDriveTokenSet>;
+export async function refreshOneDriveToken(refreshToken: string): Promise<OneDriveTokenSet>;
+```
+
+**Key API endpoints:**
+- `GET /me/drive/root/children` — list root folder
+- `GET /me/drive/root:/{path}:/children` — list folder by path
+- `GET /me/drive/items/{id}/content` — download file
+- `PUT /me/drive/root:/{path}:/content` — upload/update file
+- `GET /me/drive/items/{id}/workbook/worksheets` — list Excel worksheets
+- `PATCH /me/drive/items/{id}/workbook/worksheets/{name}/range(address='{range}')` — update Excel cells
+
+### Workspace Tool Set (`src/lib/providers/storage-tools.ts`)
+
+A new tool set analogous to `web-tools.ts`, but for cloud storage. The AI agent receives these tools when the workspace is a Google Drive or OneDrive folder:
+
+```typescript
+export interface StorageToolContext {
+  provider: "google" | "onedrive";
+  token: string;
+  folderId: string;       // Google Drive folder ID or OneDrive folder path
+  folderName: string;     // Human-readable name
+}
+
+// Tool definitions:
+// read_file      — read a file's content (text, CSV, JSON, etc.)
+// write_file     — create or overwrite a file
+// edit_file      — find-and-replace in a text file
+// list_files     — list files in the workspace folder
+// search_files   — search file names or content
+// read_spreadsheet  — read spreadsheet data (Google Sheets or Excel)
+// update_cells      — update specific cells in a spreadsheet
+// append_rows       — add rows to a spreadsheet
+// create_file       — create a new file in the folder
+// delete_file       — delete a file
+```
+
+**File format handling:**
+- **Text files** (`.txt`, `.md`, `.csv`, `.json`, `.xml`, `.yaml`): read/write as plain text
+- **Google Sheets**: use the Sheets API to read/write structured data (the agent sees tabular data, not raw file bytes)
+- **Excel files** (`.xlsx`): use the Graph API Excel endpoints for OneDrive, or download/re-upload for Google Drive
+- **Google Docs**: export as Markdown for reading, import from Markdown for writing
+- **Word/PDF**: export as text for reading (write creates new `.txt` or `.md`)
+- **Binary files** (images, etc.): list and metadata only — no read/write of raw binary content
+
+### Dashboard UI
+
+#### Workspace Selector
+
+A new **workspace picker** component (like `RepoLinker` but for cloud storage folders). Appears in `SessionControls` when the user has Google Drive or OneDrive connected.
+
+For Trello boards in cloud mode, the user currently picks a linked GitHub/GitLab repo. This phase adds Google Drive and OneDrive as additional workspace options.
+
+**Component: `WorkspaceSelector`** (`src/components/session/WorkspaceSelector.tsx`)
+- Shows connected cloud storage providers
+- Lets the user browse folders or search by name
+- Displays the selected folder as a chip (like `RepoLinker`)
+- Returns a workspace identifier: `google:{folderId}` or `onedrive:{folderPath}`
+
+#### Dashboard Routes
+
+No new dashboard routes needed — Google Drive and OneDrive are **workspaces**, not task sources. Tasks still come from Trello, GitHub, or GitLab. The workspace selector appears on existing dashboard pages when the user has a cloud storage provider connected.
+
+### Session Flow
+
+1. User selects a task source (Trello board, GitHub repo, or GitLab project)
+2. User selects a workspace — now one of: local directory, GitHub repo, GitLab project, Google Drive folder, or OneDrive folder
+3. Session launches with:
+   - **System prompt** describing the workspace type and available tools
+   - **Task data** from the task source (cards, issues, checklists)
+   - **Storage tool set** for the selected workspace provider
+   - **Task source tool set** for checking off items (Trello/GitHub/GitLab tools)
+
+The session API route (`src/routes/api/claude/session.ts`) gets a new workspace type parameter and builds the appropriate tool set combination.
+
+### System Prompts (`src/lib/providers/prompts.ts`)
+
+New prompts for cloud storage workspaces:
+
+```
+STORAGE_GOOGLE_SYSTEM_PROMPT:
+"You are operating on files in a Google Drive folder. You can read, write, edit, and search files.
+For spreadsheets (Google Sheets), use read_spreadsheet, update_cells, and append_rows.
+For text files, use read_file, write_file, and edit_file.
+Work through each task card and checklist item in order..."
+
+STORAGE_ONEDRIVE_SYSTEM_PROMPT:
+"You are operating on files in a OneDrive folder. You can read, write, edit, and search files.
+For Excel workbooks, use read_spreadsheet, update_cells, and append_rows.
+For text files, use read_file, write_file, and edit_file.
+Work through each task card and checklist item in order..."
+```
+
+### CLI Support
+
+New `--workspace` flag on the `run` command:
+
+```bash
+# Use a Google Drive folder as the workspace
+taskpilot run --workspace google:<folderId>
+
+# Use a OneDrive folder as the workspace
+taskpilot run --workspace onedrive:/path/to/folder
+
+# Interactive: prompted to select a workspace if not specified
+taskpilot run --source trello --workspace google
+```
+
+The CLI `setup` command is extended to support connecting Google Drive and OneDrive accounts.
+
+### API Routes
+
+```
+GET  /api/google/authorize       → redirect to Google OAuth
+GET  /api/google/callback        → handle OAuth callback, store token
+POST /api/google/connect         → finalize connection
+GET  /api/google/folders         → list folders (for workspace selector)
+GET  /api/google/files           → list files in a folder
+
+GET  /api/onedrive/authorize     → redirect to Microsoft OAuth
+GET  /api/onedrive/callback      → handle OAuth callback, store token
+POST /api/onedrive/connect       → finalize connection
+GET  /api/onedrive/folders       → list folders
+GET  /api/onedrive/files         → list files in a folder
+```
+
+### Database Changes
+
+No new tables needed. Google and OneDrive tokens use the existing `account` table with `providerId: "google"` and `providerId: "onedrive"`. Token refresh follows the same pattern as GitLab (store refresh token, refresh before expiry via a `getValidGoogleToken` / `getValidOneDriveToken` helper).
+
+The `useIntegrationStatus` hook and `/api/settings/status` endpoint are extended to include `googleDriveLinked` and `oneDriveLinked` booleans.
+
+### Sub-phases
+
+- **21a: Google OAuth** — authorize, callback, connect routes; token storage and refresh; `getValidGoogleToken` helper
+- **21b: Google Drive client** — `src/lib/google/client.ts` with file CRUD, folder listing, search
+- **21c: Google Sheets support** — spreadsheet read/write via Sheets API; structured data formatting for AI
+- **21d: OneDrive OAuth** — authorize, callback, connect routes; token storage and refresh; `getValidOneDriveToken` helper
+- **21e: OneDrive client** — `src/lib/onedrive/client.ts` with file CRUD, folder listing, search
+- **21f: Excel support** — workbook read/write via Graph API Excel endpoints
+- **21g: Storage tool set** — `src/lib/providers/storage-tools.ts` with tool definitions and execution for both providers
+- **21h: Workspace selector UI** — `WorkspaceSelector` component, integration into `SessionControls`
+- **21i: Session integration** — update session route to accept workspace type, build combined tool sets (storage + task source)
+- **21j: System prompts** — storage-aware prompts for Google Drive and OneDrive workspaces
+- **21k: Settings UI** — Google Drive and OneDrive connection/disconnection in Settings page
+- **21l: CLI workspace support** — `--workspace` flag, `setup` command extension, interactive workspace selection
+- **21m: Documentation** — update web docs, CLI docs, frontend docs for cloud storage workspaces
+
+---
+
 ## Useful References
 
 - [TanStack Start Docs](https://tanstack.com/start/latest)
@@ -1719,3 +1966,9 @@ Not every change touches all three — use judgement. A CLI-only flag doesn't ne
 - [Trello OAuth 1.0a Guide](https://developer.atlassian.com/cloud/trello/guides/rest-api/authorization/)
 - [Anthropic TypeScript SDK](https://github.com/anthropics/anthropic-sdk-typescript)
 - [Claude Code SDK](https://docs.anthropic.com/en/docs/claude-code/sdk)
+- [Google Drive API v3](https://developers.google.com/drive/api/reference/rest/v3)
+- [Google Sheets API v4](https://developers.google.com/sheets/api/reference/rest)
+- [Google OAuth 2.0 for Web Server Apps](https://developers.google.com/identity/protocols/oauth2/web-server)
+- [Microsoft Graph API — OneDrive](https://learn.microsoft.com/en-us/graph/api/resources/onedrive)
+- [Microsoft Graph API — Excel Workbooks](https://learn.microsoft.com/en-us/graph/api/resources/excel)
+- [Microsoft Identity Platform — OAuth 2.0](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow)

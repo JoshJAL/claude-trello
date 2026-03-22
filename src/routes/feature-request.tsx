@@ -95,10 +95,10 @@ function FeatureRequestPage() {
               id="fr-category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
+              className="w-full rounded-lg border border-(--shore-line) bg-white px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
             >
               {CATEGORIES.map((c) => (
-                <option key={c.value} value={c.value}>
+                <option key={c.value} value={c.value} className="bg-white text-black dark:bg-[#1e1e1e] dark:text-[#e0e0e0]">
                   {c.label}
                 </option>
               ))}
