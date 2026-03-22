@@ -335,7 +335,7 @@ Your Terminal                    Web App Server              Task Source API
 - Your **API keys are encrypted at rest** (AES-256-GCM) in the web app's database and only decrypted for the duration of a session
 - The local config file is written with **restricted permissions** (`600` — owner-only read/write)
 - API credentials are **held in memory only** during a session — never written to disk by the CLI
-- Claude Code runs with `acceptEdits` permission mode — it can read and edit files but requires approval for shell commands
+- The agent runs with `acceptEdits` permission mode — it can read and edit files but requires approval for shell commands
 
 ## Troubleshooting
 
