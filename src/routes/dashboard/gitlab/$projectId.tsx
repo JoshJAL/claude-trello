@@ -8,7 +8,11 @@ import { SessionLog } from "#/components/SessionLog";
 import { ParallelSessionView } from "#/components/ParallelSessionView";
 import { PrResultBanner } from "#/components/PrResultBanner";
 import { PageSkeleton } from "#/components/PageSkeleton";
+import { useIntegrationStatus } from "#/hooks/useIntegrationStatus";
+import { PROVIDER_SHORT_LABELS } from "#/lib/providers/types";
+import type { AiProviderId } from "#/lib/providers/types";
 import type { GitLabIssueWithTasks } from "#/hooks/useGitLabIssues";
+import { useState } from "react";
 
 export const Route = createFileRoute("/dashboard/gitlab/$projectId")({
   beforeLoad: async () => {
@@ -102,6 +106,9 @@ function IssueItem({
 
 function GitLabProjectPage() {
   const { projectId } = Route.useParams();
+  const { configuredProviders } = useIntegrationStatus();
+  const defaultProvider = configuredProviders[0] ?? "claude";
+  const [selectedProvider, setSelectedProvider] = useState<AiProviderId>(defaultProvider);
   const numericProjectId = Number(projectId);
   const boardKey = `gitlab:${projectId}`;
   const sequential = useClaudeSession(boardKey);
@@ -148,7 +155,7 @@ function GitLabProjectPage() {
       !window.location.hostname.startsWith("127.0.0.1");
 
     const opts = {
-      providerId: "claude" as const,
+      providerId: selectedProvider,
       source: "gitlab" as const,
       gitlabProjectId: numericProjectId,
       webMode: isDeployed || true, // GitLab always uses cloud mode for remote repos
@@ -232,6 +239,7 @@ function GitLabProjectPage() {
             if (sequential.isRunning) sequential.stop();
             if (parallel.isRunning) parallel.stop();
           }}
+          onProviderSelect={setSelectedProvider}
         />
 
         {(sequential.error || parallel.error) && (
@@ -250,6 +258,7 @@ function GitLabProjectPage() {
             isRunning={sequential.isRunning}
             pendingQuestion={sequential.pendingQuestion}
             onSendMessage={sequential.sendMessage}
+            providerLabel={PROVIDER_SHORT_LABELS[selectedProvider]}
           />
         ) : null}
 

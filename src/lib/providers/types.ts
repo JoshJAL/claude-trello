@@ -28,6 +28,13 @@ export const AI_PROVIDERS: Record<
   },
 };
 
+/** Short display names for use in UI labels and placeholders */
+export const PROVIDER_SHORT_LABELS: Record<AiProviderId, string> = {
+  claude: "Claude",
+  openai: "ChatGPT",
+  groq: "Groq",
+};
+
 // ── Normalized Agent Message ────────────────────────────────────────────────
 
 export interface AgentMessage {

@@ -7,6 +7,7 @@ interface SessionLogProps {
   isRunning: boolean;
   pendingQuestion: string | null;
   onSendMessage: (message: string) => void;
+  providerLabel?: string;
 }
 
 const typeStyles: Record<string, string> = {
@@ -26,6 +27,7 @@ export function SessionLog({
   isRunning,
   pendingQuestion,
   onSendMessage,
+  providerLabel = "the agent",
 }: SessionLogProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -103,7 +105,7 @@ export function SessionLog({
             placeholder={
               pendingQuestion
                 ? "Type your answer..."
-                : "Send a message to Claude..."
+                : `Send a message to ${providerLabel}...`
             }
             className={`flex-1 rounded-lg border px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:ring-2 dark:bg-white/5 ${
               pendingQuestion

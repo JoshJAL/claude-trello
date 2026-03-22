@@ -25,6 +25,20 @@ export interface AppUpdate {
  */
 export const UPDATES: AppUpdate[] = [
   {
+    id: "2026-03-22-dynamic-provider-labels",
+    date: "2026-03-22",
+    title: "Dynamic Provider Labels & Work On This Fix",
+    description:
+      "The chat placeholder now shows the name of your selected AI provider (e.g. 'Send a message to ChatGPT...') instead of always saying Claude. The 'Work on this' button on cards and issues now uses your selected provider instead of defaulting to Claude.",
+    type: "improvement",
+    details: [
+      {
+        heading: "What Changed",
+        body: "Previously the session chat input always said 'Send a message to Claude...' regardless of which provider you selected. Now it dynamically shows Claude, ChatGPT, or Groq based on your selection.\n\nThe 'Work on this' button on individual cards and issues also used to hardcode Claude as the provider. It now uses whichever provider you've selected in the session controls toolbar.",
+      },
+    ],
+  },
+  {
     id: "2026-03-22-searchable-repo-selector",
     date: "2026-03-22",
     title: "Searchable Repository Selector",

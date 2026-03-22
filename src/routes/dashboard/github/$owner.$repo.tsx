@@ -8,7 +8,11 @@ import { SessionLog } from "#/components/SessionLog";
 import { ParallelSessionView } from "#/components/ParallelSessionView";
 import { PrResultBanner } from "#/components/PrResultBanner";
 import { PageSkeleton } from "#/components/PageSkeleton";
+import { useIntegrationStatus } from "#/hooks/useIntegrationStatus";
+import { PROVIDER_SHORT_LABELS } from "#/lib/providers/types";
+import type { AiProviderId } from "#/lib/providers/types";
 import type { GitHubIssueWithTasks } from "#/hooks/useGitHubIssues";
+import { useState } from "react";
 
 export const Route = createFileRoute("/dashboard/github/$owner/$repo")({
   beforeLoad: async () => {
@@ -102,6 +106,9 @@ function IssueItem({
 
 function GitHubRepoPage() {
   const { owner, repo } = Route.useParams();
+  const { configuredProviders } = useIntegrationStatus();
+  const defaultProvider = configuredProviders[0] ?? "claude";
+  const [selectedProvider, setSelectedProvider] = useState<AiProviderId>(defaultProvider);
   const boardKey = `github:${owner}/${repo}`;
   const sequential = useClaudeSession(boardKey);
   const parallel = useParallelSession(boardKey);
@@ -148,7 +155,7 @@ function GitHubRepoPage() {
       !window.location.hostname.startsWith("127.0.0.1");
 
     const opts = {
-      providerId: "claude" as const,
+      providerId: selectedProvider,
       source: "github" as const,
       githubOwner: owner,
       githubRepo: repo,
@@ -234,6 +241,7 @@ function GitHubRepoPage() {
             if (sequential.isRunning) sequential.stop();
             if (parallel.isRunning) parallel.stop();
           }}
+          onProviderSelect={setSelectedProvider}
         />
 
         {(sequential.error || parallel.error) && (
@@ -252,6 +260,7 @@ function GitHubRepoPage() {
             isRunning={sequential.isRunning}
             pendingQuestion={sequential.pendingQuestion}
             onSendMessage={sequential.sendMessage}
+            providerLabel={PROVIDER_SHORT_LABELS[selectedProvider]}
           />
         ) : null}
 

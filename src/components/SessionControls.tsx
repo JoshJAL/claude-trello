@@ -24,6 +24,8 @@ interface SessionControlsProps {
   }) => void;
   onStop: () => void;
   runningLabel?: string;
+  /** Called when the user changes the selected AI provider */
+  onProviderSelect?: (providerId: AiProviderId) => void;
 }
 
 interface ControlsState {
@@ -72,6 +74,7 @@ export function SessionControls({
   onStart,
   onStop,
   runningLabel,
+  onProviderSelect,
 }: SessionControlsProps) {
   const { configuredProviders, githubLinked, gitlabLinked } = useIntegrationStatus();
 
@@ -200,7 +203,7 @@ export function SessionControls({
           <SessionToolbar
             configuredProviders={configuredProviders}
             providerId={state.providerId}
-            onProviderChange={(v) => dispatch({ type: "SET_PROVIDER", value: v })}
+            onProviderChange={(v) => { dispatch({ type: "SET_PROVIDER", value: v }); onProviderSelect?.(v); }}
             isDeployed={isDeployed}
             webMode={state.webMode}
             onWebModeChange={(v) => dispatch({ type: "SET_WEB_MODE", value: v })}

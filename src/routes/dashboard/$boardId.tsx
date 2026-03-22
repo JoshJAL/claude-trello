@@ -9,7 +9,11 @@ import { PageSkeleton } from "#/components/PageSkeleton";
 import { useBoardData, useBoards } from "#/hooks/useBoardData";
 import { useClaudeSession } from "#/hooks/useClaudeSession";
 import { useParallelSession } from "#/hooks/useParallelSession";
+import { useIntegrationStatus } from "#/hooks/useIntegrationStatus";
+import { PROVIDER_SHORT_LABELS } from "#/lib/providers/types";
+import type { AiProviderId } from "#/lib/providers/types";
 import type { TrelloCard } from "#/lib/types";
+import { useState } from "react";
 
 export const Route = createFileRoute("/dashboard/$boardId")({
   beforeLoad: async () => {
@@ -25,6 +29,9 @@ export const Route = createFileRoute("/dashboard/$boardId")({
 
 function BoardPage() {
   const { boardId } = Route.useParams();
+  const { configuredProviders } = useIntegrationStatus();
+  const defaultProvider = configuredProviders[0] ?? "claude";
+  const [selectedProvider, setSelectedProvider] = useState<AiProviderId>(defaultProvider);
   const sequential = useClaudeSession(boardId);
   const parallel = useParallelSession(boardId);
 
@@ -62,10 +69,10 @@ function BoardPage() {
       !window.location.hostname.startsWith("127.0.0.1");
 
     // Start a sequential session with just this card (use cloud mode if deployed)
-    sequential.start(singleCardBoardData, "", undefined, { 
-      providerId: "claude", 
-      source: "trello", 
-      webMode: isDeployed 
+    sequential.start(singleCardBoardData, "", undefined, {
+      providerId: selectedProvider,
+      source: "trello",
+      webMode: isDeployed
     });
   };
 
@@ -119,6 +126,7 @@ function BoardPage() {
             if (sequential.isRunning) sequential.stop();
             if (parallel.isRunning) parallel.stop();
           }}
+          onProviderSelect={setSelectedProvider}
         />
 
         {(sequential.error || parallel.error) && (
@@ -138,6 +146,7 @@ function BoardPage() {
             isRunning={sequential.isRunning}
             pendingQuestion={sequential.pendingQuestion}
             onSendMessage={sequential.sendMessage}
+            providerLabel={PROVIDER_SHORT_LABELS[selectedProvider]}
           />
         ) : null}
 

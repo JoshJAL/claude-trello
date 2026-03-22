@@ -1,10 +1,5 @@
+import { PROVIDER_SHORT_LABELS } from "#/lib/providers/types";
 import type { AiProviderId } from "#/lib/providers/types";
-
-const PROVIDER_LABELS: Record<AiProviderId, string> = {
-  claude: "Claude",
-  openai: "ChatGPT",
-  groq: "Groq",
-};
 
 interface SessionToolbarProps {
   configuredProviders: AiProviderId[];
@@ -78,7 +73,7 @@ export function SessionToolbar({
           >
             {configuredProviders.map((p) => (
               <option key={p} value={p}>
-                {PROVIDER_LABELS[p] ?? p}
+                {PROVIDER_SHORT_LABELS[p] ?? p}
               </option>
             ))}
           </select>
