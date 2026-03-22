@@ -110,7 +110,10 @@ export async function createMergeRequest(
   description: string,
   sourceBranch: string,
   targetBranch: string,
+  draft?: boolean,
 ): Promise<{ iid: number; web_url: string }> {
+  // GitLab supports a "Draft: " title prefix for draft MRs
+  const mrTitle = draft ? `Draft: ${title}` : title;
   return gitlabFetch<{ iid: number; web_url: string }>(
     `/projects/${projectId}/merge_requests`,
     token,
@@ -118,7 +121,7 @@ export async function createMergeRequest(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title,
+        title: mrTitle,
         description,
         source_branch: sourceBranch,
         target_branch: targetBranch,

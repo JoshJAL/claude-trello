@@ -117,6 +117,7 @@ export async function createPullRequest(
   body: string,
   head: string,
   base: string,
+  draft?: boolean,
 ): Promise<{ number: number; html_url: string }> {
   return githubFetch<{ number: number; html_url: string }>(
     `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/pulls`,
@@ -124,7 +125,7 @@ export async function createPullRequest(
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, body, head, base }),
+      body: JSON.stringify({ title, body, head, base, draft: draft ?? false }),
     },
   );
 }
