@@ -30,6 +30,42 @@ export interface ToolSet {
   execute: (name: string, input: Record<string, unknown>) => Promise<string>;
 }
 
+// Tools that count as "doing actual work" — must call at least one before checking off tasks
+const CODING_TOOL_NAMES = new Set([
+  "read_file", "write_file", "edit_file", "bash", "search_files", "list_files",
+]);
+
+// Tools that should be gated behind actual work being done
+const TASK_CHECK_TOOLS = new Set([
+  "check_trello_item", "move_card_to_done",
+  "check_github_task", "close_github_issue",
+  "check_gitlab_task", "close_gitlab_issue",
+]);
+
+/**
+ * Wraps a merged tool set to enforce that task-completion tools can only
+ * be called after at least one coding tool (read/write/edit/search) has
+ * been used. Prevents models from checking off all tasks without doing work.
+ */
+export function createGuardedToolSet(inner: ToolSet): ToolSet {
+  let codingToolUsed = false;
+
+  return {
+    definitions: inner.definitions,
+    execute: async (name: string, input: Record<string, unknown>) => {
+      if (CODING_TOOL_NAMES.has(name)) {
+        codingToolUsed = true;
+      }
+
+      if (TASK_CHECK_TOOLS.has(name) && !codingToolUsed) {
+        return `Error: You must read, write, or edit at least one file before marking tasks as complete. Use read_file, list_files, or search_files to explore the codebase first, then make the necessary code changes.`;
+      }
+
+      return inner.execute(name, input);
+    },
+  };
+}
+
 // ── Trello ─────────────────────────────────────────────────────────────────
 
 export function createTrelloToolSet(

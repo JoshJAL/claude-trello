@@ -16,6 +16,7 @@ import {
   createTrelloToolSet,
   createGitHubSourceToolSet,
   createGitLabSourceToolSet,
+  createGuardedToolSet,
 } from "#/lib/providers/source-tools";
 import {
   WEB_GITHUB_SYSTEM_PROMPT,
@@ -565,7 +566,7 @@ function buildWebConfig(
     );
     return {
       systemPrompt: WEB_GITHUB_SYSTEM_PROMPT,
-      toolSet: mergeToolSets(webTools, sourceTools),
+      toolSet: createGuardedToolSet(mergeToolSets(webTools, sourceTools)),
       buildUserPrompt: buildGitHubWebPrompt,
     };
   }
@@ -584,7 +585,7 @@ function buildWebConfig(
     );
     return {
       systemPrompt: WEB_GITLAB_SYSTEM_PROMPT,
-      toolSet: mergeToolSets(webTools, sourceTools),
+      toolSet: createGuardedToolSet(mergeToolSets(webTools, sourceTools)),
       buildUserPrompt: buildGitLabWebPrompt,
     };
   }

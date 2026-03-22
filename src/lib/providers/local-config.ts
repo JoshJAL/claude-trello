@@ -12,6 +12,7 @@ import {
 import {
   createGitHubSourceToolSet,
   createGitLabSourceToolSet,
+  createGuardedToolSet,
 } from "./source-tools.js";
 import type { ToolSet } from "./source-tools.js";
 import type { ProviderSessionParams, ProviderCardAgentParams } from "./types.js";
@@ -57,7 +58,7 @@ export function buildLocalSessionConfig(params: ProviderSessionParams): LocalAge
       cwd,
       trelloToken: "",
       boardId: boardData.board.id,
-      toolSet: mergeToolSets(codingToolSet, sourceTools),
+      toolSet: createGuardedToolSet(mergeToolSets(codingToolSet, sourceTools)),
     };
   }
 
@@ -74,7 +75,7 @@ export function buildLocalSessionConfig(params: ProviderSessionParams): LocalAge
       cwd,
       trelloToken: "",
       boardId: boardData.board.id,
-      toolSet: mergeToolSets(codingToolSet, sourceTools),
+      toolSet: createGuardedToolSet(mergeToolSets(codingToolSet, sourceTools)),
     };
   }
 
@@ -114,7 +115,7 @@ export function buildLocalCardConfig(params: ProviderCardAgentParams): LocalAgen
       cwd,
       trelloToken: "",
       boardId,
-      toolSet: mergeToolSets(codingToolSet, sourceTools),
+      toolSet: createGuardedToolSet(mergeToolSets(codingToolSet, sourceTools)),
     };
   }
 
@@ -136,7 +137,7 @@ export function buildLocalCardConfig(params: ProviderCardAgentParams): LocalAgen
       cwd,
       trelloToken: "",
       boardId,
-      toolSet: mergeToolSets(codingToolSet, sourceTools),
+      toolSet: createGuardedToolSet(mergeToolSets(codingToolSet, sourceTools)),
     };
   }
 
