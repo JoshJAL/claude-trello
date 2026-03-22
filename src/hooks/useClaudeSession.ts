@@ -145,17 +145,56 @@ export function useClaudeSession(boardId: string) {
                 }
               } else if (message.type === "tool_use") {
                 // Web mode tool use events
+                const toolName = message.toolName;
+                const toolInput = message.toolInput ?? {};
+                
+                // Store tool input for potential diff generation
+                if (toolName) {
+                  pendingToolInputs.current.set(toolName, toolInput);
+                }
+                
                 addLog(
                   "tool",
-                  `Using tool: ${message.toolName}(${JSON.stringify(message.toolInput ?? {})})`,
+                  `Using tool: ${toolName}(${JSON.stringify(toolInput)})`,
                 );
               } else if (message.type === "tool_result") {
-                // Web mode tool result events — show truncated result
+                // Web mode tool result events — show result and generate diff if applicable
                 const result = message.toolResult ?? "";
+                const toolName = message.toolName;
+                const toolInput = toolName ? pendingToolInputs.current.get(toolName) : undefined;
+                
+                let diff: FileDiff | undefined;
+                
+                // Generate diff for file operations
+                if (toolName && toolInput && (toolName === "write_file" || toolName === "edit_file")) {
+                  const filePath = toolInput.path as string;
+                  
+                  if (toolName === "edit_file" && toolInput.old_text && toolInput.new_text) {
+                    diff = generateEditDiff(
+                      filePath,
+                      toolInput.old_text as string,
+                      toolInput.new_text as string
+                    );
+                  } else if (toolName === "write_file" && toolInput.content) {
+                    // For write_file, we assume it's either a new file or a rewrite
+                    // We can't know for sure without the original content, so we'll show as new
+                    diff = generateWriteDiff(
+                      filePath,
+                      toolInput.content as string,
+                      !result.includes("branch:") // Heuristic: if branch mentioned, likely existing file
+                    );
+                  }
+                }
+                
+                // Clean up tool input after use
+                if (toolName) {
+                  pendingToolInputs.current.delete(toolName);
+                }
+                
                 const truncated = result.length > 200
                   ? result.slice(0, 200) + "..."
                   : result;
-                addLog("result", `[${message.toolName}] ${truncated}`);
+                addLog("result", `[${toolName}] ${truncated}`, diff);
               } else if (message.type === "result") {
                 addLog(
                   "result",
