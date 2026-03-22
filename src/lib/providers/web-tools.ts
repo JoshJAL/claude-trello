@@ -490,14 +490,19 @@ export function createWebToolSet(ctx: WebToolContext): ToolSet {
     name: string,
     input: Record<string, unknown>,
   ): Promise<string> => {
-    if (ctx.source === "github") {
-      return executeGitHubTool(name, input, ctx);
+    try {
+      if (ctx.source === "github") {
+        return await executeGitHubTool(name, input, ctx);
+      }
+      if (ctx.source === "gitlab") {
+        return await executeGitLabTool(name, input, ctx);
+      }
+      // Trello web mode: no file operations
+      return executeTrelloWebTool(name);
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      return `Error in ${name}: ${error.message}\n${error.stack ?? ""}`;
     }
-    if (ctx.source === "gitlab") {
-      return executeGitLabTool(name, input, ctx);
-    }
-    // Trello web mode: no file operations
-    return executeTrelloWebTool(name);
   };
 
   return { definitions, execute };
