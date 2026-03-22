@@ -461,10 +461,6 @@ npx taskpilot-cli login`}</CodeBlock>
                   flag: "--no-pr",
                   desc: "Skip PR/MR creation even if automation is enabled",
                 },
-                {
-                  flag: "--no-deps",
-                  desc: "Skip dependency detection, process tasks in original order",
-                },
               ]}
             />
             <CommandRef

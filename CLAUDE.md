@@ -4,6 +4,16 @@
 
 ---
 
+## Related Projects
+
+| Project | Location | Description |
+|---------|----------|-------------|
+| **Backend + Web App** (this repo) | `/home/joshjal/Projects/personal/claude-trello` | TanStack Start full-stack app, API routes, AI session logic |
+| **Frontend (landing/marketing)** | `/home/joshjal/Projects/personal/claude-trello-frontend` | Separate frontend project |
+| **CLI** | `/home/joshjal/Projects/personal/claude-trello/cli` | npm package `@joshjal/taskpilot` — published to npm |
+
+---
+
 ## Project Overview
 
 This is a **full-stack web application** that bridges **Trello** and **Claude Code**. It lets you point Claude Code at a Trello board and a local codebase simultaneously. Claude Code reads the board's cards and checklists, works through the codebase to complete the tasks described, and checks off items in Trello as it finishes them.
@@ -1660,6 +1670,18 @@ When pushing changes that are large enough to be user-visible (new features, sig
 - Include `details` sections with headings, descriptions, and code examples for anything non-trivial
 - Set `type` to `"feature"`, `"improvement"`, or `"fix"`
 - Small internal refactors, dependency bumps, or dev-only changes don't need an entry
+
+### Documentation Requirements
+
+When adding or changing user-visible features, **all three documentation surfaces must be updated**:
+
+1. **Web app docs** (`src/routes/docs/web.tsx`) — Update the in-app documentation for the web UI. Add new steps, sections, or feature descriptions as needed.
+2. **CLI docs** — Update both:
+   - `cli/README.md` — The npm package README (flags tables, usage examples)
+   - `src/routes/docs/cli.tsx` — The in-app CLI documentation page (CommandRef flags, examples)
+3. **Frontend project** (`/home/joshjal/Projects/personal/claude-trello-frontend`) — Update landing page content, feature lists, or screenshots if the change affects what users see before signing in.
+
+Not every change touches all three — use judgement. A CLI-only flag doesn't need frontend landing page updates. A UI-only feature doesn't need CLI docs. But if a feature spans both (like branch selection), update all relevant docs before committing.
 
 ---
 
