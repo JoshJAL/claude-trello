@@ -127,7 +127,13 @@ function BoardPage() {
           />
         ) : null}
 
-        <BoardPanel boardId={boardId} boardName={boardName} polling={isRunning} />
+        <BoardPanel 
+          boardId={boardId} 
+          boardName={boardName} 
+          polling={isRunning}
+          onWorkOnThis={handleWorkOnThis}
+          isSessionRunning={isRunning}
+        />
       </div>
     </main>
   );
