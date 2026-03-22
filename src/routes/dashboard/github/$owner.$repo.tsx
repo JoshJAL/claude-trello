@@ -55,7 +55,7 @@ function IssueItem({
           )}
         </div>
         <div className="flex items-center gap-2">
-          {onWorkOnThis && (
+          {onWorkOnThis && hasIncompleteTask && (
             <button
               onClick={() => onWorkOnThis(issue)}
               disabled={isSessionRunning}
