@@ -625,7 +625,7 @@ npx taskpilot-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
                 Run on a different directory
               </h3>
               <p className="mb-3 text-sm text-(--sea-ink-soft)">
-                Point Claude Code at a specific project without navigating there
+                Point the agent at a specific project without navigating there
                 first:
               </p>
               <CodeBlock copyText="npx taskpilot-cli run --dir ~/projects/my-api">
