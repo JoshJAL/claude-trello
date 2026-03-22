@@ -1,12 +1,14 @@
 import { useState, useCallback, useRef } from "react";
 import type { BoardData } from "#/lib/types";
 import type { AiProviderId } from "#/lib/providers/types";
+import { generateEditDiff, generateWriteDiff, type FileDiff } from "#/lib/diff";
 
 export interface SessionLogEntry {
   id: number;
   type: string;
   content: string;
   timestamp: number;
+  diff?: FileDiff;
 }
 
 export function useClaudeSession(boardId: string) {
