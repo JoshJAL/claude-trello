@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   generatePrBody,
-  generateBranchName,
+  generateShortBranchName,
   countTasks,
   extractIssueNumbers,
   parsePrAutomationConfig,
@@ -79,9 +79,9 @@ describe("extractIssueNumbers", () => {
   });
 });
 
-describe("generateBranchName", () => {
+describe("generateShortBranchName", () => {
   it("uses the pattern with replacements", () => {
-    const branch = generateBranchName(
+    const branch = generateShortBranchName(
       "taskpilot/{source}-{id}-{slug}",
       "github",
       "board123",
@@ -91,7 +91,7 @@ describe("generateBranchName", () => {
   });
 
   it("slugifies the title", () => {
-    const branch = generateBranchName(
+    const branch = generateShortBranchName(
       "tp/{slug}",
       "trello",
       "x",
@@ -102,7 +102,7 @@ describe("generateBranchName", () => {
 
   it("truncates long slugs", () => {
     const longTitle = "A".repeat(200);
-    const branch = generateBranchName("b/{slug}", "github", "x", longTitle);
+    const branch = generateShortBranchName("b/{slug}", "github", "x", longTitle);
     expect(branch.length).toBeLessThanOrEqual(100);
   });
 });

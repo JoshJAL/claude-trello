@@ -33,7 +33,7 @@ import { getValidGitLabToken } from "#/lib/gitlab/token";
 import {
   createPr,
   generatePrBody,
-  generateBranchName,
+  generateShortBranchName,
   countTasks,
   extractIssueNumbers,
   attachPrToTrelloCard,
@@ -979,7 +979,7 @@ async function attemptPrCreation(
     const providerLabel = ctx.providerId === "claude" ? "Claude" : ctx.providerId === "openai" ? "OpenAI" : "Groq";
     const firstCardTitle = ctx.boardData.cards[0]?.name ?? "tasks";
 
-    const branch = ctx.branch ?? generateBranchName(
+    const branch = ctx.branch ?? generateShortBranchName(
       config.branchNamingPattern, ctx.source, ctx.boardData.board.id, firstCardTitle,
     );
 
