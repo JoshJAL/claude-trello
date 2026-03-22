@@ -31,13 +31,13 @@ export const Route = createFileRoute("/api/gitlab/connect")({
         try {
           accessToken = await exchangeCodeForToken(code);
         } catch (err) {
+          const message = err instanceof Error ? err.message : "Failed to exchange code for token";
+          console.error("[GitLab connect] Token exchange failed:", message);
+          console.error("[GitLab connect] BASE_URL:", process.env.BASE_URL);
+          console.error("[GitLab connect] GITLAB_CLIENT_ID set:", !!process.env.GITLAB_CLIENT_ID);
+          console.error("[GitLab connect] GITLAB_CLIENT_SECRET set:", !!process.env.GITLAB_CLIENT_SECRET);
           return Response.json(
-            {
-              error:
-                err instanceof Error
-                  ? err.message
-                  : "Failed to exchange code for token",
-            },
+            { error: message },
             { status: 400 },
           );
         }
