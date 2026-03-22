@@ -980,10 +980,11 @@ async function attemptPrCreation(
     const firstCardTitle = ctx.boardData.cards[0]?.name ?? "tasks";
 
     const branch = ctx.branch ?? generateShortBranchName(
-      config.branchNamingPattern, ctx.source, ctx.boardData.board.id, firstCardTitle,
+      config.branchNamingPattern, ctx.source, ctx.boardData.board.id, firstCardTitle, ctx.providerId,
     );
 
-    const prTitle = `[TaskPilot] ${firstCardTitle}${ctx.boardData.cards.length > 1 ? ` (+${ctx.boardData.cards.length - 1} more)` : ""}`;
+    // Short title for the PR — detailed description goes in the body
+    const prTitle = firstCardTitle;
 
     const prBody = generatePrBody({
       source: ctx.source,

@@ -142,22 +142,55 @@ export function generatePrBody(params: PrBodyParams): string {
 // ── Branch Name Generation ─────────────────────────────────────────────────
 
 /**
+ * Infer branch type from the card/issue title.
+ * Looks for common prefixes/keywords to classify as "bug" or "feature".
+ */
+function inferBranchType(title: string): "feature" | "bug" {
+  const lower = title.toLowerCase();
+  if (
+    lower.startsWith("fix") ||
+    lower.startsWith("bug") ||
+    lower.includes("broken") ||
+    lower.includes("crash") ||
+    lower.includes("error") ||
+    lower.includes("issue")
+  ) {
+    return "bug";
+  }
+  return "feature";
+}
+
+/**
  * Generate a branch name from the automation config pattern.
- * Pattern variables: {source}, {id}, {slug}
+ *
+ * Pattern variables:
+ *   {type}     — "feature" or "bug" (inferred from title)
+ *   {provider} — AI provider ID (e.g. "claude", "openai", "groq")
+ *   {slug}     — slugified title (max 30 chars)
+ *   {source}   — task source ("trello", "github", "gitlab")
+ *   {id}       — board/repo/project ID
+ *
+ * Default pattern: "{type}/{provider}-{slug}"
+ * Example output:  "feature/claude-copy-updates"
  */
 export function generateShortBranchName(
   pattern: string,
   source: string,
   id: string,
   title: string,
+  provider: string = "claude",
 ): string {
   const slug = title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
-    .slice(0, 40);
+    .slice(0, 30);
+
+  const type = inferBranchType(title);
 
   return pattern
+    .replace("{type}", type)
+    .replace("{provider}", provider)
     .replace("{source}", source)
     .replace("{id}", id)
     .replace("{slug}", slug);

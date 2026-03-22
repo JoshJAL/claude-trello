@@ -80,30 +80,65 @@ describe("extractIssueNumbers", () => {
 });
 
 describe("generateShortBranchName", () => {
-  it("uses the pattern with replacements", () => {
+  it("uses the default pattern with type and provider", () => {
     const branch = generateShortBranchName(
-      "taskpilot/{source}-{id}-{slug}",
+      "{type}/{provider}-{slug}",
       "github",
-      "board123",
+      "123",
       "Add login feature",
+      "claude",
     );
-    expect(branch).toBe("taskpilot/github-board123-add-login-feature");
+    expect(branch).toBe("feature/claude-add-login-feature");
   });
 
-  it("slugifies the title", () => {
+  it("infers bug type from title", () => {
     const branch = generateShortBranchName(
-      "tp/{slug}",
+      "{type}/{provider}-{slug}",
+      "github",
+      "42",
+      "Fix broken auth flow",
+      "openai",
+    );
+    expect(branch).toBe("bug/openai-fix-broken-auth-flow");
+  });
+
+  it("slugifies and truncates the title", () => {
+    const branch = generateShortBranchName(
+      "{type}/{provider}-{slug}",
       "trello",
       "x",
       "Fix: Bug #42 (urgent!)",
+      "groq",
     );
-    expect(branch).toMatch(/^tp\/fix-bug-42-urgent/);
+    expect(branch).toBe("bug/groq-fix-bug-42-urgent");
   });
 
-  it("truncates long slugs", () => {
-    const longTitle = "A".repeat(200);
-    const branch = generateShortBranchName("b/{slug}", "github", "x", longTitle);
-    expect(branch.length).toBeLessThanOrEqual(100);
+  it("truncates long slugs to 30 chars", () => {
+    const longTitle = "Add a really long feature name that goes on and on forever";
+    const branch = generateShortBranchName("{type}/{slug}", "github", "x", longTitle);
+    const slug = branch.split("/")[1];
+    expect(slug.length).toBeLessThanOrEqual(30);
+  });
+
+  it("supports source and id variables", () => {
+    const branch = generateShortBranchName(
+      "{type}/{source}-{id}-{slug}",
+      "gitlab",
+      "99",
+      "Update docs",
+      "claude",
+    );
+    expect(branch).toBe("feature/gitlab-99-update-docs");
+  });
+
+  it("defaults provider to claude", () => {
+    const branch = generateShortBranchName(
+      "{type}/{provider}-{slug}",
+      "github",
+      "1",
+      "Add feature",
+    );
+    expect(branch).toBe("feature/claude-add-feature");
   });
 });
 

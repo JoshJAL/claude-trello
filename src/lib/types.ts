@@ -184,7 +184,7 @@ export const DEFAULT_PR_AUTOMATION_CONFIG: PrAutomationConfig = {
   enabled: false,
   autoDraft: true,
   autoLinkIssue: true,
-  branchNamingPattern: "taskpilot/{slug}",
+  branchNamingPattern: "{type}/{provider}-{slug}",
 };
 
 export interface PrResult {
