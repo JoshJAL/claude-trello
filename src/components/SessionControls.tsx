@@ -1,14 +1,11 @@
-import { useState } from "react";
+import { useReducer } from "react";
 import { useIntegrationStatus } from "#/hooks/useIntegrationStatus";
 import { useGitHubRepos } from "#/hooks/useGitHubRepos";
 import { useGitLabProjects } from "#/hooks/useGitLabProjects";
 import type { AiProviderId } from "#/lib/providers/types";
-
-const PROVIDER_LABELS: Record<AiProviderId, string> = {
-  claude: "Claude",
-  openai: "ChatGPT",
-  groq: "Groq",
-};
+import { WebModeBanner } from "./session/WebModeBanner";
+import { RepoLinker } from "./session/RepoLinker";
+import { SessionToolbar } from "./session/SessionToolbar";
 
 interface SessionControlsProps {
   isRunning: boolean;
@@ -29,6 +26,44 @@ interface SessionControlsProps {
   runningLabel?: string;
 }
 
+interface ControlsState {
+  webMode: boolean;
+  cwd: string;
+  initialMessage: string;
+  mode: "sequential" | "parallel";
+  concurrency: number;
+  providerId: AiProviderId;
+  linkedRepoKey: string;
+}
+
+type ControlsAction =
+  | { type: "SET_WEB_MODE"; value: boolean }
+  | { type: "SET_CWD"; value: string }
+  | { type: "SET_MESSAGE"; value: string }
+  | { type: "SET_MODE"; value: "sequential" | "parallel" }
+  | { type: "SET_CONCURRENCY"; value: number }
+  | { type: "SET_PROVIDER"; value: AiProviderId }
+  | { type: "SET_LINKED_REPO"; value: string };
+
+function controlsReducer(state: ControlsState, action: ControlsAction): ControlsState {
+  switch (action.type) {
+    case "SET_WEB_MODE":
+      return { ...state, webMode: action.value };
+    case "SET_CWD":
+      return { ...state, cwd: action.value };
+    case "SET_MESSAGE":
+      return { ...state, initialMessage: action.value };
+    case "SET_MODE":
+      return { ...state, mode: action.value };
+    case "SET_CONCURRENCY":
+      return { ...state, concurrency: action.value };
+    case "SET_PROVIDER":
+      return { ...state, providerId: action.value };
+    case "SET_LINKED_REPO":
+      return { ...state, linkedRepoKey: action.value };
+  }
+}
+
 export function SessionControls({
   isRunning,
   canStart,
@@ -41,41 +76,44 @@ export function SessionControls({
   const { configuredProviders, githubLinked, gitlabLinked } = useIntegrationStatus();
 
   const isGitSource = source === "github" || source === "gitlab";
-  const isDeployed = typeof window !== "undefined" &&
+  const isDeployed =
+    typeof window !== "undefined" &&
     !window.location.hostname.startsWith("localhost") &&
     !window.location.hostname.startsWith("127.0.0.1");
-  const [webMode, setWebMode] = useState(isGitSource || isDeployed);
-  const [cwd, setCwd] = useState("");
-  const [initialMessage, setInitialMessage] = useState("");
-  const [mode, setMode] = useState<"sequential" | "parallel">("sequential");
-  const [concurrency, setConcurrency] = useState(3);
-  const [providerId, setProviderId] = useState<AiProviderId>(
-    configuredProviders[0] ?? "claude",
-  );
-  const [linkedRepoKey, setLinkedRepoKey] = useState("");
 
-  // Fetch repos/projects for Trello linking — only when needed
+  const [state, dispatch] = useReducer(controlsReducer, {
+    webMode: isGitSource || isDeployed,
+    cwd: "",
+    initialMessage: "",
+    mode: "sequential" as const,
+    concurrency: 3,
+    providerId: configuredProviders[0] ?? "claude",
+    linkedRepoKey: "",
+  });
+
   const showRepoLinker = source === "trello" && (githubLinked || gitlabLinked);
   const { data: ghRepos } = useGitHubRepos(showRepoLinker && githubLinked);
   const { data: glProjects } = useGitLabProjects(showRepoLinker && gitlabLinked);
 
-  // Parse the selected repo key: "github:owner/repo" or "gitlab:projectId"
-  const linkedRepo = linkedRepoKey.startsWith("github:")
-    ? { owner: linkedRepoKey.slice(7).split("/")[0], repo: linkedRepoKey.slice(7).split("/")[1] }
+  const linkedRepo = state.linkedRepoKey.startsWith("github:")
+    ? {
+        owner: state.linkedRepoKey.slice(7).split("/")[0],
+        repo: state.linkedRepoKey.slice(7).split("/")[1],
+      }
     : undefined;
-  const linkedGitlabProjectId = linkedRepoKey.startsWith("gitlab:")
-    ? Number(linkedRepoKey.slice(7))
+  const linkedGitlabProjectId = state.linkedRepoKey.startsWith("gitlab:")
+    ? Number(state.linkedRepoKey.slice(7))
     : undefined;
 
   function handleStart() {
-    if (!webMode && !cwd.trim()) return;
+    if (!state.webMode && !state.cwd.trim()) return;
     onStart({
-      cwd: webMode ? "" : cwd.trim(),
-      userMessage: initialMessage.trim() || undefined,
-      mode: webMode ? "sequential" : mode,
-      concurrency,
-      providerId,
-      webMode,
+      cwd: state.webMode ? "" : state.cwd.trim(),
+      userMessage: state.initialMessage.trim() || undefined,
+      mode: state.webMode ? "sequential" : state.mode,
+      concurrency: state.concurrency,
+      providerId: state.providerId,
+      webMode: state.webMode,
       linkedRepo,
       linkedGitlabProjectId,
     });
@@ -84,87 +122,38 @@ export function SessionControls({
   return (
     <div className="sticky top-0 z-40 -mx-4 bg-(--sand) px-4 py-3">
       <div className="island-shell flex flex-col gap-3 rounded-xl p-4">
-        {/* Web mode banner */}
-        {webMode && source === "trello" && !linkedRepo && !linkedGitlabProjectId && !isRunning && (
-          <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
-            No repository linked — the AI can only suggest code changes.
-            {(githubLinked || gitlabLinked)
-              ? " Link a repo below for full file editing."
-              : " Connect GitHub or GitLab in Settings to link a repo."}
-          </div>
+        {state.webMode && !isRunning && (
+          <WebModeBanner
+            source={source}
+            linkedRepo={linkedRepo}
+            linkedGitlabProjectId={linkedGitlabProjectId}
+            githubLinked={githubLinked}
+            gitlabLinked={gitlabLinked}
+          />
         )}
 
-        {webMode && source === "trello" && linkedRepo && !isRunning && (
-          <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-800 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-300">
-            Linked to {linkedRepo.owner}/{linkedRepo.repo} — changes via GitHub API
-          </div>
-        )}
-
-        {webMode && source === "trello" && linkedGitlabProjectId && !isRunning && (
-          <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-800 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-300">
-            Linked to GitLab project #{linkedGitlabProjectId} — changes via GitLab API
-          </div>
-        )}
-
-        {webMode && isGitSource && !isRunning && (
-          <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-800 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-300">
-            Cloud mode — changes will be committed via{" "}
-            {source === "github" ? "GitHub" : "GitLab"} API to a new branch
-          </div>
-        )}
-
-        {/* Link a repo to Trello (cloud mode) */}
-        {showRepoLinker && webMode && !isRunning && (
-          <div className="flex items-center gap-2">
-            <label
-              htmlFor="linked-repo"
-              className="text-xs font-medium text-(--sea-ink-soft)"
-            >
-              Repository:
-            </label>
-            <select
-              id="linked-repo"
-              value={linkedRepoKey}
-              onChange={(e) => setLinkedRepoKey(e.target.value)}
-              className="flex-1 rounded-lg border border-(--shore-line) bg-white px-2 py-1.5 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
-            >
-              <option value="">None (advisory only)</option>
-              {githubLinked && ghRepos && ghRepos.length > 0 && (
-                <optgroup label="GitHub">
-                  {ghRepos.map((r) => (
-                    <option key={`github:${r.full_name}`} value={`github:${r.full_name}`}>
-                      {r.full_name}
-                    </option>
-                  ))}
-                </optgroup>
-              )}
-              {gitlabLinked && glProjects && glProjects.length > 0 && (
-                <optgroup label="GitLab">
-                  {glProjects.map((p) => (
-                    <option key={`gitlab:${p.id}`} value={`gitlab:${p.id}`}>
-                      {p.path_with_namespace}
-                    </option>
-                  ))}
-                </optgroup>
-              )}
-            </select>
-          </div>
+        {showRepoLinker && state.webMode && !isRunning && (
+          <RepoLinker
+            linkedRepoKey={state.linkedRepoKey}
+            onLinkedRepoKeyChange={(v) => dispatch({ type: "SET_LINKED_REPO", value: v })}
+            githubLinked={githubLinked}
+            gitlabLinked={gitlabLinked}
+            ghRepos={ghRepos}
+            glProjects={glProjects}
+          />
         )}
 
         <div className="flex items-end gap-3">
-          {!webMode && (
+          {!state.webMode && (
             <div className="flex-1">
-              <label
-                htmlFor="cwd"
-                className="mb-1 block text-xs font-medium text-(--sea-ink-soft)"
-              >
+              <label htmlFor="cwd" className="mb-1 block text-xs font-medium text-(--sea-ink-soft)">
                 Project directory
               </label>
               <input
                 id="cwd"
                 type="text"
-                value={cwd}
-                onChange={(e) => setCwd(e.target.value)}
+                value={state.cwd}
+                onChange={(e) => dispatch({ type: "SET_CWD", value: e.target.value })}
                 disabled={isRunning}
                 placeholder="/home/user/my-project"
                 className="w-full rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 disabled:opacity-50 dark:bg-white/5"
@@ -173,20 +162,15 @@ export function SessionControls({
           )}
 
           {!isRunning && (
-            <div className={webMode ? "flex-1" : "flex-1"}>
-              <label
-                htmlFor="initial-message"
-                className="mb-1 block text-xs font-medium text-(--sea-ink-soft)"
-              >
+            <div className="flex-1">
+              <label htmlFor="initial-message" className="mb-1 block text-xs font-medium text-(--sea-ink-soft)">
                 Initial instructions{" "}
-                <span className="font-normal text-(--shore-line)">
-                  (optional)
-                </span>
+                <span className="font-normal text-(--shore-line)">(optional)</span>
               </label>
               <textarea
                 id="initial-message"
-                value={initialMessage}
-                onChange={(e) => setInitialMessage(e.target.value)}
+                value={state.initialMessage}
+                onChange={(e) => dispatch({ type: "SET_MESSAGE", value: e.target.value })}
                 placeholder='e.g. "Focus on the API issues first"'
                 rows={2}
                 className="w-full resize-none rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
@@ -204,7 +188,7 @@ export function SessionControls({
           ) : (
             <button
               onClick={handleStart}
-              disabled={!canStart || (!webMode && !cwd.trim())}
+              disabled={!canStart || (!state.webMode && !state.cwd.trim())}
               className="shrink-0 rounded-lg bg-(--lagoon) px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
             >
               Start Session
@@ -212,122 +196,20 @@ export function SessionControls({
           )}
         </div>
 
-        {/* Provider + Mode toggle + concurrency + web mode */}
         {!isRunning && (
-          <div className="flex flex-wrap items-center gap-4">
-            {/* Provider selector */}
-            {configuredProviders.length > 1 && (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-(--sea-ink-soft)">AI:</span>
-                <select
-                  value={providerId}
-                  onChange={(e) =>
-                    setProviderId(e.target.value as AiProviderId)
-                  }
-                  className="rounded-lg border border-(--shore-line) bg-white px-2 py-1 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
-                >
-                  {configuredProviders.map((p) => (
-                    <option key={p} value={p}>
-                      {PROVIDER_LABELS[p] ?? p}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            {/* Web / Local toggle — only show when running locally */}
-            {!isDeployed && (
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-(--sea-ink-soft)">Env:</span>
-              <div className="inline-flex rounded-lg border border-(--shore-line) p-0.5">
-                <button
-                  onClick={() => setWebMode(false)}
-                  className={`rounded-md px-3 py-1 text-xs font-medium transition ${
-                    !webMode
-                      ? "bg-(--lagoon) text-white"
-                      : "text-(--sea-ink-soft) hover:text-(--sea-ink)"
-                  }`}
-                >
-                  Local
-                </button>
-                <button
-                  onClick={() => setWebMode(true)}
-                  className={`rounded-md px-3 py-1 text-xs font-medium transition ${
-                    webMode
-                      ? "bg-(--lagoon) text-white"
-                      : "text-(--sea-ink-soft) hover:text-(--sea-ink)"
-                  }`}
-                >
-                  Cloud
-                </button>
-              </div>
-            </div>
-            )}
-
-            {!webMode && (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-(--sea-ink-soft)">
-                  Mode:
-                </span>
-                <div className="inline-flex rounded-lg border border-(--shore-line) p-0.5">
-                  <button
-                    onClick={() => setMode("sequential")}
-                    className={`rounded-md px-3 py-1 text-xs font-medium transition ${
-                      mode === "sequential"
-                        ? "bg-(--lagoon) text-white"
-                        : "text-(--sea-ink-soft) hover:text-(--sea-ink)"
-                    }`}
-                  >
-                    Sequential
-                  </button>
-                  <button
-                    onClick={() => setMode("parallel")}
-                    className={`rounded-md px-3 py-1 text-xs font-medium transition ${
-                      mode === "parallel"
-                        ? "bg-(--lagoon) text-white"
-                        : "text-(--sea-ink-soft) hover:text-(--sea-ink)"
-                    }`}
-                  >
-                    Parallel
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {!webMode && mode === "parallel" && (
-              <div className="flex items-center gap-2">
-                <label
-                  htmlFor="concurrency"
-                  className="text-xs text-(--sea-ink-soft)"
-                >
-                  Concurrency:
-                </label>
-                <input
-                  id="concurrency"
-                  type="range"
-                  min={1}
-                  max={5}
-                  value={concurrency}
-                  onChange={(e) => setConcurrency(Number(e.target.value))}
-                  className="h-1.5 w-20 accent-(--lagoon)"
-                />
-                <span className="w-4 text-center text-xs font-medium text-(--sea-ink)">
-                  {concurrency}
-                </span>
-              </div>
-            )}
-
-            {!webMode &&
-              mode === "parallel" &&
-              activeCardCount !== undefined &&
-              activeCardCount > 0 && (
-                <span className="text-xs text-(--sea-ink-soft)">
-                  {activeCardCount} item
-                  {activeCardCount !== 1 ? "s" : ""} will each get their own
-                  agent
-                </span>
-              )}
-          </div>
+          <SessionToolbar
+            configuredProviders={configuredProviders}
+            providerId={state.providerId}
+            onProviderChange={(v) => dispatch({ type: "SET_PROVIDER", value: v })}
+            isDeployed={isDeployed}
+            webMode={state.webMode}
+            onWebModeChange={(v) => dispatch({ type: "SET_WEB_MODE", value: v })}
+            mode={state.mode}
+            onModeChange={(v) => dispatch({ type: "SET_MODE", value: v })}
+            concurrency={state.concurrency}
+            onConcurrencyChange={(v) => dispatch({ type: "SET_CONCURRENCY", value: v })}
+            activeCardCount={activeCardCount}
+          />
         )}
 
         {isRunning && (
