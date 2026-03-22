@@ -188,8 +188,20 @@ export function createGenericAgentSession(
           yield { type: "assistant", content: response.content };
         }
 
-        // If no tool calls, the agent is done
+        // If no tool calls, check if the agent just started and nudge it to use tools
         if (!response.tool_calls || response.tool_calls.length === 0) {
+          if (turn === 0) {
+            // First turn with no tool calls — the model may need a nudge
+            messages.push({
+              role: "assistant",
+              content: response.content,
+            });
+            messages.push({
+              role: "user",
+              content: "Please use the available tools to complete the tasks. Start by using list_files or search_files to explore the codebase, then make the necessary code changes.",
+            });
+            continue;
+          }
           messages.push({
             role: "assistant",
             content: response.content,

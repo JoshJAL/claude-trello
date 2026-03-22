@@ -123,7 +123,6 @@ const WEB_CODING_TOOLS: ToolDefinition[] = [
           description: "Whether to list recursively (default: true)",
         },
       },
-      required: [],
     },
   },
   {
