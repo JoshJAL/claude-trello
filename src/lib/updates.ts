@@ -25,6 +25,38 @@ export interface AppUpdate {
  */
 export const UPDATES: AppUpdate[] = [
   {
+    id: "2026-03-22-searchable-repo-selector",
+    date: "2026-03-22",
+    title: "Searchable Repository Selector",
+    description:
+      "The Trello repo linker now uses a searchable combobox instead of a plain dropdown. Type to filter across all your GitHub repos and GitLab projects, with source icons and a clear button.",
+    type: "improvement",
+    details: [
+      {
+        heading: "How It Works",
+        body: "When linking a repository to a Trello board in cloud mode, you now get a search input instead of a long dropdown. Start typing to filter across all your connected GitHub repos and GitLab projects. Results show source icons (GitHub/GitLab) next to each name.\n\nOnce selected, the repo appears as a chip with an X button to clear it.",
+      },
+    ],
+  },
+  {
+    id: "2026-03-22-gitlab-token-refresh",
+    date: "2026-03-22",
+    title: "GitLab Connection No Longer Expires",
+    description:
+      "GitLab OAuth tokens are now automatically refreshed before they expire. Connect once and forget — no more reconnecting every 2 hours.",
+    type: "fix",
+    details: [
+      {
+        heading: "What Changed",
+        body: "Previously, GitLab tokens expired every 2 hours and required you to reconnect in Settings. Now TaskPilot captures the refresh token during the OAuth flow and automatically refreshes your access token before it expires (with a 5-minute buffer).\n\nIf the refresh token itself is revoked (e.g. you revoke access in GitLab settings), you'll see a clear error message asking you to reconnect.",
+      },
+      {
+        heading: "Do I Need to Reconnect?",
+        body: "Yes, one final time. Existing GitLab connections were stored without a refresh token. Disconnect and reconnect GitLab in Settings to get the persistent connection. After that, it won't expire.",
+      },
+    ],
+  },
+  {
     id: "2026-03-22-webhooks-realtime",
     date: "2026-03-22",
     title: "Webhooks & Real-Time Updates",
