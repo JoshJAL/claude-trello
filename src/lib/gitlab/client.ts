@@ -146,20 +146,15 @@ export async function exchangeCodeForToken(code: string): Promise<string> {
     }),
   });
 
-  if (!res.ok) {
-    throw new Error(`GitLab token exchange failed: ${res.status}`);
-  }
-
   const data = (await res.json()) as {
     access_token?: string;
     error?: string;
     error_description?: string;
   };
 
-  if (data.error || !data.access_token) {
-    throw new Error(
-      data.error_description ?? data.error ?? "No access token received",
-    );
+  if (!res.ok || data.error || !data.access_token) {
+    const detail = data.error_description ?? data.error ?? `HTTP ${res.status}`;
+    throw new Error(`GitLab token exchange failed: ${detail}`);
   }
 
   return data.access_token;
