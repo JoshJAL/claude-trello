@@ -25,17 +25,20 @@ function GitHubDashboardPage() {
   const { githubLinked } = useIntegrationStatus();
   const { data: repos, isLoading, error } = useGitHubRepos();
   const navigate = useNavigate();
-  const [q, setQ] = useState("");
-
-  const filteredRepos = repos
-    ? repos.filter((repo) => {
-        const query = q.toLowerCase();
-        return (
-          repo.full_name.toLowerCase().includes(query) ||
-          (repo.description ?? "").toLowerCase().includes(query)
-        );
-      })
-    : [];
+  
+  const {
+    query,
+    setQuery,
+    filteredItems: filteredRepos,
+    isSearching
+  } = useSearchFilter(repos, {
+    filterFn: (repo, searchQuery) => {
+      return (
+        repo.full_name.toLowerCase().includes(searchQuery) ||
+        (repo.description ?? "").toLowerCase().includes(searchQuery)
+      );
+    }
+  });
 
   return (
     <main className="page-wrap px-4 py-8">
