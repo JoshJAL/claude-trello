@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { SessionLogEntry } from "#/hooks/useClaudeSession";
+import { DiffViewer } from "./DiffViewer";
 
 interface SessionLogProps {
   logs: SessionLogEntry[];
