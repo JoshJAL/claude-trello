@@ -333,7 +333,7 @@ npx taskpilot-cli login`}</CodeBlock>
               title="Navigate to your project"
             >
               <p>
-                Open your terminal in the codebase you want Claude to work on:
+                Open your terminal in the codebase you want the agent to work on:
               </p>
               <CodeBlock copyText="cd ~/my-project">cd ~/my-project</CodeBlock>
             </StepCard>
@@ -365,18 +365,18 @@ npx taskpilot-cli login`}</CodeBlock>
 #
 #   Working directory: /home/you/my-project
 #
-# ? Start Claude Code session? (4 active cards) Yes
+# ? Start AI session? (4 active cards) Yes
 #
 # ✓ Credentials loaded
-# Starting Claude Code session...
+# Starting session...
 #
 #   Session initialized (model: claude-sonnet-4-20250514)
 #
 # I'll start by working on "Fix authentication bug"...
 #   [Read]
 #   [Edit]
-#   ✓ Checked item on Trello
-#   ✓ Checked item on Trello
+#   ✓ Checked task item
+#   ✓ Checked task item
 #   ✓ Moved card to Done
 # Moving on to "Add dark mode support"...`}</CodeBlock>
             </StepCard>
@@ -625,7 +625,7 @@ npx taskpilot-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
                 Run on a different directory
               </h3>
               <p className="mb-3 text-sm text-(--sea-ink-soft)">
-                Point Claude Code at a specific project without navigating there
+                Point the agent at a specific project without navigating there
                 first:
               </p>
               <CodeBlock copyText="npx taskpilot-cli run --dir ~/projects/my-api">
@@ -853,15 +853,15 @@ npx taskpilot-cli run \\
 
             <details className="island-shell rounded-xl">
               <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
-                Claude asked me a question — what do I do?
+                The agent asked me a question — what do I do?
               </summary>
               <div className="border-t border-(--line) px-5 py-4 text-sm text-(--sea-ink-soft)">
-                Sometimes Claude needs clarification before proceeding. The
+                Sometimes the agent needs clarification before proceeding. The
                 question will appear in yellow in your terminal with a{" "}
                 <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                   &gt;
                 </code>{" "}
-                prompt. Type your answer and press Enter — Claude will continue
+                prompt. Type your answer and press Enter — the agent will continue
                 working.
               </div>
             </details>
@@ -920,7 +920,7 @@ npx taskpilot-cli run \\
                   className="mt-0.5 shrink-0 text-green-600 dark:text-green-400"
                 />
                 <span>
-                  Claude Code runs with{" "}
+                  The agent runs with{" "}
                   <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                     acceptEdits
                   </code>{" "}

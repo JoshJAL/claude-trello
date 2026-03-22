@@ -537,7 +537,7 @@ function WebDocsPage() {
                     </tr>
                     <tr className="border-b border-(--line)">
                       <td className="py-1.5">Per-agent cost budget</td>
-                      <td>$2 (Claude provider)</td>
+                      <td>$2 (default across all providers)</td>
                     </tr>
                     <tr className="border-b border-(--line)">
                       <td className="py-1.5">Isolation</td>

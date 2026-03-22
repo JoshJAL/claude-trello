@@ -54,8 +54,8 @@ Starting session...
 I'll start by working on "Fix authentication bug"...
   [Read]
   [Edit]
-  ✓ Checked item on Trello
-  ✓ Checked item on Trello
+  ✓ Checked task item
+  ✓ Checked task item
   ✓ Moved card to Done
 Moving on to "Add dark mode support"...
 ```
@@ -335,7 +335,7 @@ Your Terminal                    Web App Server              Task Source API
 - Your **API keys are encrypted at rest** (AES-256-GCM) in the web app's database and only decrypted for the duration of a session
 - The local config file is written with **restricted permissions** (`600` — owner-only read/write)
 - API credentials are **held in memory only** during a session — never written to disk by the CLI
-- Claude Code runs with `acceptEdits` permission mode — it can read and edit files but requires approval for shell commands
+- The agent runs with `acceptEdits` permission mode — it can read and edit files but requires approval for shell commands
 
 ## Troubleshooting
 
@@ -348,7 +348,7 @@ The CLI uses your web app account's integrations. Go to the web dashboard Settin
 **Can I use the CLI without the web server running?**
 No — the CLI authenticates against and fetches data from the web app. You need either a local dev server or a deployed instance running.
 
-**Claude asked me a question — what do I do?**
+**The agent asked me a question — what do I do?**
 Sometimes the agent needs clarification. The question appears in yellow with a `>` prompt. Type your answer and press Enter — the agent will continue working.
 
 **Parallel mode has merge conflicts**
