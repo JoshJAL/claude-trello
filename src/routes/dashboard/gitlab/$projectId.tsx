@@ -113,6 +113,43 @@ function GitLabProjectPage() {
 
   const activeIssues = issues?.filter((i) => i.state === "opened") ?? [];
 
+  const handleWorkOnThis = (issue: GitLabIssueWithTasks) => {
+    // Only include this single issue that has at least one incomplete task
+    const hasIncompleteTask = issue.tasks.some((t) => !t.checked);
+    if (!hasIncompleteTask) return;
+
+    const singleIssueBoardData = {
+      board: { id: projectId, name: `Project #${projectId}` },
+      cards: [{
+        id: String(issue.iid),
+        name: issue.title,
+        desc: issue.description ?? "",
+        checklists: issue.tasks.length > 0
+          ? [
+              {
+                id: "tasks",
+                name: "Tasks",
+                checkItems: issue.tasks.map((t) => ({
+                  id: `task-${t.index}`,
+                  name: t.text,
+                  state: t.checked ? "complete" : "incomplete",
+                })),
+              },
+            ]
+          : [],
+      }],
+    };
+
+    const opts = {
+      providerId: "claude" as const,
+      source: "gitlab" as const,
+      gitlabProjectId: numericProjectId,
+      webMode: true,
+    };
+
+    sequential.start(singleIssueBoardData, "", undefined, opts);
+  };
+
   return (
     <main className="page-wrap px-4 py-8">
       <div className="mx-auto max-w-4xl space-y-6">
