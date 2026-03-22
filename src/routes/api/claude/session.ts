@@ -402,6 +402,13 @@ export const Route = createFileRoute("/api/claude/session")({
           cwd: cwd!,
           userMessage,
           abortController,
+          sourceContext: {
+            source,
+            sourceToken,
+            githubOwner,
+            githubRepo,
+            gitlabProjectId,
+          },
         });
 
         activeSessions.set(userId, {

@@ -56,6 +56,14 @@ export interface ProviderSession extends AsyncIterable<AgentMessage> {
 
 // ── Provider Adapter Interface ──────────────────────────────────────────────
 
+export interface SourceContext {
+  source: "trello" | "github" | "gitlab";
+  sourceToken: string;
+  githubOwner?: string;
+  githubRepo?: string;
+  gitlabProjectId?: number;
+}
+
 export interface ProviderSessionParams {
   apiKey: string;
   trelloToken: string;
@@ -63,6 +71,7 @@ export interface ProviderSessionParams {
   cwd: string;
   userMessage?: string;
   abortController?: AbortController;
+  sourceContext?: SourceContext;
 }
 
 export interface ProviderCardAgentParams {
@@ -74,6 +83,7 @@ export interface ProviderCardAgentParams {
   cwd: string;
   userMessage?: string;
   abortController?: AbortController;
+  sourceContext?: SourceContext;
 }
 
 export interface ProviderAdapter {

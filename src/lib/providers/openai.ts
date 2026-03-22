@@ -5,28 +5,24 @@ import {
   type ToolCall,
 } from "./generic-agent.js";
 import type { ToolDefinition } from "./tools.js";
-import { buildUserPrompt, buildParallelCardPrompt } from "#/lib/prompts";
-import { GENERIC_AGENT_SYSTEM_PROMPT } from "./prompts.js";
 import type {
   ProviderAdapter,
   ProviderSession,
   ProviderSessionParams,
   ProviderCardAgentParams,
 } from "./types.js";
+import { buildLocalSessionConfig, buildLocalCardConfig } from "./local-config.js";
 
 export class OpenAIAdapter implements ProviderAdapter {
   readonly providerId = "openai" as const;
 
   launchSession(params: ProviderSessionParams): ProviderSession {
     const client = new OpenAI({ apiKey: params.apiKey });
+    const config = buildLocalSessionConfig(params);
 
     return createGenericAgentSession({
-      systemPrompt: GENERIC_AGENT_SYSTEM_PROMPT,
-      userPrompt: buildUserPrompt(params.boardData, params.userMessage),
-      cwd: params.cwd,
+      ...config,
       maxTurns: 50,
-      trelloToken: params.trelloToken,
-      boardId: params.boardData.board.id,
       abortController: params.abortController,
       chatCompletion: createOpenAIChatFn(client),
     });
@@ -34,18 +30,11 @@ export class OpenAIAdapter implements ProviderAdapter {
 
   launchCardAgent(params: ProviderCardAgentParams): ProviderSession {
     const client = new OpenAI({ apiKey: params.apiKey });
+    const config = buildLocalCardConfig(params);
 
     return createGenericAgentSession({
-      systemPrompt: GENERIC_AGENT_SYSTEM_PROMPT,
-      userPrompt: buildParallelCardPrompt(
-        params.card,
-        params.boardName,
-        params.userMessage,
-      ),
-      cwd: params.cwd,
+      ...config,
       maxTurns: 30,
-      trelloToken: params.trelloToken,
-      boardId: params.boardId,
       abortController: params.abortController,
       chatCompletion: createOpenAIChatFn(client),
     });
