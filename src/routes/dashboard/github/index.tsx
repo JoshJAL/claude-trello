@@ -60,7 +60,10 @@ function GitHubDashboardPage() {
     setInputValue(urlQ);
   }, [urlQ]);
 
-  // Memoised filter — recomputes only when repos data or debounced query changes
+  // Visibility filter state
+  const [visibilityFilter, setVisibilityFilter] = useState('All');
+
+  // Memoised filter — recomputes only when repos data, debounced query, or visibility filter changes
   const filteredRepos = useMemo(
     () =>
       repos
