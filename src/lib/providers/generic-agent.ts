@@ -42,6 +42,7 @@ export type ChatCompletionFn = (
 ) => Promise<{
   content: string | null;
   tool_calls: ToolCall[];
+  usage?: { prompt_tokens?: number; completion_tokens?: number };
 }>;
 
 /**
@@ -163,12 +164,16 @@ export function createGenericAgentSession(
         { role: "user", content: config.userPrompt },
       ];
 
+      // Accumulate token usage across turns
+      let totalInputTokens = 0;
+      let totalOutputTokens = 0;
+
       yield { type: "system", content: "Session started" };
 
       for (let turn = 0; turn < config.maxTurns; turn++) {
         if (closed || config.abortController?.signal.aborted) break;
 
-        let response: { content: string | null; tool_calls: ToolCall[] };
+        let response: { content: string | null; tool_calls: ToolCall[]; usage?: { prompt_tokens?: number; completion_tokens?: number } };
         try {
           response = await config.chatCompletion(
             messages,
@@ -181,6 +186,12 @@ export function createGenericAgentSession(
             content: err instanceof Error ? err.message : "Chat completion failed",
           };
           break;
+        }
+
+        // Accumulate token usage from this turn
+        if (response.usage) {
+          totalInputTokens += response.usage.prompt_tokens ?? 0;
+          totalOutputTokens += response.usage.completion_tokens ?? 0;
         }
 
         // Yield assistant text
@@ -242,7 +253,10 @@ export function createGenericAgentSession(
         }
       }
 
-      yield { type: "done" };
+      yield {
+        type: "done",
+        usage: { inputTokens: totalInputTokens, outputTokens: totalOutputTokens },
+      };
     },
     close() {
       closed = true;

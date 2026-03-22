@@ -38,10 +38,10 @@ function ForgotPasswordPage() {
   return (
     <main className="page-wrap flex min-h-[80vh] items-center justify-center px-4">
       <div className="island-shell w-full max-w-md rounded-2xl p-8">
-        <h1 className="mb-2 text-center text-2xl font-bold text-[var(--sea-ink)]">
+        <h1 className="mb-2 text-center text-2xl font-bold text-(--sea-ink)">
           Forgot password
         </h1>
-        <p className="mb-6 text-center text-sm text-[var(--sea-ink-soft)]">
+        <p className="mb-6 text-center text-sm text-(--sea-ink-soft)">
           Enter your email and we&apos;ll send you a reset link.
         </p>
 
@@ -53,7 +53,7 @@ function ForgotPasswordPage() {
             </div>
             <a
               href="/"
-              className="text-sm font-medium text-[var(--lagoon)] hover:underline"
+              className="text-sm font-medium text-(--lagoon) hover:underline"
             >
               Back to sign in
             </a>
@@ -63,7 +63,7 @@ function ForgotPasswordPage() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="email"
-                className="text-sm font-medium text-[var(--sea-ink)]"
+                className="text-sm font-medium text-(--sea-ink)"
               >
                 Email
               </label>
@@ -73,7 +73,7 @@ function ForgotPasswordPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 dark:bg-white/5"
+                className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
                 placeholder="you@example.com"
               />
             </div>
@@ -85,15 +85,15 @@ function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className="mt-2 rounded-lg bg-[var(--lagoon)] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+              className="mt-2 rounded-lg bg-(--lagoon) px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
             >
               {loading ? "Sending..." : "Send reset link"}
             </button>
 
-            <p className="text-center text-sm text-[var(--sea-ink-soft)]">
+            <p className="text-center text-sm text-(--sea-ink-soft)">
               <a
                 href="/"
-                className="font-medium text-[var(--lagoon)] hover:underline"
+                className="font-medium text-(--lagoon) hover:underline"
               >
                 Back to sign in
               </a>

@@ -72,7 +72,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         <div className="flex flex-col gap-1.5">
           <label
             htmlFor="name"
-            className="text-sm font-medium text-[var(--sea-ink)]"
+            className="text-sm font-medium text-(--sea-ink)"
           >
             Name
           </label>
@@ -82,7 +82,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 dark:bg-white/5"
+            className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
             placeholder="Your name"
           />
         </div>
@@ -91,7 +91,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       <div className="flex flex-col gap-1.5">
         <label
           htmlFor="email"
-          className="text-sm font-medium text-[var(--sea-ink)]"
+          className="text-sm font-medium text-(--sea-ink)"
         >
           Email
         </label>
@@ -101,7 +101,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 dark:bg-white/5"
+          className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
           placeholder="you@example.com"
         />
       </div>
@@ -109,7 +109,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       <div className="flex flex-col gap-1.5">
         <label
           htmlFor="password"
-          className="text-sm font-medium text-[var(--sea-ink)]"
+          className="text-sm font-medium text-(--sea-ink)"
         >
           Password
         </label>
@@ -120,7 +120,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           minLength={8}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 dark:bg-white/5"
+          className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
           placeholder="Min. 8 characters"
         />
       </div>
@@ -129,7 +129,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         <div className="text-right">
           <a
             href="/forgot-password"
-            className="text-xs text-[var(--lagoon)] hover:underline"
+            className="text-xs text-(--lagoon) hover:underline"
           >
             Forgot password?
           </a>
@@ -143,7 +143,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       <button
         type="submit"
         disabled={loading}
-        className="mt-2 rounded-lg bg-[var(--lagoon)] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+        className="mt-2 rounded-lg bg-(--lagoon) px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
       >
         {loading
           ? isRegister
@@ -154,11 +154,11 @@ export function AuthForm({ mode }: AuthFormProps) {
             : "Sign in"}
       </button>
 
-      <p className="text-center text-sm text-[var(--sea-ink-soft)]">
+      <p className="text-center text-sm text-(--sea-ink-soft)">
         {isRegister ? (
           <>
             Already have an account?{" "}
-            <a href="/" className="font-medium text-[var(--lagoon)] hover:underline">
+            <a href="/" className="font-medium text-(--lagoon) hover:underline">
               Sign in
             </a>
           </>
@@ -167,7 +167,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             Don&apos;t have an account?{" "}
             <a
               href="/register"
-              className="font-medium text-[var(--lagoon)] hover:underline"
+              className="font-medium text-(--lagoon) hover:underline"
             >
               Register
             </a>

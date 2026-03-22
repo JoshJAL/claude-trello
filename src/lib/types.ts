@@ -108,3 +108,88 @@ export interface ParallelSessionSummary {
   mergeConflicts: Array<{ cardId: string; files: string[] }>;
   diffStats: { filesChanged: number; insertions: number; deletions: number };
 }
+
+// ── Session History (Phase 15) ────────────────────────────────────────────────
+
+export type SessionStatus = "running" | "completed" | "failed" | "cancelled";
+
+export interface AgentSessionSummary {
+  id: string;
+  source: string;
+  sourceIdentifier: string;
+  sourceName: string;
+  providerId: string;
+  mode: "sequential" | "parallel";
+  maxConcurrency: number | null;
+  initialMessage: string | null;
+  status: SessionStatus;
+  errorMessage: string | null;
+  inputTokens: number;
+  outputTokens: number;
+  totalCostCents: number;
+  tasksTotal: number;
+  tasksCompleted: number;
+  startedAt: string; // ISO date string for JSON transport
+  completedAt: string | null;
+  durationMs: number | null;
+}
+
+export interface SessionEvent {
+  id: string;
+  sessionId: string;
+  type: string;
+  agentIndex: number | null;
+  cardId: string | null;
+  content: Record<string, unknown>;
+  sequence: number;
+  timestamp: string; // ISO date string
+}
+
+export interface SessionListQuery {
+  source?: string;
+  status?: SessionStatus;
+  limit?: number;
+  offset?: number;
+  sort?: "newest" | "oldest" | "costliest";
+}
+
+export interface SessionListResponse {
+  sessions: AgentSessionSummary[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface SessionDetailResponse {
+  session: AgentSessionSummary;
+}
+
+export interface SessionEventsResponse {
+  events: SessionEvent[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+// ── PR/MR Automation (Phase 18) ─────────────────────────────────────────────
+
+export interface PrAutomationConfig {
+  enabled: boolean;
+  autoDraft: boolean;
+  autoLinkIssue: boolean;
+  branchNamingPattern: string;
+}
+
+export const DEFAULT_PR_AUTOMATION_CONFIG: PrAutomationConfig = {
+  enabled: false,
+  autoDraft: true,
+  autoLinkIssue: true,
+  branchNamingPattern: "taskpilot/{source}-{id}-{slug}",
+};
+
+export interface PrResult {
+  url: string;
+  number: number;
+  title: string;
+  draft: boolean;
+}

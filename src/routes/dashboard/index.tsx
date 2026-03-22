@@ -9,6 +9,7 @@ import { getSession } from "#/lib/auth.functions";
 import { useBoards } from "#/hooks/useBoardData";
 import { useIntegrationStatus } from "#/hooks/useIntegrationStatus";
 import { PageSkeleton } from "#/components/PageSkeleton";
+import { UpdateBanner } from "#/components/UpdateBanner";
 import { useDebounce } from "#/hooks/useDebounce";
 
 export const Route = createFileRoute("/dashboard/")({
@@ -80,12 +81,13 @@ function DashboardPage() {
 
   return (
     <main className="page-wrap px-4 py-8">
+      <UpdateBanner />
       <div className="mx-auto max-w-4xl">
         <div className="island-shell rounded-2xl p-8">
-          <h1 className="mb-2 text-2xl font-bold text-[var(--sea-ink)]">
+          <h1 className="mb-2 text-2xl font-bold text-(--sea-ink)">
             Trello Boards
           </h1>
-          <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
+          <p className="mb-6 text-sm text-(--sea-ink-soft)">
             Welcome back, {user.name}. Select a Trello board to get started.
           </p>
 
@@ -95,7 +97,7 @@ function DashboardPage() {
                 You haven&apos;t connected Trello yet.{" "}
                 <Link
                   to="/settings"
-                  className="font-semibold text-[var(--lagoon)] hover:underline"
+                  className="font-semibold text-(--lagoon) hover:underline"
                 >
                   Connect it in Settings
                 </Link>{" "}
@@ -109,7 +111,7 @@ function DashboardPage() {
               {["skeleton-1", "skeleton-2", "skeleton-3"].map((id) => (
                 <div
                   key={id}
-                  className="h-14 animate-pulse rounded-xl bg-[var(--foam)]"
+                  className="h-14 animate-pulse rounded-xl bg-(--foam)"
                 />
               ))}
             </div>
@@ -122,7 +124,7 @@ function DashboardPage() {
           )}
 
           {trelloLinked && boards && boards.length === 0 && (
-            <p className="text-sm text-[var(--sea-ink-soft)]">
+            <p className="text-sm text-(--sea-ink-soft)">
               No open boards found. Create a board in Trello first.
             </p>
           )}
@@ -135,10 +137,10 @@ function DashboardPage() {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   placeholder="Search boards…"
-                  className="w-full rounded-xl border border-[var(--shore-line)] bg-white/60 px-4 py-2 text-sm text-[var(--sea-ink)] placeholder-[var(--sea-ink-soft)] outline-none focus:border-[var(--lagoon)] dark:bg-white/5"
+                  className="w-full rounded-xl border border-(--shore-line) bg-white/60 px-4 py-2 text-sm text-(--sea-ink) placeholder-(--sea-ink-soft) outline-none focus:border-(--lagoon) dark:bg-white/5"
                 />
                 {isPending && (
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[var(--sea-ink-soft)]">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-(--sea-ink-soft)">
                     …
                   </span>
                 )}
@@ -149,12 +151,12 @@ function DashboardPage() {
                   {["pending-1", "pending-2", "pending-3"].map((id) => (
                     <div
                       key={id}
-                      className="h-14 animate-pulse rounded-xl bg-[var(--foam)]"
+                      className="h-14 animate-pulse rounded-xl bg-(--foam)"
                     />
                   ))}
                 </div>
               ) : filteredBoards.length === 0 ? (
-                <p className="text-sm text-[var(--sea-ink-soft)]">
+                <p className="text-sm text-(--sea-ink-soft)">
                   No results for &ldquo;{debouncedQ}&rdquo;.
                 </p>
               ) : (
@@ -168,13 +170,13 @@ function DashboardPage() {
                           params: { boardId: board.id },
                         })
                       }
-                      className="flex flex-col items-start rounded-xl border border-[var(--shore-line)] bg-white/60 p-4 text-left transition hover:-translate-y-0.5 hover:border-[var(--lagoon)] hover:shadow-md dark:bg-white/5"
+                      className="flex flex-col items-start rounded-xl border border-(--shore-line) bg-white/60 p-4 text-left transition hover:-translate-y-0.5 hover:border-(--lagoon) hover:shadow-md dark:bg-white/5"
                     >
-                      <span className="text-sm font-semibold text-[var(--sea-ink)]">
+                      <span className="text-sm font-semibold text-(--sea-ink)">
                         {board.name}
                       </span>
                       {board.desc && (
-                        <span className="mt-1 line-clamp-2 text-xs text-[var(--sea-ink-soft)]">
+                        <span className="mt-1 line-clamp-2 text-xs text-(--sea-ink-soft)">
                           {board.desc}
                         </span>
                       )}

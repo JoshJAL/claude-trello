@@ -35,7 +35,7 @@ export function CardItem({ card, onCheckToggle, done, onWorkOnThis, isSessionRun
     >
       <div className="mb-2 flex items-start justify-between gap-2">
         <h3
-          className={`text-sm font-semibold ${done ? "text-green-800 line-through dark:text-green-400" : "text-[var(--sea-ink)]"}`}
+          className={`text-sm font-semibold ${done ? "text-green-800 line-through dark:text-green-400" : "text-(--sea-ink)"}`}
         >
           {done && <span className="mr-1.5 no-underline">&#10003;</span>}
           {card.name}
@@ -45,7 +45,7 @@ export function CardItem({ card, onCheckToggle, done, onWorkOnThis, isSessionRun
             <button
               onClick={() => onWorkOnThis(card)}
               disabled={isSessionRunning}
-              className="shrink-0 rounded-md bg-[var(--lagoon)] px-2 py-1 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-50"
+              className="shrink-0 rounded-md bg-(--lagoon) px-2 py-1 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-50"
               title={isSessionRunning ? "Stop current session first" : "Work on this card only"}
             >
               Work on this
@@ -56,7 +56,7 @@ export function CardItem({ card, onCheckToggle, done, onWorkOnThis, isSessionRun
               className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
                 done
                   ? "bg-green-100 text-green-900 dark:bg-green-900/40 dark:text-green-300"
-                  : "bg-[var(--foam)] text-[var(--sea-ink-soft)]"
+                  : "bg-(--foam) text-(--sea-ink-soft)"
               }`}
             >
               {completedItems}/{totalItems}
@@ -66,14 +66,14 @@ export function CardItem({ card, onCheckToggle, done, onWorkOnThis, isSessionRun
       </div>
 
       {card.desc && !done && (
-        <p className="mb-3 text-xs text-[var(--sea-ink-soft)]">{card.desc}</p>
+        <p className="mb-3 text-xs text-(--sea-ink-soft)">{card.desc}</p>
       )}
 
       {!done &&
         card.checklists.map((checklist) => (
           <div key={checklist.id} className="mt-2">
             {card.checklists.length > 1 && (
-              <p className="mb-1 text-xs font-medium text-[var(--sea-ink-soft)]">
+              <p className="mb-1 text-xs font-medium text-(--sea-ink-soft)">
                 {checklist.name}
               </p>
             )}
@@ -95,7 +95,7 @@ export function CardItem({ card, onCheckToggle, done, onWorkOnThis, isSessionRun
         ))}
 
       {!done && totalItems === 0 && (
-        <p className="text-xs text-[var(--sea-ink-soft)] italic">
+        <p className="text-xs text-(--sea-ink-soft) italic">
           No checklists
         </p>
       )}

@@ -29,7 +29,7 @@ export function ParallelSessionView({
       {/* Progress summary bar */}
       <div className="island-shell rounded-xl p-4">
         <div className="flex items-center justify-between text-sm">
-          <span className="font-medium text-[var(--sea-ink)]">
+          <span className="font-medium text-(--sea-ink)">
             Parallel Agents
           </span>
           <div className="flex gap-3 text-xs">
@@ -48,16 +48,16 @@ export function ParallelSessionView({
                 {failed} failed
               </span>
             )}
-            <span className="text-[var(--sea-ink-soft)]">
+            <span className="text-(--sea-ink-soft)">
               {agentList.length} total
             </span>
           </div>
         </div>
 
         {agentList.length > 0 && (
-          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[var(--shore-line)]">
+          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-(--shore-line)">
             <div
-              className="h-full rounded-full bg-[var(--lagoon)] transition-all"
+              className="h-full rounded-full bg-(--lagoon) transition-all"
               style={{
                 width: `${((completed + failed) / agentList.length) * 100}%`,
               }}
@@ -84,14 +84,14 @@ export function ParallelSessionView({
         <div className="island-shell min-h-[300px] overflow-hidden rounded-xl">
           {selectedCardId ? (
             <div className="flex h-full flex-col">
-              <div className="border-b border-[var(--shore-line)] px-4 py-2">
-                <span className="text-sm font-medium text-[var(--sea-ink)]">
+              <div className="border-b border-(--shore-line) px-4 py-2">
+                <span className="text-sm font-medium text-(--sea-ink)">
                   {agents.get(selectedCardId)?.cardName ?? "Agent"}
                 </span>
               </div>
               <div className="flex-1 overflow-y-auto p-4">
                 {selectedLogs.length === 0 ? (
-                  <p className="text-sm text-[var(--sea-ink-soft)]">
+                  <p className="text-sm text-(--sea-ink-soft)">
                     No output yet...
                   </p>
                 ) : (
@@ -103,8 +103,8 @@ export function ParallelSessionView({
                           log.type === "error"
                             ? "text-red-600 dark:text-red-400"
                             : log.type === "tool"
-                              ? "text-[var(--sea-ink-soft)]"
-                              : "text-[var(--sea-ink)]"
+                              ? "text-(--sea-ink-soft)"
+                              : "text-(--sea-ink)"
                         }
                       >
                         {log.content}
@@ -116,7 +116,7 @@ export function ParallelSessionView({
             </div>
           ) : (
             <div className="flex h-full items-center justify-center p-8">
-              <p className="text-sm text-[var(--sea-ink-soft)]">
+              <p className="text-sm text-(--sea-ink-soft)">
                 Select an agent to view its output
               </p>
             </div>
@@ -127,32 +127,32 @@ export function ParallelSessionView({
       {/* Summary panel */}
       {summary && (
         <div className="island-shell rounded-xl p-4">
-          <h3 className="text-sm font-semibold text-[var(--sea-ink)]">
+          <h3 className="text-sm font-semibold text-(--sea-ink)">
             Session Summary
           </h3>
           <div className="mt-3 grid gap-4 sm:grid-cols-3">
             <div>
-              <p className="text-xs text-[var(--sea-ink-soft)]">
+              <p className="text-xs text-(--sea-ink-soft)">
                 Files Changed
               </p>
-              <p className="text-lg font-semibold text-[var(--sea-ink)]">
+              <p className="text-lg font-semibold text-(--sea-ink)">
                 {summary.diffStats.filesChanged}
               </p>
-              <p className="text-xs text-[var(--sea-ink-soft)]">
+              <p className="text-xs text-(--sea-ink-soft)">
                 +{summary.diffStats.insertions} / -{summary.diffStats.deletions}
               </p>
             </div>
             <div>
-              <p className="text-xs text-[var(--sea-ink-soft)]">Duration</p>
-              <p className="text-lg font-semibold text-[var(--sea-ink)]">
+              <p className="text-xs text-(--sea-ink-soft)">Duration</p>
+              <p className="text-lg font-semibold text-(--sea-ink)">
                 {(summary.totalDurationMs / 1000).toFixed(1)}s
               </p>
             </div>
             <div>
-              <p className="text-xs text-[var(--sea-ink-soft)]">
+              <p className="text-xs text-(--sea-ink-soft)">
                 Integration Branch
               </p>
-              <p className="truncate text-sm font-mono text-[var(--sea-ink)]">
+              <p className="truncate text-sm font-mono text-(--sea-ink)">
                 {summary.integrationBranch}
               </p>
             </div>

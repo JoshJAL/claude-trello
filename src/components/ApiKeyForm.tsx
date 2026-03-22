@@ -121,7 +121,7 @@ export function ApiKeyForm({
         <form onSubmit={handleSave} className="flex flex-col gap-3">
           <label
             htmlFor={`apiKey-${providerId}`}
-            className="text-sm font-medium text-[var(--sea-ink)]"
+            className="text-sm font-medium text-(--sea-ink)"
           >
             {config.label}
           </label>
@@ -131,13 +131,13 @@ export function ApiKeyForm({
             required
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
-            className="rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 dark:bg-white/5"
+            className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
             placeholder={config.placeholder}
           />
           <button
             type="submit"
             disabled={loading}
-            className="rounded-lg bg-[var(--lagoon)] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+            className="rounded-lg bg-(--lagoon) px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
           >
             {loading ? "Saving..." : "Save API Key"}
           </button>
@@ -148,13 +148,13 @@ export function ApiKeyForm({
         <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
       )}
 
-      <p className="text-xs text-[var(--sea-ink-soft)]">
+      <p className="text-xs text-(--sea-ink-soft)">
         Get your key from{" "}
         <a
           href={config.consoleUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[var(--lagoon)] hover:underline"
+          className="text-(--lagoon) hover:underline"
         >
           {config.consoleName}
         </a>

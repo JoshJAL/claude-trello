@@ -6,6 +6,7 @@ import { useParallelSession } from "#/hooks/useParallelSession";
 import { SessionControls } from "#/components/SessionControls";
 import { SessionLog } from "#/components/SessionLog";
 import { ParallelSessionView } from "#/components/ParallelSessionView";
+import { PrResultBanner } from "#/components/PrResultBanner";
 import { PageSkeleton } from "#/components/PageSkeleton";
 import type { GitLabIssueWithTasks } from "#/hooks/useGitLabIssues";
 
@@ -38,7 +39,7 @@ function IssueItem({
     <div className="island-shell rounded-xl p-4">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-[var(--sea-ink)]">
+          <h3 className="text-sm font-semibold text-(--sea-ink)">
             #{issue.iid} {issue.title}
           </h3>
           {issue.labels.length > 0 && (
@@ -46,7 +47,7 @@ function IssueItem({
               {issue.labels.map((label) => (
                 <span
                   key={label}
-                  className="rounded-full bg-[var(--foam)] px-2 py-0.5 text-xs text-[var(--sea-ink-soft)]"
+                  className="rounded-full bg-(--foam) px-2 py-0.5 text-xs text-(--sea-ink-soft)"
                 >
                   {label}
                 </span>
@@ -59,14 +60,14 @@ function IssueItem({
             <button
               onClick={() => onWorkOnThis(issue)}
               disabled={isSessionRunning}
-              className="shrink-0 rounded-md bg-[var(--lagoon)] px-2 py-1 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-50"
+              className="shrink-0 rounded-md bg-(--lagoon) px-2 py-1 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-50"
               title={isSessionRunning ? "Stop current session first" : "Work on this issue only"}
             >
               Work on this
             </button>
           )}
           {totalTasks > 0 && (
-            <span className="shrink-0 text-xs text-[var(--sea-ink-soft)]">
+            <span className="shrink-0 text-xs text-(--sea-ink-soft)">
               {doneTasks}/{totalTasks} tasks
             </span>
           )}
@@ -77,13 +78,13 @@ function IssueItem({
           {issue.tasks.map((task) => (
             <div
               key={task.index}
-              className="flex items-center gap-2 text-sm text-[var(--sea-ink-soft)]"
+              className="flex items-center gap-2 text-sm text-(--sea-ink-soft)"
             >
               <span
                 className={
                   task.checked
                     ? "text-green-600 dark:text-green-400"
-                    : "text-[var(--shore-line)]"
+                    : "text-(--shore-line)"
                 }
               >
                 {task.checked ? "\u2713" : "\u25CB"}
@@ -162,16 +163,16 @@ function GitLabProjectPage() {
         <div className="mb-4">
           <Link
             to="/dashboard/gitlab"
-            className="text-sm text-[var(--lagoon)] hover:underline"
+            className="text-sm text-(--lagoon) hover:underline"
           >
             &larr; All projects
           </Link>
         </div>
 
-        <h1 className="mb-2 text-2xl font-bold text-[var(--sea-ink)]">
+        <h1 className="mb-2 text-2xl font-bold text-(--sea-ink)">
           Project #{projectId}
         </h1>
-        <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
+        <p className="mb-6 text-sm text-(--sea-ink-soft)">
           {activeIssues.length} open issue{activeIssues.length === 1 ? "" : "s"}{" "}
           with task lists
         </p>
@@ -239,6 +240,10 @@ function GitLabProjectPage() {
           </div>
         )}
 
+        {sequential.prResult && (
+          <PrResultBanner prResult={sequential.prResult} />
+        )}
+
         {sequential.isRunning || sequential.logs.length > 0 ? (
           <SessionLog
             logs={sequential.logs}
@@ -263,7 +268,7 @@ function GitLabProjectPage() {
             {["skeleton-1", "skeleton-2", "skeleton-3"].map((id) => (
               <div
                 key={id}
-                className="h-20 animate-pulse rounded-xl bg-[var(--foam)]"
+                className="h-20 animate-pulse rounded-xl bg-(--foam)"
               />
             ))}
           </div>
@@ -277,7 +282,7 @@ function GitLabProjectPage() {
 
         {activeIssues.length === 0 && !isLoading && (
           <div className="island-shell rounded-2xl p-8 text-center">
-            <p className="text-sm text-[var(--sea-ink-soft)]">
+            <p className="text-sm text-(--sea-ink-soft)">
               No open issues found in this project.
             </p>
           </div>

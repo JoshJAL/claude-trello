@@ -51,7 +51,7 @@ export function BoardPanel({
 
   if (!data || data.cards.length === 0) {
     return (
-      <div className="island-shell rounded-xl p-6 text-center text-sm text-[var(--sea-ink-soft)]">
+      <div className="island-shell rounded-xl p-6 text-center text-sm text-(--sea-ink-soft)">
         No cards found on &ldquo;{boardName}&rdquo;.
       </div>
     );
@@ -71,7 +71,7 @@ export function BoardPanel({
     <div className="space-y-6">
       {activeCards.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-[var(--sea-ink)]">
+          <h3 className="text-sm font-semibold text-(--sea-ink)">
             Active ({activeCards.length})
           </h3>
           {activeCards.map((card) => (

@@ -18,8 +18,8 @@ export function OnboardingSteps({ currentStep }: OnboardingStepsProps) {
                 step.number < currentStep
                   ? "bg-green-100 text-green-900 dark:bg-green-900/40 dark:text-green-300"
                   : step.number === currentStep
-                    ? "bg-[var(--lagoon)] text-white"
-                    : "bg-[var(--foam)] text-[var(--sea-ink-soft)]"
+                    ? "bg-(--lagoon) text-white"
+                    : "bg-(--foam) text-(--sea-ink-soft)"
               }`}
             >
               {step.number < currentStep ? "\u2713" : step.number}
@@ -27,15 +27,15 @@ export function OnboardingSteps({ currentStep }: OnboardingStepsProps) {
             <span
               className={`text-sm font-medium ${
                 step.number === currentStep
-                  ? "text-[var(--sea-ink)]"
-                  : "text-[var(--sea-ink-soft)]"
+                  ? "text-(--sea-ink)"
+                  : "text-(--sea-ink-soft)"
               }`}
             >
               {step.label}
             </span>
           </div>
           {i < steps.length - 1 && (
-            <div className="h-px w-12 bg-[var(--shore-line)]" />
+            <div className="h-px w-12 bg-(--shore-line)" />
           )}
         </div>
       ))}

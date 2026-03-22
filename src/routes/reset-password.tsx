@@ -89,10 +89,10 @@ function ResetPasswordPage() {
   return (
     <main className="page-wrap flex min-h-[80vh] items-center justify-center px-4">
       <div className="island-shell w-full max-w-md rounded-2xl p-8">
-        <h1 className="mb-2 text-center text-2xl font-bold text-[var(--sea-ink)]">
+        <h1 className="mb-2 text-center text-2xl font-bold text-(--sea-ink)">
           Reset password
         </h1>
-        <p className="mb-6 text-center text-sm text-[var(--sea-ink-soft)]">
+        <p className="mb-6 text-center text-sm text-(--sea-ink-soft)">
           Enter your new password below.
         </p>
 
@@ -107,7 +107,7 @@ function ResetPasswordPage() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="password"
-                className="text-sm font-medium text-[var(--sea-ink)]"
+                className="text-sm font-medium text-(--sea-ink)"
               >
                 New password
               </label>
@@ -120,7 +120,7 @@ function ResetPasswordPage() {
                 onChange={(e) =>
                   dispatch({ type: "SET_FIELD", field: "password", value: e.target.value })
                 }
-                className="rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 dark:bg-white/5"
+                className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
                 placeholder="Min. 8 characters"
               />
             </div>
@@ -128,7 +128,7 @@ function ResetPasswordPage() {
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="confirm"
-                className="text-sm font-medium text-[var(--sea-ink)]"
+                className="text-sm font-medium text-(--sea-ink)"
               >
                 Confirm password
               </label>
@@ -141,7 +141,7 @@ function ResetPasswordPage() {
                 onChange={(e) =>
                   dispatch({ type: "SET_FIELD", field: "confirm", value: e.target.value })
                 }
-                className="rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 dark:bg-white/5"
+                className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
                 placeholder="Repeat password"
               />
             </div>
@@ -153,7 +153,7 @@ function ResetPasswordPage() {
             <button
               type="submit"
               disabled={state.loading}
-              className="mt-2 rounded-lg bg-[var(--lagoon)] px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+              className="mt-2 rounded-lg bg-(--lagoon) px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
             >
               {state.loading ? "Resetting..." : "Reset password"}
             </button>

@@ -803,7 +803,9 @@ pnpm start
 
 ## Implementation Phases
 
-All phases are complete. See **PROGRESS.md** for detailed phase history and sub-phase checklists.
+Phases 1–14 are complete. See **PROGRESS.md** for detailed phase history and sub-phase checklists.
+
+Phases 15–20 are planned below with full architecture details.
 
 ---
 
@@ -850,6 +852,792 @@ GITLAB_CLIENT_SECRET=
 | Close method | `PATCH { state: "closed" }` | `PUT { state_event: "close" }` |
 | PR/MR | Pull Request | Merge Request |
 | API base | `api.github.com` | `gitlab.com/api/v4` |
+
+---
+
+## Phase 15 — Session History & Persistence
+
+Sessions are currently fire-and-forget — once the SSE stream ends, all context is lost. This phase adds a persistent record of every agent session so users can review what happened, see costs, and resume or retry failed runs.
+
+### Database Schema
+
+Two new tables in `src/lib/db/schema.ts`:
+
+```typescript
+export const agentSessions = sqliteTable("agent_session", {
+  id: text("id").primaryKey(), // nanoid
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  // Task source context
+  source: text("source").notNull(), // "trello" | "github" | "gitlab"
+  sourceIdentifier: text("sourceIdentifier").notNull(), // boardId, "owner/repo", or projectId
+  sourceName: text("sourceName").notNull(), // human-readable board/repo name
+  // AI provider
+  providerId: text("providerId").notNull(), // "claude" | "openai" | "groq"
+  // Session config
+  mode: text("mode").notNull(), // "sequential" | "parallel"
+  maxConcurrency: integer("maxConcurrency"), // null for sequential
+  initialMessage: text("initialMessage"), // user's --message / chat input
+  // Status
+  status: text("status").notNull(), // "running" | "completed" | "failed" | "cancelled"
+  errorMessage: text("errorMessage"), // populated on failure
+  // Cost tracking (raw values from provider — see Phase 16 for analytics)
+  inputTokens: integer("inputTokens").notNull().default(0),
+  outputTokens: integer("outputTokens").notNull().default(0),
+  totalCostCents: integer("totalCostCents").notNull().default(0), // USD cents to avoid floats
+  // Timestamps
+  startedAt: integer("startedAt", { mode: "timestamp" }).notNull(),
+  completedAt: integer("completedAt", { mode: "timestamp" }),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+});
+
+export const sessionEvents = sqliteTable("session_event", {
+  id: text("id").primaryKey(), // nanoid
+  sessionId: text("sessionId")
+    .notNull()
+    .references(() => agentSessions.id, { onDelete: "cascade" }),
+  // Event data
+  type: text("type").notNull(), // "message" | "tool_call" | "tool_result" | "task_completed" | "error" | "agent_started" | "agent_finished" | "merge_result"
+  agentIndex: integer("agentIndex"), // for parallel sessions — which agent produced this event
+  cardId: text("cardId"), // task source card/issue ID this event relates to
+  content: text("content").notNull(), // JSON-serialized event payload
+  // Ordering
+  sequence: integer("sequence").notNull(), // monotonically increasing per session
+  timestamp: integer("timestamp", { mode: "timestamp" }).notNull(),
+});
+```
+
+**Design decisions:**
+- `totalCostCents` is stored as integer cents to avoid floating-point rounding issues
+- `sessionEvents` stores all SSE events in order, enabling full log replay without streaming from the provider again
+- `content` is JSON text — structure varies by `type` but always includes a human-readable `summary` field for list views
+- `sequence` enables deterministic replay ordering even if timestamps collide
+
+### Session Lifecycle
+
+The session route (`src/routes/api/session.ts`) is updated to:
+
+1. **On start**: Insert an `agentSessions` row with `status: "running"`, return the `sessionId` in the SSE stream header
+2. **During streaming**: Each SSE event is written to `sessionEvents` in a fire-and-forget batch (buffered, flushed every 500ms or 20 events)
+3. **On completion**: Update `agentSessions` with `status: "completed"`, `completedAt`, final token counts and cost
+4. **On error**: Update `status: "failed"`, populate `errorMessage`
+5. **On client disconnect**: Update `status: "cancelled"` (the existing abort signal handling already detects this)
+
+For parallel sessions, each `ParallelEvent` is stored as a `sessionEvent` with `agentIndex` set to the worker index.
+
+### API Routes
+
+```
+GET  /api/sessions                    → list user's sessions (paginated, newest first)
+GET  /api/sessions/:sessionId         → session detail (metadata + summary stats)
+GET  /api/sessions/:sessionId/events  → paginated event log (supports ?offset=&limit=)
+POST /api/sessions/:sessionId/retry   → re-run a failed/cancelled session with same config
+DELETE /api/sessions/:sessionId       → soft-delete (or hard-delete — user choice)
+```
+
+All routes are authenticated and scoped to the requesting user's sessions only.
+
+**Query parameters for list endpoint:**
+- `?source=trello|github|gitlab` — filter by task source
+- `?status=running|completed|failed|cancelled` — filter by status
+- `?limit=20&offset=0` — pagination
+- `?sort=newest|oldest|costliest` — sort order
+
+### Types (`src/lib/types.ts`)
+
+```typescript
+export interface AgentSessionSummary {
+  id: string;
+  source: TaskSource;
+  sourceIdentifier: string;
+  sourceName: string;
+  providerId: AiProviderId;
+  mode: "sequential" | "parallel";
+  status: "running" | "completed" | "failed" | "cancelled";
+  inputTokens: number;
+  outputTokens: number;
+  totalCostCents: number;
+  tasksCompleted: number; // count of "task_completed" events
+  tasksTotal: number; // total tasks at session start
+  startedAt: Date;
+  completedAt: Date | null;
+  durationMs: number | null; // computed: completedAt - startedAt
+}
+
+export interface SessionEvent {
+  id: string;
+  type: string;
+  agentIndex: number | null;
+  cardId: string | null;
+  content: Record<string, unknown>;
+  sequence: number;
+  timestamp: Date;
+}
+```
+
+### Web UI
+
+New routes:
+- `/history` — session list page with filters and search
+- `/history/$sessionId` — session detail page with log replay
+
+**`/history` page:**
+- Table view using TanStack Table: columns for source icon, board/repo name, provider, mode, status badge, tasks completed (e.g. "4/6"), cost, duration, date
+- Filter bar: source dropdown, status dropdown, date range picker
+- Click a row to navigate to detail view
+- Empty state: "No sessions yet — start one from the dashboard"
+
+**`/history/$sessionId` page:**
+- Header: session metadata (source, provider, mode, status, cost, duration)
+- Two tabs: "Log" and "Tasks"
+  - **Log tab**: Scrollable event log (same rendering as `SessionLog.tsx` but reading from DB instead of SSE). For parallel sessions, filterable by agent. Auto-scrolls to bottom, with "Jump to error" button if status is failed
+  - **Tasks tab**: List of cards/issues with completion status at time of session end
+- Action buttons: "Retry" (for failed/cancelled), "Delete"
+- Sidebar link added under existing nav
+
+**Query keys:**
+- `['sessions']` — session list
+- `['sessions', sessionId]` — session detail
+- `['sessions', sessionId, 'events']` — event log
+
+### CLI
+
+New `history` command:
+- `taskpilot-cli history` — list recent sessions (last 10)
+- `taskpilot-cli history --all` — list all sessions
+- `taskpilot-cli history <sessionId>` — show session detail with log
+- `taskpilot-cli history <sessionId> --events` — stream full event log to stdout
+
+### Sub-phases
+
+- **15a: Schema & types** — `agentSessions` and `sessionEvents` tables, migration, types
+- **15b: Session write path** — Update session route to create/update `agentSessions`, buffer and flush `sessionEvents` during streaming
+- **15c: API routes** — CRUD endpoints for sessions and events with pagination and filters
+- **15d: History list UI** — `/history` route with TanStack Table, filters, sidebar link
+- **15e: Session detail UI** — `/history/$sessionId` route with log replay and retry action
+- **15f: CLI history command** — `history` command with list and detail views
+
+---
+
+## Phase 16 — Cost Tracking & Analytics
+
+Users supply their own API keys and need visibility into what they're spending. This phase builds on the `agentSessions` table from Phase 15 to provide cost analytics.
+
+### Cost Calculation
+
+Each provider reports token usage differently. Normalize to a common format in `src/lib/providers/cost.ts`:
+
+```typescript
+export interface TokenUsage {
+  inputTokens: number;
+  outputTokens: number;
+}
+
+export interface CostBreakdown {
+  inputCostCents: number;
+  outputCostCents: number;
+  totalCostCents: number;
+}
+
+// Price per million tokens (in cents) — update when providers change pricing
+const PRICING: Record<AiProviderId, { inputCentsPerMillion: number; outputCentsPerMillion: number }> = {
+  claude: { inputCentsPerMillion: 300, outputCentsPerMillion: 1500 },   // Claude Sonnet 4
+  openai: { inputCentsPerMillion: 250, outputCentsPerMillion: 1000 },   // GPT-4o
+  groq:   { inputCentsPerMillion: 59,  outputCentsPerMillion: 79 },     // Llama 3.3 70B
+};
+
+export function calculateCost(providerId: AiProviderId, usage: TokenUsage): CostBreakdown {
+  const prices = PRICING[providerId];
+  const inputCostCents = Math.ceil((usage.inputTokens / 1_000_000) * prices.inputCentsPerMillion);
+  const outputCostCents = Math.ceil((usage.outputTokens / 1_000_000) * prices.outputCentsPerMillion);
+  return {
+    inputCostCents,
+    outputCostCents,
+    totalCostCents: inputCostCents + outputCostCents,
+  };
+}
+```
+
+**Token extraction per provider:**
+- **Claude**: `usage.input_tokens` / `usage.output_tokens` from SDK response
+- **OpenAI**: `response.usage.prompt_tokens` / `response.usage.completion_tokens`
+- **Groq**: `response.usage.prompt_tokens` / `response.usage.completion_tokens` (same shape as OpenAI)
+
+The `ProviderAdapter` interface gets a new method: `extractUsage(raw: unknown): TokenUsage`. Each adapter implements it to pull tokens from its native response format.
+
+### Budget System
+
+Per-user optional spending limits stored in `user_settings`:
+
+```typescript
+// Add to user_settings table
+monthlyBudgetCents: integer("monthlyBudgetCents"), // null = no limit
+budgetAlertThreshold: integer("budgetAlertThreshold").default(80), // percentage (0-100)
+```
+
+**Enforcement:**
+- Before launching a session, sum `totalCostCents` for the current calendar month from `agentSessions`
+- If sum >= `monthlyBudgetCents`, reject with a clear error: "Monthly budget of $X.XX reached. Update your budget in Settings."
+- If sum >= `budgetAlertThreshold`% of budget, include a warning in the session start response (shown as a banner in UI)
+- Budget is advisory for the current session — once started, a session runs to completion (the per-agent $2 cap from Phase 11 still applies)
+
+### API Routes
+
+```
+GET /api/analytics/summary    → current month: total spend, session count, tasks completed, by provider
+GET /api/analytics/daily      → daily cost breakdown for last 30 days (for chart)
+GET /api/analytics/providers  → cost comparison across providers (for pie chart)
+```
+
+All routes aggregate from `agentSessions` using Drizzle's `sql` template for efficient GROUP BY queries. Scoped to the authenticated user.
+
+### Web UI
+
+New route: `/analytics` — accessible from sidebar under a "Usage" section.
+
+**Layout:**
+- **Top row**: Summary cards — "This Month" spend (large number), session count, tasks completed, avg cost per session
+- **Chart area**: Line/bar chart showing daily spend over last 30 days (use a lightweight chart lib — `recharts` or CSS-only bar chart to avoid heavy deps)
+- **Provider breakdown**: Horizontal stacked bar or pie chart showing spend by provider
+- **Budget section**: Current budget setting with progress bar, edit button to change limit and alert threshold
+- **Session cost table**: Top 10 costliest sessions with links to session detail (Phase 15)
+
+### Settings Integration
+
+Add a "Budget" section to the Settings page:
+- Monthly budget input (dollar amount, stored as cents)
+- Alert threshold slider (default 80%)
+- Current month progress bar: `$spent / $budget`
+- "Remove budget" button to clear the limit
+
+### CLI
+
+- `taskpilot-cli usage` — show current month summary (total spend, sessions, tasks)
+- `taskpilot-cli usage --month 2026-02` — show specific month
+- After each `run` command, print a one-line cost summary: "Session cost: $0.42 (1,234 input + 567 output tokens)"
+
+### Sub-phases
+
+- **16a: Cost calculation** — `src/lib/providers/cost.ts` with pricing table, `calculateCost()`, `extractUsage()` on each adapter
+- **16b: Token tracking** — Update session write path to accumulate tokens from each provider response and write to `agentSessions`
+- **16c: Budget schema & enforcement** — Add budget columns to `user_settings`, pre-session budget check, warning banner
+- **16d: Analytics API routes** — Summary, daily, and provider breakdown endpoints
+- **16e: Analytics UI** — `/analytics` route with summary cards, charts, budget management
+- **16f: Settings budget section** — Budget input and threshold on Settings page
+- **16g: CLI usage command** — `usage` command, post-session cost summary line
+
+---
+
+## Phase 17 — Smart Task Ordering & Dependencies
+
+Currently agents process cards/issues in list order with no awareness of dependencies. This phase parses dependency relationships and topologically sorts tasks for optimal execution order.
+
+### Dependency Detection
+
+Dependencies are expressed differently per task source. Parse all of them in `src/lib/tasks/dependencies.ts`:
+
+**Trello:**
+- Card labels: `blocked-by:CARD_SHORT_ID` or `depends-on:CARD_SHORT_ID`
+- Card description: `Depends on: #123` (short ID reference)
+- Checklist item names containing `[after CARD_NAME]` or `[blocked by CARD_NAME]`
+
+**GitHub:**
+- Issue body: `Depends on #123`, `Blocked by #456`, `Requires #789`
+- Issue labels: `blocked`, `depends-on-<number>`
+- Tasklist syntax: `- [ ] #123` in a parent issue references a dependency
+
+**GitLab:**
+- Issue description: `Depends on #123`, `Blocked by #456`
+- Issue links API: `GET /projects/:id/issues/:iid/links` returns related issues with `link_type: "is_blocked_by"`
+- Labels: `blocked`, `depends-on-<iid>`
+
+### Dependency Graph
+
+```typescript
+// src/lib/tasks/dependencies.ts
+
+export interface TaskDependency {
+  taskId: string;        // the task that has a dependency
+  dependsOnId: string;   // the task it depends on
+  source: "label" | "description" | "link" | "checklist"; // how it was detected
+}
+
+export interface DependencyGraph {
+  tasks: Map<string, TaskCard>;
+  edges: TaskDependency[];        // directed: dependsOnId → taskId
+  executionOrder: string[];        // topologically sorted task IDs
+  blocked: Map<string, string[]>;  // taskId → list of blocking taskIds
+  cycles: string[][];              // detected cycles (error case)
+}
+
+export function buildDependencyGraph(cards: TaskCard[], deps: TaskDependency[]): DependencyGraph;
+export function parseDependencies(cards: TaskCard[], source: TaskSource): TaskDependency[];
+```
+
+**Topological sort** uses Kahn's algorithm. If cycles are detected, they are reported to the user and the cyclic tasks are placed at the end of the execution order with a warning.
+
+### Integration with Session Launch
+
+The session route is updated:
+1. After fetching cards/issues, call `parseDependencies()` to build the graph
+2. Reorder the task list according to `executionOrder`
+3. Include dependency context in the agent prompt: "Task X must be completed before Task Y because..."
+4. For parallel sessions: tasks with unmet dependencies are held in a waiting queue. When a dependency completes, the blocked task is released to the worker pool
+
+### Parallel Orchestrator Changes (`src/lib/parallel.ts`)
+
+The existing `launchParallelSession()` processes cards from a simple queue. Update to:
+
+```typescript
+interface ParallelTask {
+  card: TaskCard;
+  dependencies: string[]; // IDs of cards that must complete first
+  status: "waiting" | "ready" | "running" | "completed" | "failed";
+}
+```
+
+- On start: mark tasks with no dependencies as `ready`, others as `waiting`
+- Worker pool only picks from `ready` tasks
+- When a task completes: scan `waiting` tasks, move any whose dependencies are all `completed` to `ready`
+- If a task fails: mark all downstream dependents as `blocked` (new status) and emit a `ParallelEvent` explaining which tasks were skipped and why
+- New event type: `dependency_resolved` — emitted when a blocked task becomes ready
+
+### Web UI Updates
+
+**Board/session view:**
+- Show dependency arrows or indicators on the card list (e.g., "Blocked by: Card A, Card B" chip)
+- Grey out blocked cards with a lock icon
+- When a dependency resolves during a parallel session, animate the card becoming unblocked
+
+**Dependency visualization** (optional, sub-phase):
+- Simple DAG view showing task ordering with arrows between dependent tasks
+- Highlight the critical path (longest chain of dependencies)
+
+### CLI Updates
+
+- During `run`, print dependency info: "Task 'Add auth' blocked by: 'Set up database' — waiting..."
+- When a task unblocks: "Task 'Add auth' is now ready (dependency 'Set up database' completed)"
+- `--no-deps` flag to skip dependency detection and process in original order
+
+### Sub-phases
+
+- **17a: Dependency parser** — `src/lib/tasks/dependencies.ts` with parsers for Trello, GitHub, GitLab dependency syntax
+- **17b: Graph builder** — `buildDependencyGraph()` with topological sort (Kahn's algorithm), cycle detection
+- **17c: Sequential integration** — Reorder task list in session prompt based on dependency graph
+- **17d: Parallel integration** — Update orchestrator with dependency-aware task queue (waiting/ready/running states)
+- **17e: Prompt updates** — Include dependency context in agent system/user prompts
+- **17f: UI dependency indicators** — Show blocked/ready status, dependency chips on cards
+- **17g: CLI dependency output** — Dependency info during `run`, `--no-deps` flag
+
+---
+
+## Phase 18 — PR/MR Automation
+
+The MCP tools for `create_pull_request` and `create_merge_request` already exist but require the agent to decide when and how to use them. This phase adds automated PR/MR creation as a first-class feature with configurable behavior.
+
+### Configuration
+
+New user-level settings (stored in `user_settings` or a new `automation_settings` table):
+
+```typescript
+export interface PrAutomationConfig {
+  enabled: boolean;                          // master toggle
+  createPerCard: boolean;                    // one PR per card/issue (parallel mode) vs one PR for entire session
+  autoDraft: boolean;                        // create as draft PR (default: true)
+  autoRequestReview: boolean;                // request review from configured reviewers
+  reviewers: string[];                       // GitHub usernames or GitLab user IDs
+  branchNamingPattern: string;               // e.g. "taskpilot/{source}-{id}-{slug}"
+  includeSessionSummary: boolean;            // add session cost/token summary to PR body
+  autoLinkIssue: boolean;                    // add "Closes #123" / "Fixes #123" to PR body
+}
+```
+
+Default config creates draft PRs with auto-linked issues, one per card in parallel mode.
+
+### PR/MR Generation Flow
+
+After a session (or per-card agent in parallel mode) completes successfully:
+
+1. **Diff detection**: Check if the agent made any file changes (`git diff --stat` against the base branch)
+2. **Skip if no changes**: If the diff is empty, skip PR creation and log "No code changes — skipping PR"
+3. **Branch creation**: Create a branch following the naming pattern (already done in parallel mode via worktrees)
+4. **Commit verification**: Ensure all changes are committed (the agent should have committed, but verify)
+5. **Push**: Push the branch to the remote
+6. **PR/MR creation**: Call the appropriate API:
+   - **GitHub**: `POST /repos/{owner}/{repo}/pulls` with title, body, head branch, base branch, draft flag
+   - **GitLab**: `POST /projects/{id}/merge_requests` with title, description, source branch, target branch
+7. **Review request**: If configured, request reviews from the specified users
+8. **Issue linking**: If `autoLinkIssue` is true, prepend "Closes #N" to the PR body
+9. **Session event**: Write a `pr_created` event to `sessionEvents` with the PR URL
+
+### PR Body Template (`src/lib/prompts.ts`)
+
+```markdown
+## Summary
+
+{agent-generated summary of changes}
+
+## Task Source
+
+- **Source**: {Trello/GitHub/GitLab}
+- **Card/Issue**: [{title}]({url})
+- **Checklist items completed**: {count}/{total}
+
+## Changes
+
+{git diff --stat output}
+
+## Session Details
+
+- **Provider**: {provider name}
+- **Duration**: {duration}
+- **Cost**: ${cost}
+- **Tokens**: {input} input / {output} output
+
+---
+
+*Created by [TaskPilot](https://github.com/JoshJAL/taskpilot)*
+```
+
+### Trello Handling
+
+Trello doesn't have native PRs, but the automation can:
+- Attach the PR URL to the Trello card via `POST /cards/{id}/attachments`
+- Add a comment to the card with the PR link
+- This requires the Trello token and the GitHub/GitLab token — both must be available
+
+### API Routes
+
+```
+GET  /api/settings/automation       → get current PR automation config
+PUT  /api/settings/automation       → update PR automation config
+POST /api/sessions/:sessionId/pr    → manually trigger PR creation for a completed session
+```
+
+### Web UI
+
+**Settings page** — new "PR Automation" section:
+- Enable/disable toggle
+- "One PR per card" vs "One PR per session" radio
+- Draft PR checkbox
+- Branch naming pattern input with preview
+- Reviewer usernames input (tag-style, comma separated)
+- "Include session summary" checkbox
+- "Auto-link issues" checkbox
+
+**Session detail page** (Phase 15):
+- Show PR link if one was created, with status badge (open/merged/closed)
+- "Create PR" button for completed sessions that don't have one yet
+
+**Board session view:**
+- After session completes, show a banner: "PR created: [#123 title](url)" with link
+
+### CLI
+
+- `--pr` flag on `run` command: create a PR after session completes (uses stored automation config, or defaults)
+- `--no-pr` flag: skip PR creation even if automation is enabled
+- `--reviewers user1,user2` flag: override configured reviewers for this run
+- After PR creation, print: "Pull request created: https://github.com/owner/repo/pull/123"
+
+### Sub-phases
+
+- **18a: Automation config** — Schema, API routes, types for PR automation settings
+- **18b: PR generation logic** — `src/lib/pr.ts` with diff detection, branch push, PR/MR creation via GitHub/GitLab clients
+- **18c: PR body template** — Template builder with session metadata, diff stats, issue links
+- **18d: Session integration** — Hook PR creation into session completion flow (both sequential and parallel)
+- **18e: Trello PR attachment** — Attach PR URL to Trello cards when source is Trello
+- **18f: Settings UI** — PR automation section on Settings page
+- **18g: Session UI integration** — PR link display on session detail and board views
+- **18h: CLI PR flags** — `--pr`, `--no-pr`, `--reviewers` flags on `run` command
+
+---
+
+## Phase 19 — Testing & CI
+
+The project has zero tests. This phase adds a comprehensive test suite and CI pipeline.
+
+### Test Stack
+
+| Tool | Purpose |
+|------|---------|
+| **Vitest** | Test runner and assertions (fast, native ESM, TypeScript) |
+| **Testing Library** | React component tests (`@testing-library/react`) |
+| **MSW** (Mock Service Worker) | API mocking for integration tests |
+| **Playwright** | E2E browser tests for critical user flows |
+
+### Test Structure
+
+```
+tests/
+├── unit/
+│   ├── lib/
+│   │   ├── encrypt.test.ts           ← AES-256-GCM encrypt/decrypt round-trip
+│   │   ├── cost.test.ts              ← Cost calculation for all providers
+│   │   ├── dependencies.test.ts      ← Dependency parser + topological sort
+│   │   ├── parser.test.ts            ← Markdown task list parser
+│   │   └── git.test.ts               ← Git helper functions
+│   ├── providers/
+│   │   ├── factory.test.ts           ← Provider factory returns correct adapter
+│   │   └── cost.test.ts              ← Token extraction per provider
+│   └── tasks/
+│       ├── adapters.test.ts          ← Trello → TaskCard adapter
+│       └── types.test.ts             ← Type guard functions
+├── integration/
+│   ├── api/
+│   │   ├── auth.test.ts              ← Sign-up, sign-in, session validation
+│   │   ├── settings.test.ts          ← API key save/delete, status endpoint
+│   │   ├── sessions.test.ts          ← Session CRUD, pagination, filters
+│   │   └── analytics.test.ts         ← Cost aggregation queries
+│   ├── trello/
+│   │   ├── client.test.ts            ← Trello API client (MSW-mocked)
+│   │   └── tools.test.ts             ← MCP tool execution
+│   ├── github/
+│   │   ├── client.test.ts            ← GitHub API client (MSW-mocked)
+│   │   └── tools.test.ts             ← MCP tool execution
+│   └── gitlab/
+│       ├── client.test.ts            ← GitLab API client (MSW-mocked)
+│       └── tools.test.ts             ← MCP tool execution
+├── components/
+│   ├── AuthForm.test.tsx             ← Form validation, submit handlers
+│   ├── ApiKeyForm.test.tsx           ← Key save/delete, status display
+│   ├── BoardPanel.test.tsx           ← Card rendering, checklist items
+│   ├── SessionLog.test.tsx           ← Event rendering, scroll behavior
+│   └── Sidebar.test.tsx              ← Navigation, collapse, active route
+├── e2e/
+│   ├── auth.spec.ts                  ← Register → sign in → sign out
+│   ├── onboarding.spec.ts           ← Full onboarding flow (mocked OAuth)
+│   ├── session.spec.ts              ← Start session → view log → check completion
+│   └── settings.spec.ts             ← Update API key, connect/disconnect sources
+└── setup/
+    ├── vitest.setup.ts               ← Global test setup
+    ├── msw-handlers.ts               ← MSW request handlers for all external APIs
+    └── test-utils.tsx                ← Custom render with providers (QueryClient, Router)
+```
+
+### Vitest Configuration
+
+```typescript
+// vitest.config.ts
+import { defineConfig } from "vitest/config";
+import tsconfigPaths from "vite-tsconfig-paths";
+
+export default defineConfig({
+  plugins: [tsconfigPaths()],
+  test: {
+    globals: true,
+    environment: "jsdom", // for component tests
+    setupFiles: ["./tests/setup/vitest.setup.ts"],
+    include: ["tests/**/*.test.{ts,tsx}"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "lcov"],
+      include: ["src/lib/**", "src/components/**"],
+      exclude: ["src/lib/db/migrations/**"],
+    },
+  },
+});
+```
+
+### MSW Handlers
+
+Mock all external API calls (Trello, GitHub, GitLab, OpenAI, Groq) so tests never hit real services. The handlers return realistic fixture data matching the actual API shapes.
+
+### CI Pipeline (GitHub Actions)
+
+```yaml
+# .github/workflows/ci.yml
+name: CI
+on: [push, pull_request]
+jobs:
+  lint-and-type:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - run: pnpm test:coverage
+      - uses: codecov/codecov-action@v4  # optional
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: npx playwright install --with-deps
+      - run: pnpm test:e2e
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+```
+
+### Package.json Scripts
+
+```json
+{
+  "test": "vitest run",
+  "test:watch": "vitest",
+  "test:coverage": "vitest run --coverage",
+  "test:e2e": "playwright test",
+  "test:e2e:ui": "playwright test --ui"
+}
+```
+
+### Sub-phases
+
+- **19a: Test infrastructure** — Install Vitest, Testing Library, MSW, Playwright. Create config files, setup, and test utils
+- **19b: Unit tests** — Tests for pure functions: encrypt, cost, parser, dependencies, git helpers, provider factory
+- **19c: Integration tests** — API route tests with MSW-mocked external services (auth, settings, sessions, analytics)
+- **19d: Component tests** — React component tests with Testing Library (AuthForm, ApiKeyForm, BoardPanel, SessionLog, Sidebar)
+- **19e: E2E tests** — Playwright tests for critical flows (auth, onboarding, session, settings)
+- **19f: CI pipeline** — GitHub Actions workflow for lint, typecheck, test, build on push/PR
+- **19g: Coverage & badges** — Coverage reporting, README badge, minimum coverage threshold (aim for 70%+)
+
+---
+
+## Phase 20 — Webhooks & Real-Time Updates
+
+Replace polling with webhooks for task source updates. Add WebSocket support for real-time UI updates during and between sessions.
+
+### Webhook Receivers
+
+Each task source pushes updates to registered webhook endpoints:
+
+```
+POST /api/webhooks/trello     ← Trello model webhooks (card updates, checklist changes)
+POST /api/webhooks/github     ← GitHub webhook events (issues, pull_request)
+POST /api/webhooks/gitlab     ← GitLab webhook events (issue, merge_request)
+```
+
+**Trello webhooks:**
+- Register via `POST /tokens/{token}/webhooks` with `callbackURL` and `idModel` (board ID)
+- Events: `updateCard`, `updateCheckItemStateOnCard`, `createCard`, `deleteCard`
+- Verify with HEAD request handshake (Trello sends HEAD to callback URL on registration)
+- Validate webhook signature using HMAC-SHA1 of the request body + callback URL with the app secret
+
+**GitHub webhooks:**
+- Register via Settings or API: `POST /repos/{owner}/{repo}/hooks`
+- Events: `issues` (opened, closed, edited), `pull_request` (opened, merged, closed)
+- Validate `X-Hub-Signature-256` header using HMAC-SHA256 with the webhook secret
+
+**GitLab webhooks:**
+- Register via Settings or API: `POST /projects/:id/hooks`
+- Events: `issue_events`, `merge_request_events`
+- Validate `X-Gitlab-Token` header against stored secret
+
+### Webhook Processing
+
+```typescript
+// src/lib/webhooks/processor.ts
+
+export interface WebhookEvent {
+  source: TaskSource;
+  eventType: string;          // "card_updated" | "issue_closed" | "mr_merged" etc.
+  sourceIdentifier: string;   // boardId, "owner/repo", projectId
+  payload: Record<string, unknown>;
+  receivedAt: Date;
+}
+
+export async function processWebhook(event: WebhookEvent): Promise<void> {
+  // 1. Identify affected users (who has this board/repo connected?)
+  // 2. Invalidate relevant cached data
+  // 3. Broadcast update to connected WebSocket clients
+  // 4. If a session is running on this board/repo, update the session's task state
+}
+```
+
+### WebSocket Server
+
+Add a WebSocket upgrade handler to the server for real-time client updates:
+
+```typescript
+// src/lib/websocket.ts
+
+export interface WsMessage {
+  type: "task_updated" | "session_status" | "webhook_event" | "cost_alert";
+  userId: string;
+  data: Record<string, unknown>;
+}
+```
+
+**Client connection flow:**
+1. Client connects to `ws://host/ws` with session cookie
+2. Server authenticates the WebSocket connection using the same Better Auth session
+3. Client subscribes to channels: `board:{boardId}`, `repo:{owner}/{repo}`, `project:{projectId}`, `user:{userId}`
+4. Server broadcasts relevant events to subscribed clients
+
+**What gets pushed:**
+- Task source changes (card moved, issue closed, checklist item toggled) — replaces the 5s polling
+- Session status changes (started, completed, failed) — for multi-device awareness
+- Cost alerts (budget threshold reached) — from Phase 16
+- PR/MR status changes (opened, merged) — from Phase 18
+
+### Webhook Registration Management
+
+New table for tracking registered webhooks:
+
+```typescript
+export const registeredWebhooks = sqliteTable("registered_webhook", {
+  id: text("id").primaryKey(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  source: text("source").notNull(),         // "trello" | "github" | "gitlab"
+  sourceIdentifier: text("sourceIdentifier").notNull(), // boardId, "owner/repo", projectId
+  webhookId: text("webhookId"),             // the ID returned by the source API
+  secret: text("secret"),                   // webhook validation secret (encrypted)
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+});
+```
+
+**Auto-registration:** When a user starts their first session on a board/repo, automatically register a webhook for that source. Deregister when the user disconnects the source.
+
+### Web UI Updates
+
+- Remove polling intervals from TanStack Query hooks — replace with WebSocket-triggered `invalidateQueries`
+- Add a connection status indicator in the sidebar: green dot = WebSocket connected, red = disconnected
+- Board view: cards update instantly when changes arrive via webhook (no more 5s delay)
+- Session view: real-time status updates without polling
+
+### Fallback
+
+If WebSocket connection fails or webhooks can't be registered (e.g., user's Trello board is private and can't receive webhooks), fall back gracefully to the existing polling mechanism. The polling interval should only activate when the WebSocket is disconnected.
+
+### Sub-phases
+
+- **20a: Webhook endpoints** — POST handlers for Trello, GitHub, GitLab with signature validation
+- **20b: Webhook processor** — Event normalization, user lookup, cache invalidation
+- **20c: WebSocket server** — WS upgrade handler, authentication, channel subscriptions
+- **20d: Client WebSocket hook** — `useWebSocket()` hook with auto-reconnect, channel subscription, query invalidation
+- **20e: Webhook registration** — `registered_webhooks` table, auto-register on first session, deregister on disconnect
+- **20f: Polling fallback** — Graceful degradation when WebSocket disconnects or webhooks unavailable
+- **20g: UI indicators** — Connection status dot, instant updates, remove polling timers
 
 ---
 

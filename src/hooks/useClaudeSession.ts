@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import type { BoardData } from "#/lib/types";
+import type { BoardData, PrResult } from "#/lib/types";
 import type { AiProviderId } from "#/lib/providers/types";
 import { generateEditDiff, generateWriteDiff, type FileDiff } from "#/lib/diff";
 
@@ -16,6 +16,7 @@ export function useClaudeSession(boardId: string) {
   const [logs, setLogs] = useState<SessionLogEntry[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
+  const [prResult, setPrResult] = useState<PrResult | null>(null);
   const idCounter = useRef(0);
   const pendingToolInputs = useRef<Map<string, Record<string, unknown>>>(new Map());
 
@@ -50,6 +51,7 @@ export function useClaudeSession(boardId: string) {
       setError(null);
       setLogs([]);
       setPendingQuestion(null);
+      setPrResult(null);
       idCounter.current = 0;
       pendingToolInputs.current.clear();
 
@@ -97,6 +99,21 @@ export function useClaudeSession(boardId: string) {
             const json = dataLine.slice(6);
             try {
               const message = JSON.parse(json);
+
+              if (message.type === "pr_created") {
+                const statusLabel = message.draft ? "draft" : "open";
+                addLog(
+                  "pr",
+                  `PR #${message.number} created (${statusLabel}): ${message.url}`,
+                );
+                setPrResult({
+                  url: message.url as string,
+                  number: message.number as number,
+                  title: message.title as string,
+                  draft: message.draft as boolean,
+                });
+                continue;
+              }
 
               if (message.type === "done") {
                 addLog("system", "Session complete");
@@ -262,5 +279,5 @@ export function useClaudeSession(boardId: string) {
     setPendingQuestion(null);
   }, []);
 
-  return { isRunning, logs, error, pendingQuestion, start, stop, sendMessage };
+  return { isRunning, logs, error, pendingQuestion, prResult, start, stop, sendMessage };
 }

@@ -82,7 +82,7 @@ export function SessionControls({
   }
 
   return (
-    <div className="sticky top-0 z-40 -mx-4 bg-[var(--sand)] px-4 py-3">
+    <div className="sticky top-0 z-40 -mx-4 bg-(--sand) px-4 py-3">
       <div className="island-shell flex flex-col gap-3 rounded-xl p-4">
         {/* Web mode banner */}
         {webMode && source === "trello" && !linkedRepo && !linkedGitlabProjectId && !isRunning && (
@@ -118,7 +118,7 @@ export function SessionControls({
           <div className="flex items-center gap-2">
             <label
               htmlFor="linked-repo"
-              className="text-xs font-medium text-[var(--sea-ink-soft)]"
+              className="text-xs font-medium text-(--sea-ink-soft)"
             >
               Repository:
             </label>
@@ -126,7 +126,7 @@ export function SessionControls({
               id="linked-repo"
               value={linkedRepoKey}
               onChange={(e) => setLinkedRepoKey(e.target.value)}
-              className="flex-1 rounded-lg border border-[var(--shore-line)] bg-white px-2 py-1.5 text-xs text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)] dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
+              className="flex-1 rounded-lg border border-(--shore-line) bg-white px-2 py-1.5 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
             >
               <option value="">None (advisory only)</option>
               {githubLinked && ghRepos && ghRepos.length > 0 && (
@@ -156,7 +156,7 @@ export function SessionControls({
             <div className="flex-1">
               <label
                 htmlFor="cwd"
-                className="mb-1 block text-xs font-medium text-[var(--sea-ink-soft)]"
+                className="mb-1 block text-xs font-medium text-(--sea-ink-soft)"
               >
                 Project directory
               </label>
@@ -167,7 +167,7 @@ export function SessionControls({
                 onChange={(e) => setCwd(e.target.value)}
                 disabled={isRunning}
                 placeholder="/home/user/my-project"
-                className="w-full rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-50 dark:bg-white/5"
+                className="w-full rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 disabled:opacity-50 dark:bg-white/5"
               />
             </div>
           )}
@@ -176,10 +176,10 @@ export function SessionControls({
             <div className={webMode ? "flex-1" : "flex-1"}>
               <label
                 htmlFor="initial-message"
-                className="mb-1 block text-xs font-medium text-[var(--sea-ink-soft)]"
+                className="mb-1 block text-xs font-medium text-(--sea-ink-soft)"
               >
                 Initial instructions{" "}
-                <span className="font-normal text-[var(--shore-line)]">
+                <span className="font-normal text-(--shore-line)">
                   (optional)
                 </span>
               </label>
@@ -189,7 +189,7 @@ export function SessionControls({
                 onChange={(e) => setInitialMessage(e.target.value)}
                 placeholder='e.g. "Focus on the API issues first"'
                 rows={2}
-                className="w-full resize-none rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 dark:bg-white/5"
+                className="w-full resize-none rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
               />
             </div>
           )}
@@ -205,7 +205,7 @@ export function SessionControls({
             <button
               onClick={handleStart}
               disabled={!canStart || (!webMode && !cwd.trim())}
-              className="shrink-0 rounded-lg bg-[var(--lagoon)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+              className="shrink-0 rounded-lg bg-(--lagoon) px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
             >
               Start Session
             </button>
@@ -218,13 +218,13 @@ export function SessionControls({
             {/* Provider selector */}
             {configuredProviders.length > 1 && (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-[var(--sea-ink-soft)]">AI:</span>
+                <span className="text-xs text-(--sea-ink-soft)">AI:</span>
                 <select
                   value={providerId}
                   onChange={(e) =>
                     setProviderId(e.target.value as AiProviderId)
                   }
-                  className="rounded-lg border border-[var(--shore-line)] bg-white px-2 py-1 text-xs text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)] dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
+                  className="rounded-lg border border-(--shore-line) bg-white px-2 py-1 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
                 >
                   {configuredProviders.map((p) => (
                     <option key={p} value={p}>
@@ -238,14 +238,14 @@ export function SessionControls({
             {/* Web / Local toggle — only show when running locally */}
             {!isDeployed && (
             <div className="flex items-center gap-2">
-              <span className="text-xs text-[var(--sea-ink-soft)]">Env:</span>
-              <div className="inline-flex rounded-lg border border-[var(--shore-line)] p-0.5">
+              <span className="text-xs text-(--sea-ink-soft)">Env:</span>
+              <div className="inline-flex rounded-lg border border-(--shore-line) p-0.5">
                 <button
                   onClick={() => setWebMode(false)}
                   className={`rounded-md px-3 py-1 text-xs font-medium transition ${
                     !webMode
-                      ? "bg-[var(--lagoon)] text-white"
-                      : "text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                      ? "bg-(--lagoon) text-white"
+                      : "text-(--sea-ink-soft) hover:text-(--sea-ink)"
                   }`}
                 >
                   Local
@@ -254,8 +254,8 @@ export function SessionControls({
                   onClick={() => setWebMode(true)}
                   className={`rounded-md px-3 py-1 text-xs font-medium transition ${
                     webMode
-                      ? "bg-[var(--lagoon)] text-white"
-                      : "text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                      ? "bg-(--lagoon) text-white"
+                      : "text-(--sea-ink-soft) hover:text-(--sea-ink)"
                   }`}
                 >
                   Cloud
@@ -266,16 +266,16 @@ export function SessionControls({
 
             {!webMode && (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-[var(--sea-ink-soft)]">
+                <span className="text-xs text-(--sea-ink-soft)">
                   Mode:
                 </span>
-                <div className="inline-flex rounded-lg border border-[var(--shore-line)] p-0.5">
+                <div className="inline-flex rounded-lg border border-(--shore-line) p-0.5">
                   <button
                     onClick={() => setMode("sequential")}
                     className={`rounded-md px-3 py-1 text-xs font-medium transition ${
                       mode === "sequential"
-                        ? "bg-[var(--lagoon)] text-white"
-                        : "text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                        ? "bg-(--lagoon) text-white"
+                        : "text-(--sea-ink-soft) hover:text-(--sea-ink)"
                     }`}
                   >
                     Sequential
@@ -284,8 +284,8 @@ export function SessionControls({
                     onClick={() => setMode("parallel")}
                     className={`rounded-md px-3 py-1 text-xs font-medium transition ${
                       mode === "parallel"
-                        ? "bg-[var(--lagoon)] text-white"
-                        : "text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                        ? "bg-(--lagoon) text-white"
+                        : "text-(--sea-ink-soft) hover:text-(--sea-ink)"
                     }`}
                   >
                     Parallel
@@ -298,7 +298,7 @@ export function SessionControls({
               <div className="flex items-center gap-2">
                 <label
                   htmlFor="concurrency"
-                  className="text-xs text-[var(--sea-ink-soft)]"
+                  className="text-xs text-(--sea-ink-soft)"
                 >
                   Concurrency:
                 </label>
@@ -309,9 +309,9 @@ export function SessionControls({
                   max={5}
                   value={concurrency}
                   onChange={(e) => setConcurrency(Number(e.target.value))}
-                  className="h-1.5 w-20 accent-[var(--lagoon)]"
+                  className="h-1.5 w-20 accent-(--lagoon)"
                 />
-                <span className="w-4 text-center text-xs font-medium text-[var(--sea-ink)]">
+                <span className="w-4 text-center text-xs font-medium text-(--sea-ink)">
                   {concurrency}
                 </span>
               </div>
@@ -321,7 +321,7 @@ export function SessionControls({
               mode === "parallel" &&
               activeCardCount !== undefined &&
               activeCardCount > 0 && (
-                <span className="text-xs text-[var(--sea-ink-soft)]">
+                <span className="text-xs text-(--sea-ink-soft)">
                   {activeCardCount} item
                   {activeCardCount !== 1 ? "s" : ""} will each get their own
                   agent

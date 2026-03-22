@@ -27,17 +27,17 @@ function OnboardingSourcePage() {
     <main className="page-wrap flex min-h-[80vh] items-center justify-center px-4">
       <div className="island-shell w-full max-w-md rounded-2xl p-8">
         <OnboardingSteps currentStep={1} />
-        <h2 className="mt-6 mb-2 text-center text-xl font-bold text-[var(--sea-ink)]">
+        <h2 className="mt-6 mb-2 text-center text-xl font-bold text-(--sea-ink)">
           Connect a task source
         </h2>
-        <p className="mb-6 text-center text-sm text-[var(--sea-ink-soft)]">
+        <p className="mb-6 text-center text-sm text-(--sea-ink-soft)">
           Connect at least one task source so your AI agents can read tasks and
           update progress as they work.
         </p>
 
         <div className="space-y-4">
           <div>
-            <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+            <h3 className="mb-2 text-sm font-semibold text-(--sea-ink)">
               Trello
             </h3>
             <ConnectTrello
@@ -47,7 +47,7 @@ function OnboardingSourcePage() {
           </div>
 
           <div>
-            <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+            <h3 className="mb-2 text-sm font-semibold text-(--sea-ink)">
               GitHub
             </h3>
             <ConnectGitHub
@@ -57,7 +57,7 @@ function OnboardingSourcePage() {
           </div>
 
           <div>
-            <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+            <h3 className="mb-2 text-sm font-semibold text-(--sea-ink)">
               GitLab
             </h3>
             <ConnectGitLab
@@ -70,7 +70,7 @@ function OnboardingSourcePage() {
         {hasTaskSource && (
           <button
             onClick={() => navigate({ to: "/onboarding/api-key" })}
-            className="mt-6 w-full rounded-lg bg-[var(--lagoon)] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--lagoon-deep)]"
+            className="mt-6 w-full rounded-lg bg-(--lagoon) px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-(--lagoon-deep)"
           >
             Continue
           </button>

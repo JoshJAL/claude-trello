@@ -4,6 +4,7 @@ import { BoardPanel } from "#/components/BoardPanel";
 import { SessionLog } from "#/components/SessionLog";
 import { ParallelSessionView } from "#/components/ParallelSessionView";
 import { SessionControls } from "#/components/SessionControls";
+import { PrResultBanner } from "#/components/PrResultBanner";
 import { PageSkeleton } from "#/components/PageSkeleton";
 import { useBoardData, useBoards } from "#/hooks/useBoardData";
 import { useClaudeSession } from "#/hooks/useClaudeSession";
@@ -74,7 +75,7 @@ function BoardPage() {
         <div className="flex items-center justify-between">
           <Link
             to="/dashboard"
-            className="text-sm text-[var(--lagoon)] hover:underline"
+            className="text-sm text-(--lagoon) hover:underline"
           >
             &larr; All boards
           </Link>
@@ -124,6 +125,10 @@ function BoardPage() {
           <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">
             {sequential.error || parallel.error}
           </div>
+        )}
+
+        {sequential.prResult && (
+          <PrResultBanner prResult={sequential.prResult} />
         )}
 
         {/* Session output — sequential or parallel */}

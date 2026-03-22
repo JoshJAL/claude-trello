@@ -46,7 +46,7 @@ function createGroqChatFn(client: Groq) {
     messages: ChatMessage[],
     tools: ToolDefinition[],
     signal?: AbortSignal,
-  ): Promise<{ content: string | null; tool_calls: ToolCall[] }> => {
+  ): Promise<{ content: string | null; tool_calls: ToolCall[]; usage?: { prompt_tokens?: number; completion_tokens?: number } }> => {
     const groqMessages = messages.map(
       (m): Groq.Chat.Completions.ChatCompletionMessageParam => {
         if (m.role === "tool") {
@@ -111,6 +111,12 @@ function createGroqChatFn(client: Groq) {
       }),
     );
 
-    return { content, tool_calls: toolCalls };
+    return {
+      content,
+      tool_calls: toolCalls,
+      usage: response.usage
+        ? { prompt_tokens: response.usage.prompt_tokens, completion_tokens: response.usage.completion_tokens }
+        : undefined,
+    };
   };
 }

@@ -48,15 +48,11 @@ function CodeBlock({
   children: React.ReactNode;
   copyText?: string;
 }) {
-  const text =
-    copyText ??
-    (typeof children === "string"
-      ? children
-      : "");
+  const text = copyText ?? (typeof children === "string" ? children : "");
 
   return (
     <div className="group relative">
-      <pre className="overflow-x-auto rounded-xl border border-[var(--line)] bg-[var(--code-bg)] p-5 text-sm leading-relaxed text-[var(--code-text)]">
+      <pre className="overflow-x-auto rounded-xl border border-(--line) bg-(--code-bg) p-5 text-sm leading-relaxed text-(--code-text)">
         <code>{children}</code>
       </pre>
       {text && <CopyButton text={text} />}
@@ -78,15 +74,15 @@ function StepCard({
   return (
     <div className="island-shell rounded-2xl p-6">
       <div className="mb-3 flex items-center gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--lagoon)] text-sm font-bold text-white">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-(--lagoon) text-sm font-bold text-white">
           {number}
         </span>
-        <Icon size={20} className="text-[var(--lagoon)]" />
-        <h3 className="text-base font-semibold text-[var(--sea-ink)]">
+        <Icon size={20} className="text-(--lagoon)" />
+        <h3 className="text-base font-semibold text-(--sea-ink)">
           {title}
         </h3>
       </div>
-      <div className="ml-11 space-y-3 text-sm text-[var(--sea-ink-soft)]">
+      <div className="ml-11 space-y-3 text-sm text-(--sea-ink-soft)">
         {children}
       </div>
     </div>
@@ -105,19 +101,19 @@ function CommandRef({
   return (
     <div className="island-shell rounded-xl p-5">
       <div className="flex flex-wrap items-baseline gap-3">
-        <code className="rounded-md bg-[var(--code-bg)] px-2.5 py-1 text-sm font-semibold text-[var(--code-text)]">
+        <code className="rounded-md bg-(--code-bg) px-2.5 py-1 text-sm font-semibold text-(--code-text)">
           {command}
         </code>
-        <span className="text-sm text-[var(--sea-ink-soft)]">
+        <span className="text-sm text-(--sea-ink-soft)">
           {description}
         </span>
       </div>
       {flags && flags.length > 0 && (
-        <div className="mt-4 space-y-2 border-t border-[var(--line)] pt-4">
+        <div className="mt-4 space-y-2 border-t border-(--line) pt-4">
           {flags.map((f) => (
             <div key={f.flag} className="flex items-baseline gap-2 text-sm">
-              <code className="shrink-0 text-[var(--lagoon)]">{f.flag}</code>
-              <span className="text-[var(--sea-ink-soft)]">{f.desc}</span>
+              <code className="shrink-0 text-(--lagoon)">{f.flag}</code>
+              <span className="text-(--sea-ink-soft)">{f.desc}</span>
             </div>
           ))}
         </div>
@@ -133,26 +129,27 @@ function CliDocsPage() {
         {/* ── Hero ─────────────────────────────────────────────────── */}
         <div className="mb-10">
           <div className="mb-3 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--lagoon)] text-white">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--lagoon) text-white">
               <Terminal size={22} />
             </div>
             <div>
               <span className="island-kicker">Documentation</span>
             </div>
           </div>
-          <h1 className="mb-2 text-3xl font-bold text-[var(--sea-ink)]">
+          <h1 className="mb-2 text-3xl font-bold text-(--sea-ink)">
             CLI Tool
           </h1>
-          <p className="text-base text-[var(--sea-ink-soft)]">
+          <p className="text-base text-(--sea-ink-soft)">
             Work through tasks from Trello, GitHub, or GitLab directly from your
-            terminal. Choose your AI provider, navigate to any project directory,
-            and let the agent work through your tasks — checking off items as it goes.
+            terminal. Choose your AI provider, navigate to any project
+            directory, and let the agent work through your tasks — checking off
+            items as it goes.
           </p>
           <a
             href="https://www.npmjs.com/package/taskpilot-cli"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-[var(--shore-line)] px-3 py-1.5 text-sm font-semibold text-[var(--sea-ink)] no-underline transition hover:bg-[var(--foam)]"
+            className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-(--shore-line) px-3 py-1.5 text-sm font-semibold text-(--sea-ink) no-underline transition hover:bg-(--foam)"
           >
             View on npm
             <ExternalLink size={14} />
@@ -161,12 +158,12 @@ function CliDocsPage() {
 
         {/* ── Install ───────────────────────────────────────────────── */}
         <section className="island-shell mb-6 rounded-2xl p-6">
-          <h2 className="mb-3 text-lg font-semibold text-[var(--sea-ink)]">
+          <h2 className="mb-3 text-lg font-semibold text-(--sea-ink)">
             Install
           </h2>
-          <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
+          <p className="mb-3 text-sm text-(--sea-ink-soft)">
             Run instantly with{" "}
-            <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs font-semibold">
+            <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs font-semibold">
               npx
             </code>{" "}
             — no install required:
@@ -174,7 +171,7 @@ function CliDocsPage() {
           <CodeBlock copyText="npx taskpilot-cli login">
             npx taskpilot-cli login
           </CodeBlock>
-          <p className="mt-4 mb-3 text-sm text-[var(--sea-ink-soft)]">
+          <p className="mt-4 mb-3 text-sm text-(--sea-ink-soft)">
             Or install globally for a shorter command:
           </p>
           <CodeBlock copyText="npm install -g taskpilot-cli">{`npm install -g taskpilot-cli
@@ -186,34 +183,40 @@ taskpilot run`}</CodeBlock>
 
         {/* ── Prerequisites ────────────────────────────────────────── */}
         <section className="island-shell mb-6 rounded-2xl p-6">
-          <h2 className="mb-3 text-lg font-semibold text-[var(--sea-ink)]">
+          <h2 className="mb-3 text-lg font-semibold text-(--sea-ink)">
             Prerequisites
           </h2>
-          <ul className="space-y-2 text-sm text-[var(--sea-ink-soft)]">
+          <ul className="space-y-2 text-sm text-(--sea-ink-soft)">
             <li className="flex items-start gap-2">
               <CheckCircle2
                 size={16}
-                className="mt-0.5 shrink-0 text-[var(--lagoon)]"
+                className="mt-0.5 shrink-0 text-(--lagoon)"
               />
               <span>
-                At least one <strong className="text-[var(--sea-ink)]">task source</strong> connected:{" "}
-                <strong className="text-[var(--sea-ink)]">Trello</strong>,{" "}
-                <strong className="text-[var(--sea-ink)]">GitHub</strong>, or{" "}
-                <strong className="text-[var(--sea-ink)]">GitLab</strong>
+                At least one{" "}
+                <strong className="text-(--sea-ink)">task source</strong>{" "}
+                connected:{" "}
+                <strong className="text-(--sea-ink)">Trello</strong>,{" "}
+                <strong className="text-(--sea-ink)">GitHub</strong>, or{" "}
+                <strong className="text-(--sea-ink)">GitLab</strong>
               </span>
             </li>
             <li className="flex items-start gap-2">
               <CheckCircle2
                 size={16}
-                className="mt-0.5 shrink-0 text-[var(--lagoon)]"
+                className="mt-0.5 shrink-0 text-(--lagoon)"
               />
               <span>
-                At least one <strong className="text-[var(--sea-ink)]">AI provider API key</strong>:{" "}
+                At least one{" "}
+                <strong className="text-(--sea-ink)">
+                  AI provider API key
+                </strong>
+                :{" "}
                 <a
                   href="https://console.anthropic.com/settings/keys"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[var(--lagoon)] hover:underline"
+                  className="text-(--lagoon) hover:underline"
                 >
                   Anthropic (Claude)
                 </a>
@@ -222,7 +225,7 @@ taskpilot run`}</CodeBlock>
                   href="https://platform.openai.com/api-keys"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[var(--lagoon)] hover:underline"
+                  className="text-(--lagoon) hover:underline"
                 >
                   OpenAI
                 </a>
@@ -231,7 +234,7 @@ taskpilot run`}</CodeBlock>
                   href="https://console.groq.com/keys"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[var(--lagoon)] hover:underline"
+                  className="text-(--lagoon) hover:underline"
                 >
                   Groq
                 </a>
@@ -240,22 +243,22 @@ taskpilot run`}</CodeBlock>
             <li className="flex items-start gap-2">
               <CheckCircle2
                 size={16}
-                className="mt-0.5 shrink-0 text-[var(--lagoon)]"
+                className="mt-0.5 shrink-0 text-(--lagoon)"
               />
               <span>
-                <strong className="text-[var(--sea-ink)]">Node.js 20+</strong>{" "}
+                <strong className="text-(--sea-ink)">Node.js 20+</strong>{" "}
                 installed
               </span>
             </li>
             <li className="flex items-start gap-2">
               <CheckCircle2
                 size={16}
-                className="mt-0.5 shrink-0 text-[var(--lagoon)]"
+                className="mt-0.5 shrink-0 text-(--lagoon)"
               />
               <span>
-                <strong className="text-[var(--sea-ink)]">Claude Code</strong>{" "}
+                <strong className="text-(--sea-ink)">Claude Code</strong>{" "}
                 installed (
-                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                   npm i -g @anthropic-ai/claude-code
                 </code>
                 ) — required only when using the Claude provider
@@ -266,42 +269,40 @@ taskpilot run`}</CodeBlock>
 
         {/* ── Quick Start ──────────────────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
             Quick Start
           </h2>
-          <p className="mb-4 text-sm text-[var(--sea-ink-soft)]">
+          <p className="mb-4 text-sm text-(--sea-ink-soft)">
             All examples use{" "}
-            <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+            <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
               npx taskpilot-cli
             </code>
             . If you installed globally, replace with just{" "}
-            <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+            <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
               taskpilot
             </code>
             .
           </p>
           <div className="space-y-4">
             <StepCard number={1} icon={LogIn} title="Register or sign in">
-              <p>
-                Create a new account, or sign in if you already have one:
-              </p>
-              <CodeBlock
-                copyText="npx taskpilot-cli register"
-              >{`# New user — create an account
+              <p>Create a new account, or sign in if you already have one:</p>
+              <CodeBlock copyText="npx taskpilot-cli register">{`# New user — create an account
 npx taskpilot-cli register
 
 # Returning user — sign in
 npx taskpilot-cli login`}</CodeBlock>
             </StepCard>
 
-            <StepCard number={2} icon={Settings} title="Connect a task source and API key">
+            <StepCard
+              number={2}
+              icon={Settings}
+              title="Connect a task source and API key"
+            >
               <p>
-                The setup wizard walks you through connecting a task source (Trello,
-                GitHub, or GitLab) and saving your AI provider API key:
+                The setup wizard walks you through connecting a task source
+                (Trello, GitHub, or GitLab) and saving your AI provider API key:
               </p>
-              <CodeBlock
-                copyText="npx taskpilot-cli setup"
-              >{`npx taskpilot-cli setup
+              <CodeBlock copyText="npx taskpilot-cli setup">{`npx taskpilot-cli setup
 
 # TaskPilot — Setup
 #
@@ -320,30 +321,29 @@ npx taskpilot-cli login`}</CodeBlock>
 #   ✓ API key saved (encrypted on server)
 #
 #   All set! Run \`taskpilot run\` to start a session.`}</CodeBlock>
-              <p className="text-xs text-[var(--sea-ink-soft)]">
-                You can also connect GitHub and GitLab, or add additional AI provider
-                keys (OpenAI, Groq) from the web app Settings page.
+              <p className="text-xs text-(--sea-ink-soft)">
+                You can also connect GitHub and GitLab, or add additional AI
+                provider keys (OpenAI, Groq) from the web app Settings page.
               </p>
             </StepCard>
 
-            <StepCard number={3} icon={FolderOpen} title="Navigate to your project">
+            <StepCard
+              number={3}
+              icon={FolderOpen}
+              title="Navigate to your project"
+            >
               <p>
                 Open your terminal in the codebase you want Claude to work on:
               </p>
               <CodeBlock copyText="cd ~/my-project">cd ~/my-project</CodeBlock>
             </StepCard>
 
-            <StepCard
-              number={4}
-              icon={Play}
-              title="Run a session"
-            >
+            <StepCard number={4} icon={Play} title="Run a session">
               <p>
-                Select a board or repo, review the tasks, and launch an AI session:
+                Select a board or repo, review the tasks, and launch an AI
+                session:
               </p>
-              <CodeBlock
-                copyText="npx taskpilot-cli run"
-              >{`npx taskpilot-cli run
+              <CodeBlock copyText="npx taskpilot-cli run">{`npx taskpilot-cli run
 
 # ? Select a board:
 # ❯ My Project Board
@@ -385,7 +385,7 @@ npx taskpilot-cli login`}</CodeBlock>
 
         {/* ── Commands Reference ────────────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-5 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-5 text-xl font-bold text-(--sea-ink)">
             Commands
           </h2>
           <div className="space-y-4">
@@ -468,17 +468,17 @@ npx taskpilot-cli login`}</CodeBlock>
 
         {/* ── How It Works ─────────────────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
             How It Works
           </h2>
           <div className="island-shell rounded-2xl p-6">
-            <div className="space-y-4 text-sm text-[var(--sea-ink-soft)]">
+            <div className="space-y-4 text-sm text-(--sea-ink-soft)">
               <div className="flex items-start gap-3">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--foam)] text-xs font-bold text-[var(--lagoon)]">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--foam) text-xs font-bold text-(--lagoon)">
                   1
                 </div>
                 <p>
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     Authenticate
                   </strong>{" "}
                   — The CLI signs in to the web app and stores your session
@@ -486,36 +486,30 @@ npx taskpilot-cli login`}</CodeBlock>
                 </p>
               </div>
               <div className="flex justify-center">
-                <ArrowRight
-                  size={16}
-                  className="text-[var(--shore-line)]"
-                />
+                <ArrowRight size={16} className="text-(--shore-line)" />
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--foam)] text-xs font-bold text-[var(--lagoon)]">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--foam) text-xs font-bold text-(--lagoon)">
                   2
                 </div>
                 <p>
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     Fetch task data
                   </strong>{" "}
                   — Boards, cards, and checklists (or GitHub/GitLab issues with
-                  task lists) are fetched via the web app's API using your stored
-                  connection.
+                  task lists) are fetched via the web app's API using your
+                  stored connection.
                 </p>
               </div>
               <div className="flex justify-center">
-                <ArrowRight
-                  size={16}
-                  className="text-[var(--shore-line)]"
-                />
+                <ArrowRight size={16} className="text-(--shore-line)" />
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--foam)] text-xs font-bold text-[var(--lagoon)]">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--foam) text-xs font-bold text-(--lagoon)">
                   3
                 </div>
                 <p>
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     Load credentials
                   </strong>{" "}
                   — Your AI provider API key (encrypted in the database) is
@@ -523,17 +517,14 @@ npx taskpilot-cli login`}</CodeBlock>
                 </p>
               </div>
               <div className="flex justify-center">
-                <ArrowRight
-                  size={16}
-                  className="text-[var(--shore-line)]"
-                />
+                <ArrowRight size={16} className="text-(--shore-line)" />
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--foam)] text-xs font-bold text-[var(--lagoon)]">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--foam) text-xs font-bold text-(--lagoon)">
                   4
                 </div>
                 <p>
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     Run your AI agent locally
                   </strong>{" "}
                   — The AI agent (Claude, OpenAI, or Groq) launches in your
@@ -542,17 +533,14 @@ npx taskpilot-cli login`}</CodeBlock>
                 </p>
               </div>
               <div className="flex justify-center">
-                <ArrowRight
-                  size={16}
-                  className="text-[var(--shore-line)]"
-                />
+                <ArrowRight size={16} className="text-(--shore-line)" />
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--foam)] text-xs font-bold text-[var(--lagoon)]">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--foam) text-xs font-bold text-(--lagoon)">
                   5
                 </div>
                 <p>
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     Update tasks automatically
                   </strong>{" "}
                   — As the agent completes each task, it marks it done on your
@@ -566,22 +554,22 @@ npx taskpilot-cli login`}</CodeBlock>
 
         {/* ── Examples ─────────────────────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
             Examples
           </h2>
           <div className="space-y-6">
             <div>
-              <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+              <h3 className="mb-2 text-sm font-semibold text-(--sea-ink)">
                 Skip board selection with a board ID
               </h3>
-              <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
+              <p className="mb-3 text-sm text-(--sea-ink-soft)">
                 Get the board ID from{" "}
-                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                   npx taskpilot-cli boards
                 </code>{" "}
                 and pass it directly:
               </p>
-              <CodeBlock copyText='npx taskpilot-cli run --board 60d5e2a3f1a2b40017c3d4e5'>{`npx taskpilot-cli boards
+              <CodeBlock copyText="npx taskpilot-cli run --board 60d5e2a3f1a2b40017c3d4e5">{`npx taskpilot-cli boards
 #   My Project Board  60d5e2a3f1a2b40017c3d4e5
 #   Side Project      507f1f77bcf86cd799439011
 
@@ -589,10 +577,10 @@ npx taskpilot-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
             </div>
 
             <div>
-              <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+              <h3 className="mb-2 text-sm font-semibold text-(--sea-ink)">
                 Run on a different directory
               </h3>
-              <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
+              <p className="mb-3 text-sm text-(--sea-ink-soft)">
                 Point Claude Code at a specific project without navigating there
                 first:
               </p>
@@ -602,15 +590,13 @@ npx taskpilot-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
             </div>
 
             <div>
-              <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+              <h3 className="mb-2 text-sm font-semibold text-(--sea-ink)">
                 Check your connection status
               </h3>
-              <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
+              <p className="mb-3 text-sm text-(--sea-ink-soft)">
                 Verify everything is set up correctly before starting a session:
               </p>
-              <CodeBlock
-                copyText="npx taskpilot-cli status"
-              >{`npx taskpilot-cli status
+              <CodeBlock copyText="npx taskpilot-cli status">{`npx taskpilot-cli status
 
 # TaskPilot — Status
 #
@@ -623,19 +609,21 @@ npx taskpilot-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
             </div>
 
             <div>
-              <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+              <h3 className="mb-2 text-sm font-semibold text-(--sea-ink)">
                 Give the agent extra context with --message
               </h3>
-              <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
+              <p className="mb-3 text-sm text-(--sea-ink-soft)">
                 Pass initial instructions so the agent knows how to approach the
                 work. Without{" "}
-                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                   --message
                 </code>
                 , the CLI will prompt you interactively (press Enter to skip).
               </p>
               <CodeBlock
-                copyText={'npx taskpilot-cli run --message "Check the development branch for comparison"'}
+                copyText={
+                  'npx taskpilot-cli run --message "Check the development branch for comparison"'
+                }
               >{`# Give the agent context before it starts
 npx taskpilot-cli run --message "Check the development branch for comparison"
 
@@ -647,19 +635,18 @@ npx taskpilot-cli run --message "Focus on the API cards first, skip frontend for
             </div>
 
             <div>
-              <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+              <h3 className="mb-2 text-sm font-semibold text-(--sea-ink)">
                 Work from GitHub or GitLab issues
               </h3>
-              <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
+              <p className="mb-3 text-sm text-(--sea-ink-soft)">
                 Use{" "}
-                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                   --source
                 </code>{" "}
-                to pull tasks from GitHub issues or GitLab issues instead of Trello:
+                to pull tasks from GitHub issues or GitLab issues instead of
+                Trello:
               </p>
-              <CodeBlock
-                copyText="npx taskpilot-cli run --source github"
-              >{`# Work through GitHub issues
+              <CodeBlock copyText="npx taskpilot-cli run --source github">{`# Work through GitHub issues
 npx taskpilot-cli run --source github
 
 # Work through GitLab issues
@@ -670,19 +657,17 @@ npx taskpilot-cli repos`}</CodeBlock>
             </div>
 
             <div>
-              <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+              <h3 className="mb-2 text-sm font-semibold text-(--sea-ink)">
                 Choose a different AI provider
               </h3>
-              <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
+              <p className="mb-3 text-sm text-(--sea-ink-soft)">
                 Switch between Claude, OpenAI, or Groq with{" "}
-                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                   --provider
                 </code>
                 . You must have the corresponding API key saved in Settings.
               </p>
-              <CodeBlock
-                copyText="npx taskpilot-cli run --provider openai"
-              >{`# Use OpenAI (gpt-4o) instead of Claude
+              <CodeBlock copyText="npx taskpilot-cli run --provider openai">{`# Use OpenAI (gpt-4o) instead of Claude
 npx taskpilot-cli run --provider openai
 
 # Use Groq (llama-3.3-70b) for fast inference
@@ -690,16 +675,15 @@ npx taskpilot-cli run --provider groq`}</CodeBlock>
             </div>
 
             <div>
-              <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+              <h3 className="mb-2 text-sm font-semibold text-(--sea-ink)">
                 Run agents in parallel
               </h3>
-              <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
-                Launch one agent per card/issue simultaneously using isolated git
-                worktrees. Changes are merged back sequentially when complete.
+              <p className="mb-3 text-sm text-(--sea-ink-soft)">
+                Launch one agent per card/issue simultaneously using isolated
+                git worktrees. Changes are merged back sequentially when
+                complete.
               </p>
-              <CodeBlock
-                copyText="npx taskpilot-cli run --parallel"
-              >{`# Run agents in parallel (default: 3 concurrent)
+              <CodeBlock copyText="npx taskpilot-cli run --parallel">{`# Run agents in parallel (default: 3 concurrent)
 npx taskpilot-cli run --parallel
 
 # Control concurrency (1-5 agents)
@@ -710,14 +694,16 @@ npx taskpilot-cli run --source github --provider openai --parallel`}</CodeBlock>
             </div>
 
             <div>
-              <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+              <h3 className="mb-2 text-sm font-semibold text-(--sea-ink)">
                 Full scripted workflow
               </h3>
-              <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
+              <p className="mb-3 text-sm text-(--sea-ink-soft)">
                 Combine flags for a non-interactive launch:
               </p>
               <CodeBlock
-                copyText={'npx taskpilot-cli run --source github --provider claude --parallel --dir ~/projects/my-api --message "Just go"'}
+                copyText={
+                  'npx taskpilot-cli run --source github --provider claude --parallel --dir ~/projects/my-api --message "Just go"'
+                }
               >{`# Login once
 npx taskpilot-cli login
 
@@ -734,17 +720,17 @@ npx taskpilot-cli run \\
 
         {/* ── FAQ / Troubleshooting ────────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
             Troubleshooting
           </h2>
           <div className="space-y-3">
             <details className="island-shell rounded-xl">
-              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-[var(--sea-ink)]">
+              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
                 "Session expired" error
               </summary>
-              <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
+              <div className="border-t border-(--line) px-5 py-4 text-sm text-(--sea-ink-soft)">
                 Your login session has expired. Run{" "}
-                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                   npx taskpilot-cli login
                 </code>{" "}
                 again to re-authenticate.
@@ -752,10 +738,10 @@ npx taskpilot-cli run \\
             </details>
 
             <details className="island-shell rounded-xl">
-              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-[var(--sea-ink)]">
+              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
                 "Source not connected" or "API key not configured"
               </summary>
-              <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
+              <div className="border-t border-(--line) px-5 py-4 text-sm text-(--sea-ink-soft)">
                 The CLI uses your web app account's integrations. Go to the web
                 dashboard Settings page to connect your task source (Trello,
                 GitHub, or GitLab) and save the API key for your chosen AI
@@ -764,17 +750,17 @@ npx taskpilot-cli run \\
             </details>
 
             <details className="island-shell rounded-xl">
-              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-[var(--sea-ink)]">
+              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
                 Can I use the CLI without the web server running?
               </summary>
-              <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
+              <div className="border-t border-(--line) px-5 py-4 text-sm text-(--sea-ink-soft)">
                 The CLI connects to{" "}
-                <strong className="text-[var(--sea-ink)]">
+                <strong className="text-(--sea-ink)">
                   ct.joshualevine.me
                 </strong>{" "}
                 by default. If the site is down, the CLI won't work. You can
                 also self-host and point at your own instance with{" "}
-                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                   --server
                 </code>
                 .
@@ -782,20 +768,20 @@ npx taskpilot-cli run \\
             </details>
 
             <details className="island-shell rounded-xl">
-              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-[var(--sea-ink)]">
+              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
                 Where is my session stored?
               </summary>
-              <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
+              <div className="border-t border-(--line) px-5 py-4 text-sm text-(--sea-ink-soft)">
                 Your session cookie and server URL are stored at{" "}
-                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                   ~/.config/taskpilot/config.json
                 </code>{" "}
                 with restricted file permissions (
-                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                   600
                 </code>
                 ). Run{" "}
-                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                   npx taskpilot-cli logout
                 </code>{" "}
                 to clear it.
@@ -803,13 +789,13 @@ npx taskpilot-cli run \\
             </details>
 
             <details className="island-shell rounded-xl">
-              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-[var(--sea-ink)]">
+              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
                 Claude asked me a question — what do I do?
               </summary>
-              <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
+              <div className="border-t border-(--line) px-5 py-4 text-sm text-(--sea-ink-soft)">
                 Sometimes Claude needs clarification before proceeding. The
                 question will appear in yellow in your terminal with a{" "}
-                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+                <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                   &gt;
                 </code>{" "}
                 prompt. Type your answer and press Enter — Claude will continue
@@ -821,11 +807,11 @@ npx taskpilot-cli run \\
 
         {/* ── Security ─────────────────────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
             Security
           </h2>
           <div className="island-shell rounded-2xl p-6">
-            <ul className="space-y-3 text-sm text-[var(--sea-ink-soft)]">
+            <ul className="space-y-3 text-sm text-(--sea-ink-soft)">
               <li className="flex items-start gap-2">
                 <CheckCircle2
                   size={16}
@@ -833,7 +819,7 @@ npx taskpilot-cli run \\
                 />
                 <span>
                   All API keys are{" "}
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     encrypted at rest
                   </strong>{" "}
                   (AES-256-GCM) and only decrypted for the duration of a session
@@ -846,7 +832,7 @@ npx taskpilot-cli run \\
                 />
                 <span>
                   The local config file is written with{" "}
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     restricted permissions
                   </strong>{" "}
                   (owner-only read/write)
@@ -859,7 +845,7 @@ npx taskpilot-cli run \\
                 />
                 <span>
                   Credentials are{" "}
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     held in memory only
                   </strong>{" "}
                   during a session — never written to disk by the CLI
@@ -872,7 +858,7 @@ npx taskpilot-cli run \\
                 />
                 <span>
                   Claude Code runs with{" "}
-                  <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+                  <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                     acceptEdits
                   </code>{" "}
                   permission mode — it can read and edit files but won't run

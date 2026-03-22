@@ -49,6 +49,8 @@ export const runCommand = new Command("run")
     "Max concurrent agents in parallel mode (default: 3)",
     "3",
   )
+  .option("--pr", "Create a PR/MR after session completes")
+  .option("--no-pr", "Skip PR/MR creation even if automation is enabled")
   .action(
     async (opts: {
       board?: string;
@@ -58,6 +60,7 @@ export const runCommand = new Command("run")
       provider?: string;
       parallel?: boolean;
       concurrency?: string;
+      pr?: boolean;
     }) => {
       if (!isLoggedIn()) {
         console.log(

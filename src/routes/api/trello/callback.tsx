@@ -48,7 +48,7 @@ function TrelloCallbackPage() {
           <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
           <a
             href="/onboarding/trello"
-            className="mt-4 inline-block text-sm text-[var(--lagoon)] hover:underline"
+            className="mt-4 inline-block text-sm text-(--lagoon) hover:underline"
           >
             Try again
           </a>
@@ -60,7 +60,7 @@ function TrelloCallbackPage() {
   return (
     <main className="page-wrap flex min-h-[80vh] items-center justify-center px-4">
       <div className="island-shell w-full max-w-md rounded-2xl p-8 text-center">
-        <p className="text-sm text-[var(--sea-ink-soft)]">
+        <p className="text-sm text-(--sea-ink-soft)">
           Connecting your Trello account...
         </p>
       </div>

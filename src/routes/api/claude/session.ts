@@ -26,6 +26,18 @@ import {
 } from "#/lib/providers/prompts";
 import { buildUserPrompt } from "#/lib/prompts";
 import type { BoardData } from "#/lib/types";
+import { SessionWriter, checkBudget } from "#/lib/session-history";
+import { DEFAULT_PR_AUTOMATION_CONFIG } from "#/lib/types";
+import { ensureWebhookRegistered } from "#/lib/webhooks/registration";
+import {
+  createPr,
+  generatePrBody,
+  generateBranchName,
+  countTasks,
+  extractIssueNumbers,
+  attachPrToTrelloCard,
+  parsePrAutomationConfig,
+} from "#/lib/pr";
 
 /** Minimal shape of a Claude Agent SDK Query — avoids importing the SDK at module level */
 interface StreamableQuery {
@@ -94,6 +106,9 @@ export const Route = createFileRoute("/api/claude/session")({
 
         // GitLab-specific params
         const gitlabProjectId = body.gitlabProjectId as number | undefined;
+
+        // PR automation override from CLI: true = force PR, false = skip PR, undefined = use config
+        const prOverride = body.pr as boolean | undefined;
 
         if (!boardData?.board?.id || !boardData?.cards) {
           return Response.json(
@@ -300,15 +315,61 @@ export const Route = createFileRoute("/api/claude/session")({
 
         const anthropicApiKey = apiKey;
 
+        // ── Budget check ──────────────────────────────────────────────────
+        const budget = await checkBudget(userId);
+        if (!budget.allowed) {
+          const limitStr = `$${((budget.budgetCents ?? 0) / 100).toFixed(2)}`;
+          return Response.json(
+            { error: `Monthly budget of ${limitStr} reached. Update your budget in Settings.` },
+            { status: 429 },
+          );
+        }
+
         // Source metadata passed to session launchers
         const sourceParams = { source, sourceToken, githubOwner, githubRepo, gitlabProjectId };
 
         const abortController = new AbortController();
 
+        // ── Create persistent session record ──────────────────────────────
+        let sourceIdentifier: string;
+        if (source === "github" && githubOwner && githubRepo) {
+          sourceIdentifier = `${githubOwner}/${githubRepo}`;
+        } else if (source === "gitlab" && gitlabProjectId) {
+          sourceIdentifier = String(gitlabProjectId);
+        } else {
+          sourceIdentifier = boardData.board.id;
+        }
+
+        const sessionWriter = await SessionWriter.create({
+          userId,
+          source,
+          sourceIdentifier,
+          sourceName: boardData.board.name,
+          providerId,
+          mode,
+          maxConcurrency: mode === "parallel" ? maxConcurrency : undefined,
+          initialMessage: userMessage,
+          boardData,
+        });
+
+        // Auto-register webhook for this source (best-effort, non-blocking)
+        void ensureWebhookRegistered(userId, source, sourceIdentifier, sourceToken);
+
+        // Emit budget warning if near threshold
+        if (budget.warning && budget.budgetCents !== null) {
+          const spentStr = `$${(budget.spentCents / 100).toFixed(2)}`;
+          const limitStr = `$${(budget.budgetCents / 100).toFixed(2)}`;
+          sessionWriter.addEvent("system", {
+            type: "system",
+            content: `Budget warning: You've spent ${spentStr} of your ${limitStr} monthly limit.`,
+          });
+        }
+
         // Abort the session if the client disconnects
         request.signal.addEventListener("abort", () => {
           abortController.abort();
           activeSessions.delete(userId);
+          void sessionWriter.cancel();
         });
 
         // ── Web mode ──────────────────────────────────────────────────────
@@ -344,8 +405,23 @@ export const Route = createFileRoute("/api/claude/session")({
 
               try {
                 for await (const message of providerSession) {
+                  sessionWriter.recordMessage(message as unknown as Record<string, unknown>);
                   const data = JSON.stringify(message);
                   controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+                }
+
+                // Attempt PR creation
+                const prEvent = await attemptPrCreation({
+                  userId, source, sourceToken, boardData, providerId,
+                  mode: "sequential", startTime: Date.now(), prOverride,
+                  githubOwner, githubRepo, gitlabProjectId,
+                  trelloToken: trelloToken || undefined,
+                });
+                if (prEvent) {
+                  sessionWriter.recordMessage(prEvent as unknown as Record<string, unknown>);
+                  controller.enqueue(
+                    encoder.encode(`data: ${JSON.stringify(prEvent)}\n\n`),
+                  );
                 }
 
                 controller.enqueue(
@@ -353,6 +429,7 @@ export const Route = createFileRoute("/api/claude/session")({
                     `data: ${JSON.stringify({ type: "done" })}\n\n`,
                   ),
                 );
+                await sessionWriter.complete();
               } catch (err) {
                 const errorMsg =
                   err instanceof Error ? err.message : "Unknown error";
@@ -361,6 +438,7 @@ export const Route = createFileRoute("/api/claude/session")({
                     `data: ${JSON.stringify({ type: "error", error: errorMsg })}\n\n`,
                   ),
                 );
+                await sessionWriter.fail(errorMsg);
               } finally {
                 activeSessions.delete(userId);
                 controller.close();
@@ -373,6 +451,7 @@ export const Route = createFileRoute("/api/claude/session")({
               "Content-Type": "text/event-stream",
               "Cache-Control": "no-cache",
               Connection: "keep-alive",
+              "X-Session-Id": sessionWriter.sessionId,
             },
           });
         }
@@ -386,6 +465,7 @@ export const Route = createFileRoute("/api/claude/session")({
           const stream = new ReadableStream({
             async start(controller) {
               const encoder = new TextEncoder();
+              let integrationBranch: string | undefined;
 
               try {
                 const parallelSession = launchParallelSession({
@@ -401,8 +481,31 @@ export const Route = createFileRoute("/api/claude/session")({
                 });
 
                 for await (const event of parallelSession) {
+                  // Extract agent index and card ID for parallel event tracking
+                  const parallelEvent = event as Record<string, unknown>;
+                  const cardId = parallelEvent.cardId as string | undefined;
+                  sessionWriter.recordMessage(parallelEvent, { cardId });
                   const data = JSON.stringify(event);
                   controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+                  // Capture integration branch from summary
+                  if ((event as { type: string }).type === "summary") {
+                    integrationBranch = (event as { summary?: { integrationBranch?: string } }).summary?.integrationBranch;
+                  }
+                }
+
+                // Attempt PR creation
+                const prEvent = await attemptPrCreation({
+                  userId, source, sourceToken, boardData, providerId,
+                  mode: "parallel", startTime: Date.now(), prOverride,
+                  githubOwner, githubRepo, gitlabProjectId,
+                  trelloToken: trelloToken || undefined,
+                  branch: integrationBranch,
+                });
+                if (prEvent) {
+                  sessionWriter.recordMessage(prEvent as unknown as Record<string, unknown>);
+                  controller.enqueue(
+                    encoder.encode(`data: ${JSON.stringify(prEvent)}\n\n`),
+                  );
                 }
 
                 controller.enqueue(
@@ -410,6 +513,7 @@ export const Route = createFileRoute("/api/claude/session")({
                     `data: ${JSON.stringify({ type: "done" })}\n\n`,
                   ),
                 );
+                await sessionWriter.complete();
               } catch (err) {
                 const errorMsg =
                   err instanceof Error ? err.message : "Unknown error";
@@ -418,6 +522,7 @@ export const Route = createFileRoute("/api/claude/session")({
                     `data: ${JSON.stringify({ type: "error", error: errorMsg })}\n\n`,
                   ),
                 );
+                await sessionWriter.fail(errorMsg);
               } finally {
                 activeSessions.delete(userId);
                 controller.close();
@@ -430,6 +535,7 @@ export const Route = createFileRoute("/api/claude/session")({
               "Content-Type": "text/event-stream",
               "Cache-Control": "no-cache",
               Connection: "keep-alive",
+              "X-Session-Id": sessionWriter.sessionId,
             },
           });
         }
@@ -470,8 +576,23 @@ export const Route = createFileRoute("/api/claude/session")({
 
             try {
               for await (const message of providerSession) {
+                sessionWriter.recordMessage(message as unknown as Record<string, unknown>);
                 const data = JSON.stringify(message);
                 controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+              }
+
+              // Attempt PR creation
+              const prEvent = await attemptPrCreation({
+                userId, source, sourceToken, boardData, providerId,
+                mode: "sequential", startTime: Date.now(), prOverride,
+                githubOwner, githubRepo, gitlabProjectId,
+                trelloToken: trelloToken || undefined,
+              });
+              if (prEvent) {
+                sessionWriter.recordMessage(prEvent as unknown as Record<string, unknown>);
+                controller.enqueue(
+                  encoder.encode(`data: ${JSON.stringify(prEvent)}\n\n`),
+                );
               }
 
               controller.enqueue(
@@ -479,6 +600,7 @@ export const Route = createFileRoute("/api/claude/session")({
                   `data: ${JSON.stringify({ type: "done" })}\n\n`,
                 ),
               );
+              await sessionWriter.complete();
             } catch (err) {
               const errorMsg =
                 err instanceof Error ? err.message : "Unknown error";
@@ -487,6 +609,7 @@ export const Route = createFileRoute("/api/claude/session")({
                   `data: ${JSON.stringify({ type: "error", error: errorMsg })}\n\n`,
                 ),
               );
+              await sessionWriter.fail(errorMsg);
             } finally {
               activeSessions.delete(userId);
               controller.close();
@@ -499,6 +622,7 @@ export const Route = createFileRoute("/api/claude/session")({
             "Content-Type": "text/event-stream",
             "Cache-Control": "no-cache",
             Connection: "keep-alive",
+            "X-Session-Id": sessionWriter.sessionId,
           },
         });
       },
@@ -781,4 +905,133 @@ function mergeToolSets(a: ToolSet, b: ToolSet): ToolSet {
       return b.execute(name, input);
     },
   };
+}
+
+// ── PR Automation ──────────────────────────────────────────────────────────
+
+interface PrAutomationContext {
+  userId: string;
+  source: "trello" | "github" | "gitlab";
+  sourceToken: string;
+  boardData: BoardData;
+  providerId: AiProviderId;
+  mode: "sequential" | "parallel";
+  startTime: number;
+  prOverride?: boolean;
+  githubOwner?: string;
+  githubRepo?: string;
+  gitlabProjectId?: number;
+  trelloToken?: string;
+  branch?: string;
+}
+
+/**
+ * Attempt to create a PR/MR after session completion.
+ * Returns a pr_created event object, or null if skipped/failed.
+ * Best-effort: errors are logged but never thrown.
+ */
+async function attemptPrCreation(
+  ctx: PrAutomationContext,
+): Promise<{ type: string; url: string; number: number; title: string; draft: boolean } | null> {
+  try {
+    const [settings] = await db
+      .select({ prAutomationConfig: userSettings.prAutomationConfig })
+      .from(userSettings)
+      .where(eq(userSettings.userId, ctx.userId))
+      .limit(1);
+
+    const config = parsePrAutomationConfig(settings?.prAutomationConfig ?? null)
+      ?? { ...DEFAULT_PR_AUTOMATION_CONFIG };
+
+    const shouldCreate =
+      ctx.prOverride === true || (ctx.prOverride !== false && config.enabled);
+
+    if (!shouldCreate) return null;
+
+    let prSource: "github" | "gitlab";
+    let prOwner: string | undefined;
+    let prRepo: string | undefined;
+    let prProjectId: number | undefined;
+    let prToken: string;
+
+    if (ctx.source === "github" && ctx.githubOwner && ctx.githubRepo) {
+      prSource = "github";
+      prOwner = ctx.githubOwner;
+      prRepo = ctx.githubRepo;
+      prToken = ctx.sourceToken;
+    } else if (ctx.source === "gitlab" && ctx.gitlabProjectId) {
+      prSource = "gitlab";
+      prProjectId = ctx.gitlabProjectId;
+      prToken = ctx.sourceToken;
+    } else if (ctx.source === "trello") {
+      if (ctx.githubOwner && ctx.githubRepo) {
+        const [ghAccount] = await db
+          .select({ accessToken: account.accessToken })
+          .from(account)
+          .where(and(eq(account.userId, ctx.userId), eq(account.providerId, "github")))
+          .limit(1);
+        if (!ghAccount?.accessToken) return null;
+        prSource = "github";
+        prOwner = ctx.githubOwner;
+        prRepo = ctx.githubRepo;
+        prToken = ghAccount.accessToken;
+      } else if (ctx.gitlabProjectId) {
+        const [glAccount] = await db
+          .select({ accessToken: account.accessToken })
+          .from(account)
+          .where(and(eq(account.userId, ctx.userId), eq(account.providerId, "gitlab")))
+          .limit(1);
+        if (!glAccount?.accessToken) return null;
+        prSource = "gitlab";
+        prProjectId = ctx.gitlabProjectId;
+        prToken = glAccount.accessToken;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+
+    const { completed, total } = countTasks(ctx.boardData);
+    const durationMs = Date.now() - ctx.startTime;
+    const issueNumbers = extractIssueNumbers(ctx.boardData);
+    const providerLabel = ctx.providerId === "claude" ? "Claude" : ctx.providerId === "openai" ? "OpenAI" : "Groq";
+    const firstCardTitle = ctx.boardData.cards[0]?.name ?? "tasks";
+
+    const branch = ctx.branch ?? generateBranchName(
+      config.branchNamingPattern, ctx.source, ctx.boardData.board.id, firstCardTitle,
+    );
+
+    const prTitle = `[TaskPilot] ${firstCardTitle}${ctx.boardData.cards.length > 1 ? ` (+${ctx.boardData.cards.length - 1} more)` : ""}`;
+
+    const prBody = generatePrBody({
+      source: ctx.source,
+      boardName: ctx.boardData.board.name,
+      tasksCompleted: completed,
+      tasksTotal: total,
+      providerName: providerLabel,
+      mode: ctx.mode,
+      durationMs,
+      issueNumbers: prSource === "github" ? issueNumbers : undefined,
+      autoLinkIssue: config.autoLinkIssue,
+    });
+
+    const pr = await createPr({
+      source: prSource, sourceToken: prToken,
+      owner: prOwner, repo: prRepo, projectId: prProjectId,
+      title: prTitle, body: prBody, head: branch, base: "main",
+      draft: config.autoDraft,
+    });
+
+    if (ctx.source === "trello" && ctx.trelloToken) {
+      for (const card of ctx.boardData.cards) {
+        await attachPrToTrelloCard(ctx.trelloToken, card.id, pr.url, pr.title);
+      }
+    }
+
+    return { type: "pr_created", url: pr.url, number: pr.number, title: pr.title, draft: pr.draft };
+  } catch (err) {
+    console.error("[PR Automation] Failed to create PR:", err instanceof Error ? err.message : err);
+    return null;
+  }
 }

@@ -16,7 +16,7 @@ export function ChecklistItem({
 
   return (
     <label
-      className={`flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition hover:bg-[var(--foam)] ${
+      className={`flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition hover:bg-(--foam) ${
         disabled ? "pointer-events-none opacity-50" : ""
       }`}
     >
@@ -27,13 +27,13 @@ export function ChecklistItem({
           onToggle(item.id, isComplete ? "incomplete" : "complete")
         }
         disabled={disabled}
-        className="h-4 w-4 rounded border-[var(--shore-line)] text-[var(--lagoon)] accent-[var(--lagoon)]"
+        className="h-4 w-4 rounded border-(--shore-line) text-(--lagoon) accent-(--lagoon)"
       />
       <span
         className={
           isComplete
-            ? "text-[var(--sea-ink-soft)] line-through"
-            : "text-[var(--sea-ink)]"
+            ? "text-(--sea-ink-soft) line-through"
+            : "text-(--sea-ink)"
         }
       >
         {item.name}

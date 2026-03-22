@@ -46,6 +46,8 @@ export interface AgentMessage {
   toolResult?: string;
   /** Original provider-specific message (for backward compat in SSE) */
   raw?: unknown;
+  /** Token usage for this turn (accumulated on final messages for non-Claude) */
+  usage?: { inputTokens: number; outputTokens: number };
 }
 
 // ── Provider Session ────────────────────────────────────────────────────────

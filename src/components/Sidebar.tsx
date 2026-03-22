@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 import { signOut, useSession } from "#/lib/auth-client";
+import { useUpdates } from "#/hooks/useUpdates";
+import { useRealtime } from "#/hooks/useRealtimeContext";
 import ThemeToggle from "./ThemeToggle";
 import {
   PanelLeftClose,
@@ -14,6 +16,9 @@ import {
   LogOut,
   Menu,
   UserCircle,
+  History,
+  Sparkles,
+  BarChart3,
 } from "lucide-react";
 
 const STORAGE_KEY = "sidebar-collapsed";
@@ -29,6 +34,7 @@ interface SidebarLinkProps {
   label: string;
   collapsed: boolean;
   onClick?: () => void;
+  badge?: number;
 }
 
 function SidebarLink({
@@ -38,6 +44,7 @@ function SidebarLink({
   collapsed,
   onClick,
   excludeMatches,
+  badge,
 }: SidebarLinkProps & { excludeMatches?: string[] }) {
   const matchRoute = useMatchRoute();
   const fuzzyMatch = !!matchRoute({ to, fuzzy: true });
@@ -53,7 +60,14 @@ function SidebarLink({
       className={`sidebar-link ${isActive ? "is-active" : ""}`}
       title={collapsed ? label : undefined}
     >
-      <Icon size={18} className="shrink-0" />
+      <span className="relative shrink-0">
+        <Icon size={18} />
+        {badge !== undefined && badge > 0 && (
+          <span className="absolute -right-1 -top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-blue-600 text-[8px] font-bold text-white">
+            {badge > 9 ? "9+" : badge}
+          </span>
+        )}
+      </span>
       {!collapsed && <span>{label}</span>}
     </Link>
   );
@@ -61,6 +75,8 @@ function SidebarLink({
 
 export default function Sidebar() {
   const { data: session } = useSession();
+  const { unseenCount } = useUpdates();
+  const { status: wsStatus } = useRealtime();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -141,6 +157,28 @@ export default function Sidebar() {
           {/* Navigation */}
           <div className="sidebar-section">
             <SidebarLink
+              to="/history"
+              icon={History}
+              label="History"
+              collapsed={collapsed}
+              onClick={closeMobile}
+            />
+            <SidebarLink
+              to="/analytics"
+              icon={BarChart3}
+              label="Analytics"
+              collapsed={collapsed}
+              onClick={closeMobile}
+            />
+            <SidebarLink
+              to="/updates"
+              icon={Sparkles}
+              label="Updates"
+              collapsed={collapsed}
+              onClick={closeMobile}
+              badge={unseenCount}
+            />
+            <SidebarLink
               to="/settings"
               icon={Settings}
               label="Settings"
@@ -161,6 +199,13 @@ export default function Sidebar() {
               collapsed={collapsed}
               onClick={closeMobile}
             />
+            <SidebarLink
+              to="/docs/self-hosting"
+              icon={Globe}
+              label="Self-Hosting"
+              collapsed={collapsed}
+              onClick={closeMobile}
+            />
           </div>
 
           {/* Spacer */}
@@ -171,11 +216,23 @@ export default function Sidebar() {
             <div className="sidebar-divider" />
             <div className={`sidebar-user ${collapsed ? "justify-center" : ""}`}>
               {collapsed ? (
-                <UserCircle size={18} className="text-[var(--sea-ink-soft)]" />
+                <span className="relative">
+                  <UserCircle size={18} className="text-(--sea-ink-soft)" />
+                  <span
+                    className={`absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full ${wsStatus === "connected" ? "bg-emerald-500" : wsStatus === "connecting" ? "bg-amber-500 animate-pulse" : "bg-gray-400"}`}
+                    title={wsStatus === "connected" ? "Live updates active" : wsStatus === "connecting" ? "Connecting..." : "Polling mode"}
+                  />
+                </span>
               ) : (
                 <>
-                  <UserCircle size={16} className="shrink-0 text-[var(--sea-ink-soft)]" />
-                  <span className="truncate text-xs font-medium text-[var(--sea-ink-soft)]">
+                  <span className="relative shrink-0">
+                    <UserCircle size={16} className="text-(--sea-ink-soft)" />
+                    <span
+                      className={`absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full ${wsStatus === "connected" ? "bg-emerald-500" : wsStatus === "connecting" ? "bg-amber-500 animate-pulse" : "bg-gray-400"}`}
+                      title={wsStatus === "connected" ? "Live updates active" : wsStatus === "connecting" ? "Connecting..." : "Polling mode"}
+                    />
+                  </span>
+                  <span className="truncate text-xs font-medium text-(--sea-ink-soft)">
                     {session.user.name || session.user.email}
                   </span>
                 </>
@@ -249,7 +306,7 @@ export default function Sidebar() {
         >
           <Menu size={20} />
         </button>
-        <Link to="/" className="text-sm font-semibold text-[var(--sea-ink)] no-underline">
+        <Link to="/" className="text-sm font-semibold text-(--sea-ink) no-underline">
           TaskPilot
         </Link>
         <div className="w-8" />

@@ -9,20 +9,34 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UpdatesRouteImport } from './routes/updates'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UpdatesIndexRouteImport } from './routes/updates/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
+import { Route as HistoryIndexRouteImport } from './routes/history/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as UpdatesUpdateIdRouteImport } from './routes/updates/$updateId'
 import { Route as OnboardingTrelloRouteImport } from './routes/onboarding/trello'
 import { Route as OnboardingApiKeyRouteImport } from './routes/onboarding/api-key'
+import { Route as HistorySessionIdRouteImport } from './routes/history/$sessionId'
 import { Route as DocsWebRouteImport } from './routes/docs/web'
+import { Route as DocsSelfHostingRouteImport } from './routes/docs/self-hosting'
 import { Route as DocsCliRouteImport } from './routes/docs/cli'
 import { Route as DashboardBoardIdRouteImport } from './routes/dashboard/$boardId'
+import { Route as ApiWsRouteImport } from './routes/api/ws'
 import { Route as DashboardGitlabIndexRouteImport } from './routes/dashboard/gitlab/index'
 import { Route as DashboardGithubIndexRouteImport } from './routes/dashboard/github/index'
+import { Route as ApiUpdatesIndexRouteImport } from './routes/api/updates/index'
+import { Route as ApiSessionsIndexRouteImport } from './routes/api/sessions/index'
 import { Route as DashboardGitlabProjectIdRouteImport } from './routes/dashboard/gitlab/$projectId'
+import { Route as ApiWebhooksTrelloRouteImport } from './routes/api/webhooks/trello'
+import { Route as ApiWebhooksGitlabRouteImport } from './routes/api/webhooks/gitlab'
+import { Route as ApiWebhooksGithubRouteImport } from './routes/api/webhooks/github'
+import { Route as ApiUpdatesSeenRouteImport } from './routes/api/updates/seen'
 import { Route as ApiTrelloConnectRouteImport } from './routes/api/trello/connect'
 import { Route as ApiTrelloChecklistRouteImport } from './routes/api/trello/checklist'
 import { Route as ApiTrelloCardsRouteImport } from './routes/api/trello/cards'
@@ -30,7 +44,10 @@ import { Route as ApiTrelloCallbackRouteImport } from './routes/api/trello/callb
 import { Route as ApiTrelloBoardsRouteImport } from './routes/api/trello/boards'
 import { Route as ApiTrelloAuthorizeRouteImport } from './routes/api/trello/authorize'
 import { Route as ApiSettingsStatusRouteImport } from './routes/api/settings/status'
+import { Route as ApiSettingsBudgetRouteImport } from './routes/api/settings/budget'
+import { Route as ApiSettingsAutomationRouteImport } from './routes/api/settings/automation'
 import { Route as ApiSettingsApikeyRouteImport } from './routes/api/settings/apikey'
+import { Route as ApiSessionsSessionIdRouteImport } from './routes/api/sessions/$sessionId'
 import { Route as ApiGitlabTaskRouteImport } from './routes/api/gitlab/task'
 import { Route as ApiGitlabProjectsRouteImport } from './routes/api/gitlab/projects'
 import { Route as ApiGitlabIssuesRouteImport } from './routes/api/gitlab/issues'
@@ -46,8 +63,18 @@ import { Route as ApiGithubAuthorizeRouteImport } from './routes/api/github/auth
 import { Route as ApiCliCredentialsRouteImport } from './routes/api/cli/credentials'
 import { Route as ApiClaudeSessionRouteImport } from './routes/api/claude/session'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiAnalyticsSummaryRouteImport } from './routes/api/analytics/summary'
+import { Route as ApiAnalyticsProvidersRouteImport } from './routes/api/analytics/providers'
+import { Route as ApiAnalyticsDailyRouteImport } from './routes/api/analytics/daily'
 import { Route as DashboardGithubOwnerRepoRouteImport } from './routes/dashboard/github/$owner.$repo'
+import { Route as ApiSessionsSessionIdRetryRouteImport } from './routes/api/sessions/$sessionId.retry'
+import { Route as ApiSessionsSessionIdEventsRouteImport } from './routes/api/sessions/$sessionId.events'
 
+const UpdatesRoute = UpdatesRouteImport.update({
+  id: '/updates',
+  path: '/updates',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -63,20 +90,40 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const UpdatesIndexRoute = UpdatesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => UpdatesRoute,
 } as any)
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/settings/',
   path: '/settings/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HistoryIndexRoute = HistoryIndexRouteImport.update({
+  id: '/history/',
+  path: '/history/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/dashboard/',
   path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const UpdatesUpdateIdRoute = UpdatesUpdateIdRouteImport.update({
+  id: '/$updateId',
+  path: '/$updateId',
+  getParentRoute: () => UpdatesRoute,
 } as any)
 const OnboardingTrelloRoute = OnboardingTrelloRouteImport.update({
   id: '/onboarding/trello',
@@ -88,9 +135,19 @@ const OnboardingApiKeyRoute = OnboardingApiKeyRouteImport.update({
   path: '/onboarding/api-key',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HistorySessionIdRoute = HistorySessionIdRouteImport.update({
+  id: '/history/$sessionId',
+  path: '/history/$sessionId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DocsWebRoute = DocsWebRouteImport.update({
   id: '/docs/web',
   path: '/docs/web',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsSelfHostingRoute = DocsSelfHostingRouteImport.update({
+  id: '/docs/self-hosting',
+  path: '/docs/self-hosting',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocsCliRoute = DocsCliRouteImport.update({
@@ -103,6 +160,11 @@ const DashboardBoardIdRoute = DashboardBoardIdRouteImport.update({
   path: '/dashboard/$boardId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiWsRoute = ApiWsRouteImport.update({
+  id: '/api/ws',
+  path: '/api/ws',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardGitlabIndexRoute = DashboardGitlabIndexRouteImport.update({
   id: '/dashboard/gitlab/',
   path: '/dashboard/gitlab/',
@@ -113,12 +175,42 @@ const DashboardGithubIndexRoute = DashboardGithubIndexRouteImport.update({
   path: '/dashboard/github/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiUpdatesIndexRoute = ApiUpdatesIndexRouteImport.update({
+  id: '/api/updates/',
+  path: '/api/updates/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSessionsIndexRoute = ApiSessionsIndexRouteImport.update({
+  id: '/api/sessions/',
+  path: '/api/sessions/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardGitlabProjectIdRoute =
   DashboardGitlabProjectIdRouteImport.update({
     id: '/dashboard/gitlab/$projectId',
     path: '/dashboard/gitlab/$projectId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiWebhooksTrelloRoute = ApiWebhooksTrelloRouteImport.update({
+  id: '/api/webhooks/trello',
+  path: '/api/webhooks/trello',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWebhooksGitlabRoute = ApiWebhooksGitlabRouteImport.update({
+  id: '/api/webhooks/gitlab',
+  path: '/api/webhooks/gitlab',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWebhooksGithubRoute = ApiWebhooksGithubRouteImport.update({
+  id: '/api/webhooks/github',
+  path: '/api/webhooks/github',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUpdatesSeenRoute = ApiUpdatesSeenRouteImport.update({
+  id: '/api/updates/seen',
+  path: '/api/updates/seen',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTrelloConnectRoute = ApiTrelloConnectRouteImport.update({
   id: '/api/trello/connect',
   path: '/api/trello/connect',
@@ -154,9 +246,24 @@ const ApiSettingsStatusRoute = ApiSettingsStatusRouteImport.update({
   path: '/api/settings/status',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSettingsBudgetRoute = ApiSettingsBudgetRouteImport.update({
+  id: '/api/settings/budget',
+  path: '/api/settings/budget',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSettingsAutomationRoute = ApiSettingsAutomationRouteImport.update({
+  id: '/api/settings/automation',
+  path: '/api/settings/automation',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSettingsApikeyRoute = ApiSettingsApikeyRouteImport.update({
   id: '/api/settings/apikey',
   path: '/api/settings/apikey',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSessionsSessionIdRoute = ApiSessionsSessionIdRouteImport.update({
+  id: '/api/sessions/$sessionId',
+  path: '/api/sessions/$sessionId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiGitlabTaskRoute = ApiGitlabTaskRouteImport.update({
@@ -234,25 +341,63 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAnalyticsSummaryRoute = ApiAnalyticsSummaryRouteImport.update({
+  id: '/api/analytics/summary',
+  path: '/api/analytics/summary',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAnalyticsProvidersRoute = ApiAnalyticsProvidersRouteImport.update({
+  id: '/api/analytics/providers',
+  path: '/api/analytics/providers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAnalyticsDailyRoute = ApiAnalyticsDailyRouteImport.update({
+  id: '/api/analytics/daily',
+  path: '/api/analytics/daily',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardGithubOwnerRepoRoute =
   DashboardGithubOwnerRepoRouteImport.update({
     id: '/dashboard/github/$owner/$repo',
     path: '/dashboard/github/$owner/$repo',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiSessionsSessionIdRetryRoute =
+  ApiSessionsSessionIdRetryRouteImport.update({
+    id: '/retry',
+    path: '/retry',
+    getParentRoute: () => ApiSessionsSessionIdRoute,
+  } as any)
+const ApiSessionsSessionIdEventsRoute =
+  ApiSessionsSessionIdEventsRouteImport.update({
+    id: '/events',
+    path: '/events',
+    getParentRoute: () => ApiSessionsSessionIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/updates': typeof UpdatesRouteWithChildren
+  '/api/ws': typeof ApiWsRoute
   '/dashboard/$boardId': typeof DashboardBoardIdRoute
   '/docs/cli': typeof DocsCliRoute
+  '/docs/self-hosting': typeof DocsSelfHostingRoute
   '/docs/web': typeof DocsWebRoute
+  '/history/$sessionId': typeof HistorySessionIdRoute
   '/onboarding/api-key': typeof OnboardingApiKeyRoute
   '/onboarding/trello': typeof OnboardingTrelloRoute
+  '/updates/$updateId': typeof UpdatesUpdateIdRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/history/': typeof HistoryIndexRoute
   '/settings/': typeof SettingsIndexRoute
+  '/updates/': typeof UpdatesIndexRoute
+  '/api/analytics/daily': typeof ApiAnalyticsDailyRoute
+  '/api/analytics/providers': typeof ApiAnalyticsProvidersRoute
+  '/api/analytics/summary': typeof ApiAnalyticsSummaryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/claude/session': typeof ApiClaudeSessionRoute
   '/api/cli/credentials': typeof ApiCliCredentialsRoute
@@ -268,7 +413,10 @@ export interface FileRoutesByFullPath {
   '/api/gitlab/issues': typeof ApiGitlabIssuesRoute
   '/api/gitlab/projects': typeof ApiGitlabProjectsRoute
   '/api/gitlab/task': typeof ApiGitlabTaskRoute
+  '/api/sessions/$sessionId': typeof ApiSessionsSessionIdRouteWithChildren
   '/api/settings/apikey': typeof ApiSettingsApikeyRoute
+  '/api/settings/automation': typeof ApiSettingsAutomationRoute
+  '/api/settings/budget': typeof ApiSettingsBudgetRoute
   '/api/settings/status': typeof ApiSettingsStatusRoute
   '/api/trello/authorize': typeof ApiTrelloAuthorizeRoute
   '/api/trello/boards': typeof ApiTrelloBoardsRoute
@@ -276,23 +424,41 @@ export interface FileRoutesByFullPath {
   '/api/trello/cards': typeof ApiTrelloCardsRoute
   '/api/trello/checklist': typeof ApiTrelloChecklistRoute
   '/api/trello/connect': typeof ApiTrelloConnectRoute
+  '/api/updates/seen': typeof ApiUpdatesSeenRoute
+  '/api/webhooks/github': typeof ApiWebhooksGithubRoute
+  '/api/webhooks/gitlab': typeof ApiWebhooksGitlabRoute
+  '/api/webhooks/trello': typeof ApiWebhooksTrelloRoute
   '/dashboard/gitlab/$projectId': typeof DashboardGitlabProjectIdRoute
+  '/api/sessions/': typeof ApiSessionsIndexRoute
+  '/api/updates/': typeof ApiUpdatesIndexRoute
   '/dashboard/github/': typeof DashboardGithubIndexRoute
   '/dashboard/gitlab/': typeof DashboardGitlabIndexRoute
+  '/api/sessions/$sessionId/events': typeof ApiSessionsSessionIdEventsRoute
+  '/api/sessions/$sessionId/retry': typeof ApiSessionsSessionIdRetryRoute
   '/dashboard/github/$owner/$repo': typeof DashboardGithubOwnerRepoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/api/ws': typeof ApiWsRoute
   '/dashboard/$boardId': typeof DashboardBoardIdRoute
   '/docs/cli': typeof DocsCliRoute
+  '/docs/self-hosting': typeof DocsSelfHostingRoute
   '/docs/web': typeof DocsWebRoute
+  '/history/$sessionId': typeof HistorySessionIdRoute
   '/onboarding/api-key': typeof OnboardingApiKeyRoute
   '/onboarding/trello': typeof OnboardingTrelloRoute
+  '/updates/$updateId': typeof UpdatesUpdateIdRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/history': typeof HistoryIndexRoute
   '/settings': typeof SettingsIndexRoute
+  '/updates': typeof UpdatesIndexRoute
+  '/api/analytics/daily': typeof ApiAnalyticsDailyRoute
+  '/api/analytics/providers': typeof ApiAnalyticsProvidersRoute
+  '/api/analytics/summary': typeof ApiAnalyticsSummaryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/claude/session': typeof ApiClaudeSessionRoute
   '/api/cli/credentials': typeof ApiCliCredentialsRoute
@@ -308,7 +474,10 @@ export interface FileRoutesByTo {
   '/api/gitlab/issues': typeof ApiGitlabIssuesRoute
   '/api/gitlab/projects': typeof ApiGitlabProjectsRoute
   '/api/gitlab/task': typeof ApiGitlabTaskRoute
+  '/api/sessions/$sessionId': typeof ApiSessionsSessionIdRouteWithChildren
   '/api/settings/apikey': typeof ApiSettingsApikeyRoute
+  '/api/settings/automation': typeof ApiSettingsAutomationRoute
+  '/api/settings/budget': typeof ApiSettingsBudgetRoute
   '/api/settings/status': typeof ApiSettingsStatusRoute
   '/api/trello/authorize': typeof ApiTrelloAuthorizeRoute
   '/api/trello/boards': typeof ApiTrelloBoardsRoute
@@ -316,24 +485,43 @@ export interface FileRoutesByTo {
   '/api/trello/cards': typeof ApiTrelloCardsRoute
   '/api/trello/checklist': typeof ApiTrelloChecklistRoute
   '/api/trello/connect': typeof ApiTrelloConnectRoute
+  '/api/updates/seen': typeof ApiUpdatesSeenRoute
+  '/api/webhooks/github': typeof ApiWebhooksGithubRoute
+  '/api/webhooks/gitlab': typeof ApiWebhooksGitlabRoute
+  '/api/webhooks/trello': typeof ApiWebhooksTrelloRoute
   '/dashboard/gitlab/$projectId': typeof DashboardGitlabProjectIdRoute
+  '/api/sessions': typeof ApiSessionsIndexRoute
+  '/api/updates': typeof ApiUpdatesIndexRoute
   '/dashboard/github': typeof DashboardGithubIndexRoute
   '/dashboard/gitlab': typeof DashboardGitlabIndexRoute
+  '/api/sessions/$sessionId/events': typeof ApiSessionsSessionIdEventsRoute
+  '/api/sessions/$sessionId/retry': typeof ApiSessionsSessionIdRetryRoute
   '/dashboard/github/$owner/$repo': typeof DashboardGithubOwnerRepoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/updates': typeof UpdatesRouteWithChildren
+  '/api/ws': typeof ApiWsRoute
   '/dashboard/$boardId': typeof DashboardBoardIdRoute
   '/docs/cli': typeof DocsCliRoute
+  '/docs/self-hosting': typeof DocsSelfHostingRoute
   '/docs/web': typeof DocsWebRoute
+  '/history/$sessionId': typeof HistorySessionIdRoute
   '/onboarding/api-key': typeof OnboardingApiKeyRoute
   '/onboarding/trello': typeof OnboardingTrelloRoute
+  '/updates/$updateId': typeof UpdatesUpdateIdRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/history/': typeof HistoryIndexRoute
   '/settings/': typeof SettingsIndexRoute
+  '/updates/': typeof UpdatesIndexRoute
+  '/api/analytics/daily': typeof ApiAnalyticsDailyRoute
+  '/api/analytics/providers': typeof ApiAnalyticsProvidersRoute
+  '/api/analytics/summary': typeof ApiAnalyticsSummaryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/claude/session': typeof ApiClaudeSessionRoute
   '/api/cli/credentials': typeof ApiCliCredentialsRoute
@@ -349,7 +537,10 @@ export interface FileRoutesById {
   '/api/gitlab/issues': typeof ApiGitlabIssuesRoute
   '/api/gitlab/projects': typeof ApiGitlabProjectsRoute
   '/api/gitlab/task': typeof ApiGitlabTaskRoute
+  '/api/sessions/$sessionId': typeof ApiSessionsSessionIdRouteWithChildren
   '/api/settings/apikey': typeof ApiSettingsApikeyRoute
+  '/api/settings/automation': typeof ApiSettingsAutomationRoute
+  '/api/settings/budget': typeof ApiSettingsBudgetRoute
   '/api/settings/status': typeof ApiSettingsStatusRoute
   '/api/trello/authorize': typeof ApiTrelloAuthorizeRoute
   '/api/trello/boards': typeof ApiTrelloBoardsRoute
@@ -357,25 +548,44 @@ export interface FileRoutesById {
   '/api/trello/cards': typeof ApiTrelloCardsRoute
   '/api/trello/checklist': typeof ApiTrelloChecklistRoute
   '/api/trello/connect': typeof ApiTrelloConnectRoute
+  '/api/updates/seen': typeof ApiUpdatesSeenRoute
+  '/api/webhooks/github': typeof ApiWebhooksGithubRoute
+  '/api/webhooks/gitlab': typeof ApiWebhooksGitlabRoute
+  '/api/webhooks/trello': typeof ApiWebhooksTrelloRoute
   '/dashboard/gitlab/$projectId': typeof DashboardGitlabProjectIdRoute
+  '/api/sessions/': typeof ApiSessionsIndexRoute
+  '/api/updates/': typeof ApiUpdatesIndexRoute
   '/dashboard/github/': typeof DashboardGithubIndexRoute
   '/dashboard/gitlab/': typeof DashboardGitlabIndexRoute
+  '/api/sessions/$sessionId/events': typeof ApiSessionsSessionIdEventsRoute
+  '/api/sessions/$sessionId/retry': typeof ApiSessionsSessionIdRetryRoute
   '/dashboard/github/$owner/$repo': typeof DashboardGithubOwnerRepoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/analytics'
     | '/forgot-password'
     | '/register'
     | '/reset-password'
+    | '/updates'
+    | '/api/ws'
     | '/dashboard/$boardId'
     | '/docs/cli'
+    | '/docs/self-hosting'
     | '/docs/web'
+    | '/history/$sessionId'
     | '/onboarding/api-key'
     | '/onboarding/trello'
+    | '/updates/$updateId'
     | '/dashboard/'
+    | '/history/'
     | '/settings/'
+    | '/updates/'
+    | '/api/analytics/daily'
+    | '/api/analytics/providers'
+    | '/api/analytics/summary'
     | '/api/auth/$'
     | '/api/claude/session'
     | '/api/cli/credentials'
@@ -391,7 +601,10 @@ export interface FileRouteTypes {
     | '/api/gitlab/issues'
     | '/api/gitlab/projects'
     | '/api/gitlab/task'
+    | '/api/sessions/$sessionId'
     | '/api/settings/apikey'
+    | '/api/settings/automation'
+    | '/api/settings/budget'
     | '/api/settings/status'
     | '/api/trello/authorize'
     | '/api/trello/boards'
@@ -399,23 +612,41 @@ export interface FileRouteTypes {
     | '/api/trello/cards'
     | '/api/trello/checklist'
     | '/api/trello/connect'
+    | '/api/updates/seen'
+    | '/api/webhooks/github'
+    | '/api/webhooks/gitlab'
+    | '/api/webhooks/trello'
     | '/dashboard/gitlab/$projectId'
+    | '/api/sessions/'
+    | '/api/updates/'
     | '/dashboard/github/'
     | '/dashboard/gitlab/'
+    | '/api/sessions/$sessionId/events'
+    | '/api/sessions/$sessionId/retry'
     | '/dashboard/github/$owner/$repo'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/analytics'
     | '/forgot-password'
     | '/register'
     | '/reset-password'
+    | '/api/ws'
     | '/dashboard/$boardId'
     | '/docs/cli'
+    | '/docs/self-hosting'
     | '/docs/web'
+    | '/history/$sessionId'
     | '/onboarding/api-key'
     | '/onboarding/trello'
+    | '/updates/$updateId'
     | '/dashboard'
+    | '/history'
     | '/settings'
+    | '/updates'
+    | '/api/analytics/daily'
+    | '/api/analytics/providers'
+    | '/api/analytics/summary'
     | '/api/auth/$'
     | '/api/claude/session'
     | '/api/cli/credentials'
@@ -431,7 +662,10 @@ export interface FileRouteTypes {
     | '/api/gitlab/issues'
     | '/api/gitlab/projects'
     | '/api/gitlab/task'
+    | '/api/sessions/$sessionId'
     | '/api/settings/apikey'
+    | '/api/settings/automation'
+    | '/api/settings/budget'
     | '/api/settings/status'
     | '/api/trello/authorize'
     | '/api/trello/boards'
@@ -439,23 +673,42 @@ export interface FileRouteTypes {
     | '/api/trello/cards'
     | '/api/trello/checklist'
     | '/api/trello/connect'
+    | '/api/updates/seen'
+    | '/api/webhooks/github'
+    | '/api/webhooks/gitlab'
+    | '/api/webhooks/trello'
     | '/dashboard/gitlab/$projectId'
+    | '/api/sessions'
+    | '/api/updates'
     | '/dashboard/github'
     | '/dashboard/gitlab'
+    | '/api/sessions/$sessionId/events'
+    | '/api/sessions/$sessionId/retry'
     | '/dashboard/github/$owner/$repo'
   id:
     | '__root__'
     | '/'
+    | '/analytics'
     | '/forgot-password'
     | '/register'
     | '/reset-password'
+    | '/updates'
+    | '/api/ws'
     | '/dashboard/$boardId'
     | '/docs/cli'
+    | '/docs/self-hosting'
     | '/docs/web'
+    | '/history/$sessionId'
     | '/onboarding/api-key'
     | '/onboarding/trello'
+    | '/updates/$updateId'
     | '/dashboard/'
+    | '/history/'
     | '/settings/'
+    | '/updates/'
+    | '/api/analytics/daily'
+    | '/api/analytics/providers'
+    | '/api/analytics/summary'
     | '/api/auth/$'
     | '/api/claude/session'
     | '/api/cli/credentials'
@@ -471,7 +724,10 @@ export interface FileRouteTypes {
     | '/api/gitlab/issues'
     | '/api/gitlab/projects'
     | '/api/gitlab/task'
+    | '/api/sessions/$sessionId'
     | '/api/settings/apikey'
+    | '/api/settings/automation'
+    | '/api/settings/budget'
     | '/api/settings/status'
     | '/api/trello/authorize'
     | '/api/trello/boards'
@@ -479,24 +735,41 @@ export interface FileRouteTypes {
     | '/api/trello/cards'
     | '/api/trello/checklist'
     | '/api/trello/connect'
+    | '/api/updates/seen'
+    | '/api/webhooks/github'
+    | '/api/webhooks/gitlab'
+    | '/api/webhooks/trello'
     | '/dashboard/gitlab/$projectId'
+    | '/api/sessions/'
+    | '/api/updates/'
     | '/dashboard/github/'
     | '/dashboard/gitlab/'
+    | '/api/sessions/$sessionId/events'
+    | '/api/sessions/$sessionId/retry'
     | '/dashboard/github/$owner/$repo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnalyticsRoute: typeof AnalyticsRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  UpdatesRoute: typeof UpdatesRouteWithChildren
+  ApiWsRoute: typeof ApiWsRoute
   DashboardBoardIdRoute: typeof DashboardBoardIdRoute
   DocsCliRoute: typeof DocsCliRoute
+  DocsSelfHostingRoute: typeof DocsSelfHostingRoute
   DocsWebRoute: typeof DocsWebRoute
+  HistorySessionIdRoute: typeof HistorySessionIdRoute
   OnboardingApiKeyRoute: typeof OnboardingApiKeyRoute
   OnboardingTrelloRoute: typeof OnboardingTrelloRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  HistoryIndexRoute: typeof HistoryIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
+  ApiAnalyticsDailyRoute: typeof ApiAnalyticsDailyRoute
+  ApiAnalyticsProvidersRoute: typeof ApiAnalyticsProvidersRoute
+  ApiAnalyticsSummaryRoute: typeof ApiAnalyticsSummaryRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiClaudeSessionRoute: typeof ApiClaudeSessionRoute
   ApiCliCredentialsRoute: typeof ApiCliCredentialsRoute
@@ -512,7 +785,10 @@ export interface RootRouteChildren {
   ApiGitlabIssuesRoute: typeof ApiGitlabIssuesRoute
   ApiGitlabProjectsRoute: typeof ApiGitlabProjectsRoute
   ApiGitlabTaskRoute: typeof ApiGitlabTaskRoute
+  ApiSessionsSessionIdRoute: typeof ApiSessionsSessionIdRouteWithChildren
   ApiSettingsApikeyRoute: typeof ApiSettingsApikeyRoute
+  ApiSettingsAutomationRoute: typeof ApiSettingsAutomationRoute
+  ApiSettingsBudgetRoute: typeof ApiSettingsBudgetRoute
   ApiSettingsStatusRoute: typeof ApiSettingsStatusRoute
   ApiTrelloAuthorizeRoute: typeof ApiTrelloAuthorizeRoute
   ApiTrelloBoardsRoute: typeof ApiTrelloBoardsRoute
@@ -520,7 +796,13 @@ export interface RootRouteChildren {
   ApiTrelloCardsRoute: typeof ApiTrelloCardsRoute
   ApiTrelloChecklistRoute: typeof ApiTrelloChecklistRoute
   ApiTrelloConnectRoute: typeof ApiTrelloConnectRoute
+  ApiUpdatesSeenRoute: typeof ApiUpdatesSeenRoute
+  ApiWebhooksGithubRoute: typeof ApiWebhooksGithubRoute
+  ApiWebhooksGitlabRoute: typeof ApiWebhooksGitlabRoute
+  ApiWebhooksTrelloRoute: typeof ApiWebhooksTrelloRoute
   DashboardGitlabProjectIdRoute: typeof DashboardGitlabProjectIdRoute
+  ApiSessionsIndexRoute: typeof ApiSessionsIndexRoute
+  ApiUpdatesIndexRoute: typeof ApiUpdatesIndexRoute
   DashboardGithubIndexRoute: typeof DashboardGithubIndexRoute
   DashboardGitlabIndexRoute: typeof DashboardGitlabIndexRoute
   DashboardGithubOwnerRepoRoute: typeof DashboardGithubOwnerRepoRoute
@@ -528,6 +810,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/updates': {
+      id: '/updates'
+      path: '/updates'
+      fullPath: '/updates'
+      preLoaderRoute: typeof UpdatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -549,12 +838,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/updates/': {
+      id: '/updates/'
+      path: '/'
+      fullPath: '/updates/'
+      preLoaderRoute: typeof UpdatesIndexRouteImport
+      parentRoute: typeof UpdatesRoute
     }
     '/settings/': {
       id: '/settings/'
@@ -563,12 +866,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/history/': {
+      id: '/history/'
+      path: '/history'
+      fullPath: '/history/'
+      preLoaderRoute: typeof HistoryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/': {
       id: '/dashboard/'
       path: '/dashboard'
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/updates/$updateId': {
+      id: '/updates/$updateId'
+      path: '/$updateId'
+      fullPath: '/updates/$updateId'
+      preLoaderRoute: typeof UpdatesUpdateIdRouteImport
+      parentRoute: typeof UpdatesRoute
     }
     '/onboarding/trello': {
       id: '/onboarding/trello'
@@ -584,11 +901,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingApiKeyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/history/$sessionId': {
+      id: '/history/$sessionId'
+      path: '/history/$sessionId'
+      fullPath: '/history/$sessionId'
+      preLoaderRoute: typeof HistorySessionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/docs/web': {
       id: '/docs/web'
       path: '/docs/web'
       fullPath: '/docs/web'
       preLoaderRoute: typeof DocsWebRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/self-hosting': {
+      id: '/docs/self-hosting'
+      path: '/docs/self-hosting'
+      fullPath: '/docs/self-hosting'
+      preLoaderRoute: typeof DocsSelfHostingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/docs/cli': {
@@ -605,6 +936,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardBoardIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ws': {
+      id: '/api/ws'
+      path: '/api/ws'
+      fullPath: '/api/ws'
+      preLoaderRoute: typeof ApiWsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/gitlab/': {
       id: '/dashboard/gitlab/'
       path: '/dashboard/gitlab'
@@ -619,11 +957,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardGithubIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/updates/': {
+      id: '/api/updates/'
+      path: '/api/updates'
+      fullPath: '/api/updates/'
+      preLoaderRoute: typeof ApiUpdatesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sessions/': {
+      id: '/api/sessions/'
+      path: '/api/sessions'
+      fullPath: '/api/sessions/'
+      preLoaderRoute: typeof ApiSessionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/gitlab/$projectId': {
       id: '/dashboard/gitlab/$projectId'
       path: '/dashboard/gitlab/$projectId'
       fullPath: '/dashboard/gitlab/$projectId'
       preLoaderRoute: typeof DashboardGitlabProjectIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/webhooks/trello': {
+      id: '/api/webhooks/trello'
+      path: '/api/webhooks/trello'
+      fullPath: '/api/webhooks/trello'
+      preLoaderRoute: typeof ApiWebhooksTrelloRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/webhooks/gitlab': {
+      id: '/api/webhooks/gitlab'
+      path: '/api/webhooks/gitlab'
+      fullPath: '/api/webhooks/gitlab'
+      preLoaderRoute: typeof ApiWebhooksGitlabRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/webhooks/github': {
+      id: '/api/webhooks/github'
+      path: '/api/webhooks/github'
+      fullPath: '/api/webhooks/github'
+      preLoaderRoute: typeof ApiWebhooksGithubRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/updates/seen': {
+      id: '/api/updates/seen'
+      path: '/api/updates/seen'
+      fullPath: '/api/updates/seen'
+      preLoaderRoute: typeof ApiUpdatesSeenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/trello/connect': {
@@ -675,11 +1055,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSettingsStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/settings/budget': {
+      id: '/api/settings/budget'
+      path: '/api/settings/budget'
+      fullPath: '/api/settings/budget'
+      preLoaderRoute: typeof ApiSettingsBudgetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/settings/automation': {
+      id: '/api/settings/automation'
+      path: '/api/settings/automation'
+      fullPath: '/api/settings/automation'
+      preLoaderRoute: typeof ApiSettingsAutomationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/settings/apikey': {
       id: '/api/settings/apikey'
       path: '/api/settings/apikey'
       fullPath: '/api/settings/apikey'
       preLoaderRoute: typeof ApiSettingsApikeyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sessions/$sessionId': {
+      id: '/api/sessions/$sessionId'
+      path: '/api/sessions/$sessionId'
+      fullPath: '/api/sessions/$sessionId'
+      preLoaderRoute: typeof ApiSessionsSessionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/gitlab/task': {
@@ -787,6 +1188,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/analytics/summary': {
+      id: '/api/analytics/summary'
+      path: '/api/analytics/summary'
+      fullPath: '/api/analytics/summary'
+      preLoaderRoute: typeof ApiAnalyticsSummaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/analytics/providers': {
+      id: '/api/analytics/providers'
+      path: '/api/analytics/providers'
+      fullPath: '/api/analytics/providers'
+      preLoaderRoute: typeof ApiAnalyticsProvidersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/analytics/daily': {
+      id: '/api/analytics/daily'
+      path: '/api/analytics/daily'
+      fullPath: '/api/analytics/daily'
+      preLoaderRoute: typeof ApiAnalyticsDailyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/github/$owner/$repo': {
       id: '/dashboard/github/$owner/$repo'
       path: '/dashboard/github/$owner/$repo'
@@ -794,21 +1216,70 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardGithubOwnerRepoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/sessions/$sessionId/retry': {
+      id: '/api/sessions/$sessionId/retry'
+      path: '/retry'
+      fullPath: '/api/sessions/$sessionId/retry'
+      preLoaderRoute: typeof ApiSessionsSessionIdRetryRouteImport
+      parentRoute: typeof ApiSessionsSessionIdRoute
+    }
+    '/api/sessions/$sessionId/events': {
+      id: '/api/sessions/$sessionId/events'
+      path: '/events'
+      fullPath: '/api/sessions/$sessionId/events'
+      preLoaderRoute: typeof ApiSessionsSessionIdEventsRouteImport
+      parentRoute: typeof ApiSessionsSessionIdRoute
+    }
   }
 }
 
+interface UpdatesRouteChildren {
+  UpdatesUpdateIdRoute: typeof UpdatesUpdateIdRoute
+  UpdatesIndexRoute: typeof UpdatesIndexRoute
+}
+
+const UpdatesRouteChildren: UpdatesRouteChildren = {
+  UpdatesUpdateIdRoute: UpdatesUpdateIdRoute,
+  UpdatesIndexRoute: UpdatesIndexRoute,
+}
+
+const UpdatesRouteWithChildren =
+  UpdatesRoute._addFileChildren(UpdatesRouteChildren)
+
+interface ApiSessionsSessionIdRouteChildren {
+  ApiSessionsSessionIdEventsRoute: typeof ApiSessionsSessionIdEventsRoute
+  ApiSessionsSessionIdRetryRoute: typeof ApiSessionsSessionIdRetryRoute
+}
+
+const ApiSessionsSessionIdRouteChildren: ApiSessionsSessionIdRouteChildren = {
+  ApiSessionsSessionIdEventsRoute: ApiSessionsSessionIdEventsRoute,
+  ApiSessionsSessionIdRetryRoute: ApiSessionsSessionIdRetryRoute,
+}
+
+const ApiSessionsSessionIdRouteWithChildren =
+  ApiSessionsSessionIdRoute._addFileChildren(ApiSessionsSessionIdRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnalyticsRoute: AnalyticsRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  UpdatesRoute: UpdatesRouteWithChildren,
+  ApiWsRoute: ApiWsRoute,
   DashboardBoardIdRoute: DashboardBoardIdRoute,
   DocsCliRoute: DocsCliRoute,
+  DocsSelfHostingRoute: DocsSelfHostingRoute,
   DocsWebRoute: DocsWebRoute,
+  HistorySessionIdRoute: HistorySessionIdRoute,
   OnboardingApiKeyRoute: OnboardingApiKeyRoute,
   OnboardingTrelloRoute: OnboardingTrelloRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  HistoryIndexRoute: HistoryIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
+  ApiAnalyticsDailyRoute: ApiAnalyticsDailyRoute,
+  ApiAnalyticsProvidersRoute: ApiAnalyticsProvidersRoute,
+  ApiAnalyticsSummaryRoute: ApiAnalyticsSummaryRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiClaudeSessionRoute: ApiClaudeSessionRoute,
   ApiCliCredentialsRoute: ApiCliCredentialsRoute,
@@ -824,7 +1295,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGitlabIssuesRoute: ApiGitlabIssuesRoute,
   ApiGitlabProjectsRoute: ApiGitlabProjectsRoute,
   ApiGitlabTaskRoute: ApiGitlabTaskRoute,
+  ApiSessionsSessionIdRoute: ApiSessionsSessionIdRouteWithChildren,
   ApiSettingsApikeyRoute: ApiSettingsApikeyRoute,
+  ApiSettingsAutomationRoute: ApiSettingsAutomationRoute,
+  ApiSettingsBudgetRoute: ApiSettingsBudgetRoute,
   ApiSettingsStatusRoute: ApiSettingsStatusRoute,
   ApiTrelloAuthorizeRoute: ApiTrelloAuthorizeRoute,
   ApiTrelloBoardsRoute: ApiTrelloBoardsRoute,
@@ -832,7 +1306,13 @@ const rootRouteChildren: RootRouteChildren = {
   ApiTrelloCardsRoute: ApiTrelloCardsRoute,
   ApiTrelloChecklistRoute: ApiTrelloChecklistRoute,
   ApiTrelloConnectRoute: ApiTrelloConnectRoute,
+  ApiUpdatesSeenRoute: ApiUpdatesSeenRoute,
+  ApiWebhooksGithubRoute: ApiWebhooksGithubRoute,
+  ApiWebhooksGitlabRoute: ApiWebhooksGitlabRoute,
+  ApiWebhooksTrelloRoute: ApiWebhooksTrelloRoute,
   DashboardGitlabProjectIdRoute: DashboardGitlabProjectIdRoute,
+  ApiSessionsIndexRoute: ApiSessionsIndexRoute,
+  ApiUpdatesIndexRoute: ApiUpdatesIndexRoute,
   DashboardGithubIndexRoute: DashboardGithubIndexRoute,
   DashboardGitlabIndexRoute: DashboardGitlabIndexRoute,
   DashboardGithubOwnerRepoRoute: DashboardGithubOwnerRepoRoute,

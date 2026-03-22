@@ -58,7 +58,7 @@ function CodeBlock({
 
   return (
     <div className="group relative">
-      <pre className="overflow-x-auto rounded-xl border border-[var(--line)] bg-[var(--code-bg)] p-5 text-sm leading-relaxed text-[var(--code-text)]">
+      <pre className="overflow-x-auto rounded-xl border border-(--line) bg-(--code-bg) p-5 text-sm leading-relaxed text-(--code-text)">
         <code>{children}</code>
       </pre>
       {text && <CopyButton text={text} />}
@@ -80,15 +80,15 @@ function StepCard({
   return (
     <div className="island-shell rounded-2xl p-6">
       <div className="mb-3 flex items-center gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--lagoon)] text-sm font-bold text-white">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-(--lagoon) text-sm font-bold text-white">
           {number}
         </span>
-        <Icon size={20} className="text-[var(--lagoon)]" />
-        <h3 className="text-base font-semibold text-[var(--sea-ink)]">
+        <Icon size={20} className="text-(--lagoon)" />
+        <h3 className="text-base font-semibold text-(--sea-ink)">
           {title}
         </h3>
       </div>
-      <div className="ml-11 space-y-3 text-sm text-[var(--sea-ink-soft)]">
+      <div className="ml-11 space-y-3 text-sm text-(--sea-ink-soft)">
         {children}
       </div>
     </div>
@@ -107,12 +107,12 @@ function FeatureCard({
   return (
     <div className="island-shell rounded-xl p-5">
       <div className="mb-2 flex items-center gap-2">
-        <Icon size={18} className="text-[var(--lagoon)]" />
-        <h3 className="text-sm font-semibold text-[var(--sea-ink)]">
+        <Icon size={18} className="text-(--lagoon)" />
+        <h3 className="text-sm font-semibold text-(--sea-ink)">
           {title}
         </h3>
       </div>
-      <div className="text-sm text-[var(--sea-ink-soft)]">{children}</div>
+      <div className="text-sm text-(--sea-ink-soft)">{children}</div>
     </div>
   );
 }
@@ -124,17 +124,17 @@ function WebDocsPage() {
         {/* ── Hero ─────────────────────────────────────────────────── */}
         <div className="mb-10">
           <div className="mb-3 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--lagoon)] text-white">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--lagoon) text-white">
               <Globe size={22} />
             </div>
             <div>
               <span className="island-kicker">Documentation</span>
             </div>
           </div>
-          <h1 className="mb-2 text-3xl font-bold text-[var(--sea-ink)]">
+          <h1 className="mb-2 text-3xl font-bold text-(--sea-ink)">
             Web App
           </h1>
-          <p className="text-base text-[var(--sea-ink-soft)]">
+          <p className="text-base text-(--sea-ink-soft)">
             The TaskPilot web app is your control center. Connect task sources,
             configure AI providers, and launch coding sessions — all from
             your browser.
@@ -143,7 +143,7 @@ function WebDocsPage() {
 
         {/* ── Overview ────────────────────────────────────────────── */}
         <section className="island-shell mb-6 rounded-2xl p-6">
-          <h2 className="mb-3 text-lg font-semibold text-[var(--sea-ink)]">
+          <h2 className="mb-3 text-lg font-semibold text-(--sea-ink)">
             What You Can Do
           </h2>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -177,7 +177,7 @@ function WebDocsPage() {
 
         {/* ── Getting Started ─────────────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
             Getting Started
           </h2>
           <div className="space-y-4">
@@ -195,15 +195,15 @@ function WebDocsPage() {
               </p>
               <ul className="list-inside list-disc space-y-1">
                 <li>
-                  <strong className="text-[var(--sea-ink)]">Trello</strong> —
+                  <strong className="text-(--sea-ink)">Trello</strong> —
                   click "Connect Trello" to authorize via OAuth
                 </li>
                 <li>
-                  <strong className="text-[var(--sea-ink)]">GitHub</strong> —
+                  <strong className="text-(--sea-ink)">GitHub</strong> —
                   click "Connect GitHub" to authorize via OAuth
                 </li>
                 <li>
-                  <strong className="text-[var(--sea-ink)]">GitLab</strong> —
+                  <strong className="text-(--sea-ink)">GitLab</strong> —
                   click "Connect GitLab" to authorize via OAuth
                 </li>
               </ul>
@@ -219,23 +219,23 @@ function WebDocsPage() {
                 encrypted (AES-256-GCM) before being stored — they're never
                 visible after saving.
               </p>
-              <div className="rounded-lg border border-[var(--line)] p-3">
+              <div className="rounded-lg border border-(--line) p-3">
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="border-b border-[var(--line)]">
-                      <th className="pb-2 text-left font-semibold text-[var(--sea-ink)]">
+                    <tr className="border-b border-(--line)">
+                      <th className="pb-2 text-left font-semibold text-(--sea-ink)">
                         Provider
                       </th>
-                      <th className="pb-2 text-left font-semibold text-[var(--sea-ink)]">
+                      <th className="pb-2 text-left font-semibold text-(--sea-ink)">
                         Key prefix
                       </th>
-                      <th className="pb-2 text-left font-semibold text-[var(--sea-ink)]">
+                      <th className="pb-2 text-left font-semibold text-(--sea-ink)">
                         Where to get it
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="text-[var(--sea-ink-soft)]">
-                    <tr className="border-b border-[var(--line)]">
+                  <tbody className="text-(--sea-ink-soft)">
+                    <tr className="border-b border-(--line)">
                       <td className="py-1.5">Claude</td>
                       <td>
                         <code className="text-xs">sk-ant-api03-</code>
@@ -245,13 +245,13 @@ function WebDocsPage() {
                           href="https://console.anthropic.com/settings/keys"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[var(--lagoon)] hover:underline"
+                          className="text-(--lagoon) hover:underline"
                         >
                           console.anthropic.com
                         </a>
                       </td>
                     </tr>
-                    <tr className="border-b border-[var(--line)]">
+                    <tr className="border-b border-(--line)">
                       <td className="py-1.5">OpenAI</td>
                       <td>
                         <code className="text-xs">sk-</code>
@@ -261,7 +261,7 @@ function WebDocsPage() {
                           href="https://platform.openai.com/api-keys"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[var(--lagoon)] hover:underline"
+                          className="text-(--lagoon) hover:underline"
                         >
                           platform.openai.com
                         </a>
@@ -277,7 +277,7 @@ function WebDocsPage() {
                           href="https://console.groq.com/keys"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[var(--lagoon)] hover:underline"
+                          className="text-(--lagoon) hover:underline"
                         >
                           console.groq.com
                         </a>
@@ -296,7 +296,7 @@ function WebDocsPage() {
               <p>
                 Once onboarding is complete you'll land on the dashboard. Select
                 a board or repo, review the cards/issues, and hit{" "}
-                <strong className="text-[var(--sea-ink)]">Start Session</strong>{" "}
+                <strong className="text-(--sea-ink)">Start Session</strong>{" "}
                 to begin.
               </p>
             </StepCard>
@@ -305,19 +305,19 @@ function WebDocsPage() {
 
         {/* ── Dashboard ──────────────────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
             Dashboard
           </h2>
           <div className="space-y-4">
             <div className="island-shell rounded-2xl p-6">
-              <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-[var(--sea-ink)]">
-                <Trello size={18} className="text-[var(--lagoon)]" />
+              <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-(--sea-ink)">
+                <Trello size={18} className="text-(--lagoon)" />
                 Trello
               </h3>
-              <div className="space-y-2 text-sm text-[var(--sea-ink-soft)]">
+              <div className="space-y-2 text-sm text-(--sea-ink-soft)">
                 <p>
                   Navigate to{" "}
-                  <strong className="text-[var(--sea-ink)]">Trello</strong> in
+                  <strong className="text-(--sea-ink)">Trello</strong> in
                   the sidebar to see your connected boards. Select a board to
                   view its lists and cards.
                 </p>
@@ -338,21 +338,21 @@ function WebDocsPage() {
             </div>
 
             <div className="island-shell rounded-2xl p-6">
-              <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-[var(--sea-ink)]">
-                <Github size={18} className="text-[var(--lagoon)]" />
+              <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-(--sea-ink)">
+                <Github size={18} className="text-(--lagoon)" />
                 GitHub
               </h3>
-              <div className="space-y-2 text-sm text-[var(--sea-ink-soft)]">
+              <div className="space-y-2 text-sm text-(--sea-ink-soft)">
                 <p>
                   Navigate to{" "}
-                  <strong className="text-[var(--sea-ink)]">GitHub</strong> in
+                  <strong className="text-(--sea-ink)">GitHub</strong> in
                   the sidebar to browse your repositories. Select a repo to view
                   its open issues.
                 </p>
                 <ul className="list-inside list-disc space-y-1">
                   <li>
                     Issues with markdown task lists (
-                    <code className="rounded border border-[var(--line)] bg-[var(--surface)] px-1 text-xs">
+                    <code className="rounded border border-(--line) bg-(--surface) px-1 text-xs">
                       - [ ] item
                     </code>
                     ) are parsed into checkable items
@@ -370,14 +370,14 @@ function WebDocsPage() {
             </div>
 
             <div className="island-shell rounded-2xl p-6">
-              <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-[var(--sea-ink)]">
-                <Gitlab size={18} className="text-[var(--lagoon)]" />
+              <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-(--sea-ink)">
+                <Gitlab size={18} className="text-(--lagoon)" />
                 GitLab
               </h3>
-              <div className="space-y-2 text-sm text-[var(--sea-ink-soft)]">
+              <div className="space-y-2 text-sm text-(--sea-ink-soft)">
                 <p>
                   Navigate to{" "}
-                  <strong className="text-[var(--sea-ink)]">GitLab</strong> in
+                  <strong className="text-(--sea-ink)">GitLab</strong> in
                   the sidebar to see your projects. Select a project to view its
                   open issues.
                 </p>
@@ -398,17 +398,17 @@ function WebDocsPage() {
 
         {/* ── Running a Session ───────────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
             Running a Session
           </h2>
           <div className="island-shell rounded-2xl p-6">
-            <div className="space-y-4 text-sm text-[var(--sea-ink-soft)]">
+            <div className="space-y-4 text-sm text-(--sea-ink-soft)">
               <div className="flex items-start gap-3">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--foam)] text-xs font-bold text-[var(--lagoon)]">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--foam) text-xs font-bold text-(--lagoon)">
                   1
                 </div>
                 <p>
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     Select your tasks
                   </strong>{" "}
                   — Pick a Trello board, GitHub repo, or GitLab project from the
@@ -419,21 +419,21 @@ function WebDocsPage() {
               <div className="flex justify-center">
                 <ArrowRight
                   size={16}
-                  className="text-[var(--shore-line)]"
+                  className="text-(--shore-line)"
                 />
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--foam)] text-xs font-bold text-[var(--lagoon)]">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--foam) text-xs font-bold text-(--lagoon)">
                   2
                 </div>
                 <p>
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     Choose a mode
                   </strong>{" "}
                   — Select{" "}
-                  <strong className="text-[var(--sea-ink)]">Sequential</strong>{" "}
+                  <strong className="text-(--sea-ink)">Sequential</strong>{" "}
                   (one card at a time) or{" "}
-                  <strong className="text-[var(--sea-ink)]">Parallel</strong>{" "}
+                  <strong className="text-(--sea-ink)">Parallel</strong>{" "}
                   (one agent per card, running concurrently in isolated git
                   worktrees). Adjust the concurrency slider if using parallel
                   mode.
@@ -442,15 +442,15 @@ function WebDocsPage() {
               <div className="flex justify-center">
                 <ArrowRight
                   size={16}
-                  className="text-[var(--shore-line)]"
+                  className="text-(--shore-line)"
                 />
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--foam)] text-xs font-bold text-[var(--lagoon)]">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--foam) text-xs font-bold text-(--lagoon)">
                   3
                 </div>
                 <p>
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     Pick your AI provider
                   </strong>{" "}
                   — If you have multiple provider keys configured, a dropdown
@@ -460,19 +460,19 @@ function WebDocsPage() {
               <div className="flex justify-center">
                 <ArrowRight
                   size={16}
-                  className="text-[var(--shore-line)]"
+                  className="text-(--shore-line)"
                 />
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--foam)] text-xs font-bold text-[var(--lagoon)]">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--foam) text-xs font-bold text-(--lagoon)">
                   4
                 </div>
                 <p>
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     Start the session
                   </strong>{" "}
                   — Click{" "}
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     Start Session
                   </strong>
                   . The session log streams AI output in real time. In
@@ -483,15 +483,15 @@ function WebDocsPage() {
               <div className="flex justify-center">
                 <ArrowRight
                   size={16}
-                  className="text-[var(--shore-line)]"
+                  className="text-(--shore-line)"
                 />
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--foam)] text-xs font-bold text-[var(--lagoon)]">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--foam) text-xs font-bold text-(--lagoon)">
                   5
                 </div>
                 <p>
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     Tasks update automatically
                   </strong>{" "}
                   — As the agent finishes items, your task source updates in real
@@ -505,41 +505,41 @@ function WebDocsPage() {
 
         {/* ── Parallel Mode ──────────────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
             Parallel Mode
           </h2>
           <div className="island-shell rounded-2xl p-6">
-            <div className="space-y-3 text-sm text-[var(--sea-ink-soft)]">
+            <div className="space-y-3 text-sm text-(--sea-ink-soft)">
               <p>
                 Parallel mode launches{" "}
-                <strong className="text-[var(--sea-ink)]">
+                <strong className="text-(--sea-ink)">
                   one agent per card or issue
                 </strong>
                 , each in an isolated git worktree. This lets multiple tasks be
                 worked on simultaneously without conflicts.
               </p>
-              <div className="rounded-lg border border-[var(--line)] p-3">
+              <div className="rounded-lg border border-(--line) p-3">
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="border-b border-[var(--line)]">
-                      <th className="pb-2 text-left font-semibold text-[var(--sea-ink)]">
+                    <tr className="border-b border-(--line)">
+                      <th className="pb-2 text-left font-semibold text-(--sea-ink)">
                         Setting
                       </th>
-                      <th className="pb-2 text-left font-semibold text-[var(--sea-ink)]">
+                      <th className="pb-2 text-left font-semibold text-(--sea-ink)">
                         Value
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="text-[var(--sea-ink-soft)]">
-                    <tr className="border-b border-[var(--line)]">
+                  <tbody className="text-(--sea-ink-soft)">
+                    <tr className="border-b border-(--line)">
                       <td className="py-1.5">Max concurrency</td>
                       <td>1 to 5 agents (default: 3)</td>
                     </tr>
-                    <tr className="border-b border-[var(--line)]">
+                    <tr className="border-b border-(--line)">
                       <td className="py-1.5">Per-agent cost budget</td>
                       <td>$2 (Claude provider)</td>
                     </tr>
-                    <tr className="border-b border-[var(--line)]">
+                    <tr className="border-b border-(--line)">
                       <td className="py-1.5">Isolation</td>
                       <td>Each agent runs in its own git worktree</td>
                     </tr>
@@ -562,20 +562,20 @@ function WebDocsPage() {
 
         {/* ── Settings ───────────────────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
             Settings
           </h2>
           <div className="island-shell rounded-2xl p-6">
-            <div className="space-y-4 text-sm text-[var(--sea-ink-soft)]">
+            <div className="space-y-4 text-sm text-(--sea-ink-soft)">
               <p>
                 The{" "}
-                <strong className="text-[var(--sea-ink)]">Settings</strong> page
+                <strong className="text-(--sea-ink)">Settings</strong> page
                 (accessible from the sidebar) lets you manage all your
                 connections and API keys at any time.
               </p>
 
               <div>
-                <h3 className="mb-2 font-semibold text-[var(--sea-ink)]">
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
                   Task Sources
                 </h3>
                 <ul className="list-inside list-disc space-y-1">
@@ -594,7 +594,7 @@ function WebDocsPage() {
               </div>
 
               <div>
-                <h3 className="mb-2 font-semibold text-[var(--sea-ink)]">
+                <h3 className="mb-2 font-semibold text-(--sea-ink)">
                   AI Provider Keys
                 </h3>
                 <ul className="list-inside list-disc space-y-1">
@@ -603,7 +603,7 @@ function WebDocsPage() {
                   </li>
                   <li>
                     Keys are validated by prefix before saving (e.g.{" "}
-                    <code className="rounded border border-[var(--line)] bg-[var(--surface)] px-1 text-xs">
+                    <code className="rounded border border-(--line) bg-(--surface) px-1 text-xs">
                       sk-ant-api03-
                     </code>{" "}
                     for Claude)
@@ -624,7 +624,7 @@ function WebDocsPage() {
 
         {/* ── How It Works ───────────────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
             How It Works
           </h2>
           <div className="island-shell rounded-2xl p-6">
@@ -662,16 +662,16 @@ function WebDocsPage() {
 
         {/* ── Task Format ────────────────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
             Task Format by Source
           </h2>
           <div className="space-y-4">
             <div className="island-shell rounded-xl p-5">
-              <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--sea-ink)]">
-                <Trello size={16} className="text-[var(--lagoon)]" />
+              <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-(--sea-ink)">
+                <Trello size={16} className="text-(--lagoon)" />
                 Trello
               </h3>
-              <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
+              <p className="mb-3 text-sm text-(--sea-ink-soft)">
                 Cards with checklists. Each checklist item becomes a task for the
                 agent. Structure your board with lists like "To Do", "In
                 Progress", and "Done".
@@ -692,12 +692,12 @@ function WebDocsPage() {
             </div>
 
             <div className="island-shell rounded-xl p-5">
-              <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--sea-ink)]">
-                <Github size={16} className="text-[var(--lagoon)]" />
-                GitHub / <Gitlab size={16} className="text-[var(--lagoon)]" />{" "}
+              <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-(--sea-ink)">
+                <Github size={16} className="text-(--lagoon)" />
+                GitHub / <Gitlab size={16} className="text-(--lagoon)" />{" "}
                 GitLab
               </h3>
-              <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
+              <p className="mb-3 text-sm text-(--sea-ink-soft)">
                 Issues with markdown task lists. Write task lists in the issue
                 body and the agent will check them off as it works.
               </p>
@@ -716,17 +716,17 @@ The token refresh flow is broken. Fix the following:
 
         {/* ── FAQ / Troubleshooting ──────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
             Troubleshooting
           </h2>
           <div className="space-y-3">
             <details className="island-shell rounded-xl">
-              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-[var(--sea-ink)]">
+              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
                 I connected Trello/GitHub/GitLab but no boards or repos appear
               </summary>
-              <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
+              <div className="border-t border-(--line) px-5 py-4 text-sm text-(--sea-ink-soft)">
                 Make sure your OAuth token hasn't expired. Go to{" "}
-                <strong className="text-[var(--sea-ink)]">Settings</strong>,
+                <strong className="text-(--sea-ink)">Settings</strong>,
                 disconnect the source, and reconnect it. For GitHub, ensure the
                 OAuth app has access to the repos you expect (check your GitHub
                 OAuth app permissions).
@@ -734,16 +734,16 @@ The token refresh flow is broken. Fix the following:
             </details>
 
             <details className="island-shell rounded-xl">
-              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-[var(--sea-ink)]">
+              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
                 The session started but nothing is happening
               </summary>
-              <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
+              <div className="border-t border-(--line) px-5 py-4 text-sm text-(--sea-ink-soft)">
                 Check that your AI provider API key is valid and has sufficient
                 credits. Go to{" "}
-                <strong className="text-[var(--sea-ink)]">Settings</strong> to
+                <strong className="text-(--sea-ink)">Settings</strong> to
                 verify your key is configured. If using Claude, make sure you
                 have{" "}
-                <code className="rounded border border-[var(--line)] bg-[var(--surface)] px-1 text-xs">
+                <code className="rounded border border-(--line) bg-(--surface) px-1 text-xs">
                   @anthropic-ai/claude-code
                 </code>{" "}
                 installed globally on the server.
@@ -751,10 +751,10 @@ The token refresh flow is broken. Fix the following:
             </details>
 
             <details className="island-shell rounded-xl">
-              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-[var(--sea-ink)]">
+              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
                 Can I run multiple sessions at the same time?
               </summary>
-              <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
+              <div className="border-t border-(--line) px-5 py-4 text-sm text-(--sea-ink-soft)">
                 Each user is limited to one active session at a time. Wait for
                 the current session to finish, or stop it before starting
                 another. In parallel mode, the concurrency limit controls how
@@ -763,10 +763,10 @@ The token refresh flow is broken. Fix the following:
             </details>
 
             <details className="island-shell rounded-xl">
-              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-[var(--sea-ink)]">
+              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
                 Parallel mode has merge conflicts
               </summary>
-              <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
+              <div className="border-t border-(--line) px-5 py-4 text-sm text-(--sea-ink-soft)">
                 When multiple agents edit the same files, merge conflicts can
                 occur during the sequential merge phase. The summary panel will
                 flag these. Resolve them manually in your working directory after
@@ -775,22 +775,22 @@ The token refresh flow is broken. Fix the following:
             </details>
 
             <details className="island-shell rounded-xl">
-              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-[var(--sea-ink)]">
+              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
                 The provider dropdown only shows Claude
               </summary>
-              <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
+              <div className="border-t border-(--line) px-5 py-4 text-sm text-(--sea-ink-soft)">
                 The dropdown only appears when you have two or more provider keys
                 configured. Go to{" "}
-                <strong className="text-[var(--sea-ink)]">Settings</strong> and
+                <strong className="text-(--sea-ink)">Settings</strong> and
                 add API keys for OpenAI or Groq to see additional options.
               </div>
             </details>
 
             <details className="island-shell rounded-xl">
-              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-[var(--sea-ink)]">
+              <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
                 Where is my data stored?
               </summary>
-              <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
+              <div className="border-t border-(--line) px-5 py-4 text-sm text-(--sea-ink-soft)">
                 TaskPilot uses Turso (cloud SQLite) for all persistent data.
                 Passwords are hashed with bcrypt. API keys are encrypted with
                 AES-256-GCM. OAuth tokens are stored server-side and never sent
@@ -802,18 +802,18 @@ The token refresh flow is broken. Fix the following:
 
         {/* ── Security ───────────────────────────────────────────── */}
         <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-[var(--sea-ink)]">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
             Security
           </h2>
           <div className="island-shell rounded-2xl p-6">
-            <ul className="space-y-3 text-sm text-[var(--sea-ink-soft)]">
+            <ul className="space-y-3 text-sm text-(--sea-ink-soft)">
               <li className="flex items-start gap-2">
                 <CheckCircle2
                   size={16}
                   className="mt-0.5 shrink-0 text-green-600 dark:text-green-400"
                 />
                 <span>
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     Passwords hashed with bcrypt
                   </strong>{" "}
                   — managed by Better Auth, never stored or logged in plaintext
@@ -825,7 +825,7 @@ The token refresh flow is broken. Fix the following:
                   className="mt-0.5 shrink-0 text-green-600 dark:text-green-400"
                 />
                 <span>
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     API keys encrypted at rest
                   </strong>{" "}
                   (AES-256-GCM) — decrypted only at the moment a session is
@@ -838,7 +838,7 @@ The token refresh flow is broken. Fix the following:
                   className="mt-0.5 shrink-0 text-green-600 dark:text-green-400"
                 />
                 <span>
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     OAuth tokens stored server-side only
                   </strong>{" "}
                   — Trello, GitHub, and GitLab tokens are never sent to the
@@ -851,7 +851,7 @@ The token refresh flow is broken. Fix the following:
                   className="mt-0.5 shrink-0 text-green-600 dark:text-green-400"
                 />
                 <span>
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     HTTP-only session cookies
                   </strong>{" "}
                   — signed with BETTER_AUTH_SECRET, inaccessible to JavaScript
@@ -863,7 +863,7 @@ The token refresh flow is broken. Fix the following:
                   className="mt-0.5 shrink-0 text-green-600 dark:text-green-400"
                 />
                 <span>
-                  <strong className="text-[var(--sea-ink)]">
+                  <strong className="text-(--sea-ink)">
                     All server functions authenticated
                   </strong>{" "}
                   — every API route checks the session before accessing

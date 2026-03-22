@@ -7,6 +7,8 @@ import { runCommand } from "./commands/run.js";
 import { boardsCommand } from "./commands/boards.js";
 import { reposCommand } from "./commands/repos.js";
 import { statusCommand } from "./commands/status.js";
+import { historyCommand } from "./commands/history.js";
+import { usageCommand } from "./commands/usage.js";
 
 const program = new Command();
 
@@ -25,5 +27,7 @@ program.addCommand(runCommand);
 program.addCommand(boardsCommand);
 program.addCommand(reposCommand);
 program.addCommand(statusCommand);
+program.addCommand(historyCommand);
+program.addCommand(usageCommand);
 
 program.parse();

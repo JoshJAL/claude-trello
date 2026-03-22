@@ -29,17 +29,17 @@ function OnboardingApiKeyPage() {
     <main className="page-wrap flex min-h-[80vh] items-center justify-center px-4">
       <div className="island-shell w-full max-w-md rounded-2xl p-8">
         <OnboardingSteps currentStep={2} />
-        <h2 className="mt-6 mb-2 text-center text-xl font-bold text-[var(--sea-ink)]">
+        <h2 className="mt-6 mb-2 text-center text-xl font-bold text-(--sea-ink)">
           Configure an AI Provider
         </h2>
-        <p className="mb-6 text-center text-sm text-[var(--sea-ink-soft)]">
+        <p className="mb-6 text-center text-sm text-(--sea-ink-soft)">
           Add at least one API key. Your keys are encrypted before storage and
           never displayed. You can add more providers later in Settings.
         </p>
         <div className="space-y-5">
           {PROVIDERS.map((provider) => (
             <div key={provider.id}>
-              <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+              <h3 className="mb-2 text-sm font-semibold text-(--sea-ink)">
                 {provider.label}
               </h3>
               <ApiKeyForm
