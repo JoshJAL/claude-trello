@@ -25,17 +25,20 @@ function GitLabDashboardPage() {
   const { gitlabLinked } = useIntegrationStatus();
   const { data: projects, isLoading, error } = useGitLabProjects();
   const navigate = useNavigate();
-  const [q, setQ] = useState("");
-
-  const filteredProjects = projects
-    ? projects.filter((project) => {
-        const query = q.toLowerCase();
-        return (
-          project.path_with_namespace.toLowerCase().includes(query) ||
-          (project.description ?? "").toLowerCase().includes(query)
-        );
-      })
-    : [];
+  
+  const {
+    query,
+    setQuery,
+    filteredItems: filteredProjects,
+    isSearching
+  } = useSearchFilter(projects, {
+    filterFn: (project, searchQuery) => {
+      return (
+        project.path_with_namespace.toLowerCase().includes(searchQuery) ||
+        (project.description ?? "").toLowerCase().includes(searchQuery)
+      );
+    }
+  });
 
   return (
     <main className="page-wrap px-4 py-8">
