@@ -132,6 +132,7 @@ npx taskpilot-cli run --provider openai
 npx taskpilot-cli run --parallel --concurrency 5
 npx taskpilot-cli run --dir ~/projects/my-api
 npx taskpilot-cli run --message "Check the development branch for comparison"
+npx taskpilot-cli run --branch feature/auth-refactor
 ```
 
 Without `--message`, you'll be prompted interactively before the session starts. Press Enter to skip.
@@ -145,6 +146,7 @@ Without `--message`, you'll be prompted interactively before the session starts.
 | `-P, --provider <name>` | AI provider: `claude`, `openai`, or `groq` (default: `claude`) |
 | `-p, --parallel` | Run one agent per card/issue in parallel (uses git worktrees) |
 | `-c, --concurrency <n>` | Max concurrent agents in parallel mode (1-5, default: 3) |
+| `--branch <name>` | Git branch to work on (checks out the branch before starting; default: current branch) |
 | `--pr` | Create a PR/MR after session completes |
 | `--no-pr` | Skip PR/MR creation even if automation is enabled |
 | `--no-deps` | Skip dependency detection, process tasks in original order |

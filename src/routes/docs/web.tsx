@@ -469,6 +469,27 @@ function WebDocsPage() {
                 </div>
                 <p>
                   <strong className="text-(--sea-ink)">
+                    Select a branch
+                  </strong>{" "}
+                  — When working with a GitHub or GitLab repo, a searchable
+                  branch selector lets you choose an existing branch for the
+                  agent to commit to. Leave it on &ldquo;Auto-generate&rdquo;
+                  to create a new branch from the issue title (the default
+                  behavior).
+                </p>
+              </div>
+              <div className="flex justify-center">
+                <ArrowRight
+                  size={16}
+                  className="text-(--shore-line)"
+                />
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--foam) text-xs font-bold text-(--lagoon)">
+                  5
+                </div>
+                <p>
+                  <strong className="text-(--sea-ink)">
                     Start the session
                   </strong>{" "}
                   — Click{" "}
@@ -488,7 +509,7 @@ function WebDocsPage() {
               </div>
               <div className="flex items-start gap-3">
                 <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--foam) text-xs font-bold text-(--lagoon)">
-                  5
+                  6
                 </div>
                 <p>
                   <strong className="text-(--sea-ink)">

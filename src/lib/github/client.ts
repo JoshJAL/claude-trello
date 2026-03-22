@@ -109,6 +109,18 @@ export async function addComment(
   );
 }
 
+export async function getBranches(
+  token: string,
+  owner: string,
+  repo: string,
+): Promise<string[]> {
+  const branches = await githubFetch<Array<{ name: string }>>(
+    `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/branches?per_page=100`,
+    token,
+  );
+  return branches.map((b) => b.name);
+}
+
 export async function createPullRequest(
   token: string,
   owner: string,

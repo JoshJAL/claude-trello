@@ -25,6 +25,20 @@ export interface AppUpdate {
  */
 export const UPDATES: AppUpdate[] = [
   {
+    id: "2026-03-22-branch-selection",
+    date: "2026-03-22",
+    title: "Branch Selection for Cloud Mode",
+    description:
+      "You can now select an existing branch before starting a session in cloud mode. Agents will commit to the selected branch instead of auto-generating a new one.",
+    type: "feature",
+    details: [
+      {
+        heading: "How It Works",
+        body: "A searchable branch selector appears in the session controls when using cloud mode with a GitHub or GitLab repository. You can search and select any existing branch, or leave it on 'Auto-generate' to keep the previous behavior.\n\nThis works on GitHub repo dashboards, GitLab project dashboards, and Trello boards with a linked repository. The selector resets when you change the linked repo.",
+      },
+    ],
+  },
+  {
     id: "2026-03-22-dynamic-provider-labels",
     date: "2026-03-22",
     title: "Dynamic Provider Labels & Work On This Fix",

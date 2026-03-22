@@ -65,6 +65,7 @@ export function useParallelSession(boardId: string) {
         githubRepo?: string;
         gitlabProjectId?: number;
         webMode?: boolean;
+        selectedBranch?: string;
       },
     ) => {
       setIsRunning(true);
@@ -90,6 +91,7 @@ export function useParallelSession(boardId: string) {
             githubRepo: options?.githubRepo,
             gitlabProjectId: options?.gitlabProjectId,
             webMode: options?.webMode,
+            selectedBranch: options?.selectedBranch,
           }),
         });
 

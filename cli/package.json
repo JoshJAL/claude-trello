@@ -1,6 +1,6 @@
 {
   "name": "@joshjal/taskpilot",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "CLI for TaskPilot — point AI coding agents at task boards and work through items from your terminal",
   "type": "module",
   "bin": {

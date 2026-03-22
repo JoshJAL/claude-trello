@@ -45,6 +45,7 @@ export function useClaudeSession(boardId: string) {
         githubRepo?: string;
         gitlabProjectId?: number;
         webMode?: boolean;
+        selectedBranch?: string;
       },
     ) => {
       setIsRunning(true);
@@ -69,6 +70,7 @@ export function useClaudeSession(boardId: string) {
             githubRepo: options?.githubRepo,
             gitlabProjectId: options?.gitlabProjectId,
             webMode: options?.webMode,
+            selectedBranch: options?.selectedBranch,
           }),
         });
 

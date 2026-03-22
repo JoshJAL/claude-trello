@@ -53,12 +53,14 @@ import { Route as ApiGitlabProjectsRouteImport } from './routes/api/gitlab/proje
 import { Route as ApiGitlabIssuesRouteImport } from './routes/api/gitlab/issues'
 import { Route as ApiGitlabConnectRouteImport } from './routes/api/gitlab/connect'
 import { Route as ApiGitlabCallbackRouteImport } from './routes/api/gitlab/callback'
+import { Route as ApiGitlabBranchesRouteImport } from './routes/api/gitlab/branches'
 import { Route as ApiGitlabAuthorizeRouteImport } from './routes/api/gitlab/authorize'
 import { Route as ApiGithubTaskRouteImport } from './routes/api/github/task'
 import { Route as ApiGithubReposRouteImport } from './routes/api/github/repos'
 import { Route as ApiGithubIssuesRouteImport } from './routes/api/github/issues'
 import { Route as ApiGithubConnectRouteImport } from './routes/api/github/connect'
 import { Route as ApiGithubCallbackRouteImport } from './routes/api/github/callback'
+import { Route as ApiGithubBranchesRouteImport } from './routes/api/github/branches'
 import { Route as ApiGithubAuthorizeRouteImport } from './routes/api/github/authorize'
 import { Route as ApiCliCredentialsRouteImport } from './routes/api/cli/credentials'
 import { Route as ApiClaudeSessionRouteImport } from './routes/api/claude/session'
@@ -291,6 +293,11 @@ const ApiGitlabCallbackRoute = ApiGitlabCallbackRouteImport.update({
   path: '/api/gitlab/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGitlabBranchesRoute = ApiGitlabBranchesRouteImport.update({
+  id: '/api/gitlab/branches',
+  path: '/api/gitlab/branches',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGitlabAuthorizeRoute = ApiGitlabAuthorizeRouteImport.update({
   id: '/api/gitlab/authorize',
   path: '/api/gitlab/authorize',
@@ -319,6 +326,11 @@ const ApiGithubConnectRoute = ApiGithubConnectRouteImport.update({
 const ApiGithubCallbackRoute = ApiGithubCallbackRouteImport.update({
   id: '/api/github/callback',
   path: '/api/github/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGithubBranchesRoute = ApiGithubBranchesRouteImport.update({
+  id: '/api/github/branches',
+  path: '/api/github/branches',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiGithubAuthorizeRoute = ApiGithubAuthorizeRouteImport.update({
@@ -402,12 +414,14 @@ export interface FileRoutesByFullPath {
   '/api/claude/session': typeof ApiClaudeSessionRoute
   '/api/cli/credentials': typeof ApiCliCredentialsRoute
   '/api/github/authorize': typeof ApiGithubAuthorizeRoute
+  '/api/github/branches': typeof ApiGithubBranchesRoute
   '/api/github/callback': typeof ApiGithubCallbackRoute
   '/api/github/connect': typeof ApiGithubConnectRoute
   '/api/github/issues': typeof ApiGithubIssuesRoute
   '/api/github/repos': typeof ApiGithubReposRoute
   '/api/github/task': typeof ApiGithubTaskRoute
   '/api/gitlab/authorize': typeof ApiGitlabAuthorizeRoute
+  '/api/gitlab/branches': typeof ApiGitlabBranchesRoute
   '/api/gitlab/callback': typeof ApiGitlabCallbackRoute
   '/api/gitlab/connect': typeof ApiGitlabConnectRoute
   '/api/gitlab/issues': typeof ApiGitlabIssuesRoute
@@ -463,12 +477,14 @@ export interface FileRoutesByTo {
   '/api/claude/session': typeof ApiClaudeSessionRoute
   '/api/cli/credentials': typeof ApiCliCredentialsRoute
   '/api/github/authorize': typeof ApiGithubAuthorizeRoute
+  '/api/github/branches': typeof ApiGithubBranchesRoute
   '/api/github/callback': typeof ApiGithubCallbackRoute
   '/api/github/connect': typeof ApiGithubConnectRoute
   '/api/github/issues': typeof ApiGithubIssuesRoute
   '/api/github/repos': typeof ApiGithubReposRoute
   '/api/github/task': typeof ApiGithubTaskRoute
   '/api/gitlab/authorize': typeof ApiGitlabAuthorizeRoute
+  '/api/gitlab/branches': typeof ApiGitlabBranchesRoute
   '/api/gitlab/callback': typeof ApiGitlabCallbackRoute
   '/api/gitlab/connect': typeof ApiGitlabConnectRoute
   '/api/gitlab/issues': typeof ApiGitlabIssuesRoute
@@ -526,12 +542,14 @@ export interface FileRoutesById {
   '/api/claude/session': typeof ApiClaudeSessionRoute
   '/api/cli/credentials': typeof ApiCliCredentialsRoute
   '/api/github/authorize': typeof ApiGithubAuthorizeRoute
+  '/api/github/branches': typeof ApiGithubBranchesRoute
   '/api/github/callback': typeof ApiGithubCallbackRoute
   '/api/github/connect': typeof ApiGithubConnectRoute
   '/api/github/issues': typeof ApiGithubIssuesRoute
   '/api/github/repos': typeof ApiGithubReposRoute
   '/api/github/task': typeof ApiGithubTaskRoute
   '/api/gitlab/authorize': typeof ApiGitlabAuthorizeRoute
+  '/api/gitlab/branches': typeof ApiGitlabBranchesRoute
   '/api/gitlab/callback': typeof ApiGitlabCallbackRoute
   '/api/gitlab/connect': typeof ApiGitlabConnectRoute
   '/api/gitlab/issues': typeof ApiGitlabIssuesRoute
@@ -590,12 +608,14 @@ export interface FileRouteTypes {
     | '/api/claude/session'
     | '/api/cli/credentials'
     | '/api/github/authorize'
+    | '/api/github/branches'
     | '/api/github/callback'
     | '/api/github/connect'
     | '/api/github/issues'
     | '/api/github/repos'
     | '/api/github/task'
     | '/api/gitlab/authorize'
+    | '/api/gitlab/branches'
     | '/api/gitlab/callback'
     | '/api/gitlab/connect'
     | '/api/gitlab/issues'
@@ -651,12 +671,14 @@ export interface FileRouteTypes {
     | '/api/claude/session'
     | '/api/cli/credentials'
     | '/api/github/authorize'
+    | '/api/github/branches'
     | '/api/github/callback'
     | '/api/github/connect'
     | '/api/github/issues'
     | '/api/github/repos'
     | '/api/github/task'
     | '/api/gitlab/authorize'
+    | '/api/gitlab/branches'
     | '/api/gitlab/callback'
     | '/api/gitlab/connect'
     | '/api/gitlab/issues'
@@ -713,12 +735,14 @@ export interface FileRouteTypes {
     | '/api/claude/session'
     | '/api/cli/credentials'
     | '/api/github/authorize'
+    | '/api/github/branches'
     | '/api/github/callback'
     | '/api/github/connect'
     | '/api/github/issues'
     | '/api/github/repos'
     | '/api/github/task'
     | '/api/gitlab/authorize'
+    | '/api/gitlab/branches'
     | '/api/gitlab/callback'
     | '/api/gitlab/connect'
     | '/api/gitlab/issues'
@@ -774,12 +798,14 @@ export interface RootRouteChildren {
   ApiClaudeSessionRoute: typeof ApiClaudeSessionRoute
   ApiCliCredentialsRoute: typeof ApiCliCredentialsRoute
   ApiGithubAuthorizeRoute: typeof ApiGithubAuthorizeRoute
+  ApiGithubBranchesRoute: typeof ApiGithubBranchesRoute
   ApiGithubCallbackRoute: typeof ApiGithubCallbackRoute
   ApiGithubConnectRoute: typeof ApiGithubConnectRoute
   ApiGithubIssuesRoute: typeof ApiGithubIssuesRoute
   ApiGithubReposRoute: typeof ApiGithubReposRoute
   ApiGithubTaskRoute: typeof ApiGithubTaskRoute
   ApiGitlabAuthorizeRoute: typeof ApiGitlabAuthorizeRoute
+  ApiGitlabBranchesRoute: typeof ApiGitlabBranchesRoute
   ApiGitlabCallbackRoute: typeof ApiGitlabCallbackRoute
   ApiGitlabConnectRoute: typeof ApiGitlabConnectRoute
   ApiGitlabIssuesRoute: typeof ApiGitlabIssuesRoute
@@ -1118,6 +1144,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGitlabCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/gitlab/branches': {
+      id: '/api/gitlab/branches'
+      path: '/api/gitlab/branches'
+      fullPath: '/api/gitlab/branches'
+      preLoaderRoute: typeof ApiGitlabBranchesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/gitlab/authorize': {
       id: '/api/gitlab/authorize'
       path: '/api/gitlab/authorize'
@@ -1158,6 +1191,13 @@ declare module '@tanstack/react-router' {
       path: '/api/github/callback'
       fullPath: '/api/github/callback'
       preLoaderRoute: typeof ApiGithubCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/github/branches': {
+      id: '/api/github/branches'
+      path: '/api/github/branches'
+      fullPath: '/api/github/branches'
+      preLoaderRoute: typeof ApiGithubBranchesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/github/authorize': {
@@ -1284,12 +1324,14 @@ const rootRouteChildren: RootRouteChildren = {
   ApiClaudeSessionRoute: ApiClaudeSessionRoute,
   ApiCliCredentialsRoute: ApiCliCredentialsRoute,
   ApiGithubAuthorizeRoute: ApiGithubAuthorizeRoute,
+  ApiGithubBranchesRoute: ApiGithubBranchesRoute,
   ApiGithubCallbackRoute: ApiGithubCallbackRoute,
   ApiGithubConnectRoute: ApiGithubConnectRoute,
   ApiGithubIssuesRoute: ApiGithubIssuesRoute,
   ApiGithubReposRoute: ApiGithubReposRoute,
   ApiGithubTaskRoute: ApiGithubTaskRoute,
   ApiGitlabAuthorizeRoute: ApiGitlabAuthorizeRoute,
+  ApiGitlabBranchesRoute: ApiGitlabBranchesRoute,
   ApiGitlabCallbackRoute: ApiGitlabCallbackRoute,
   ApiGitlabConnectRoute: ApiGitlabConnectRoute,
   ApiGitlabIssuesRoute: ApiGitlabIssuesRoute,

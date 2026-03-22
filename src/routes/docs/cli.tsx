@@ -450,6 +450,10 @@ npx taskpilot-cli login`}</CodeBlock>
                   desc: "Max concurrent agents in parallel mode (1-5, default: 3)",
                 },
                 {
+                  flag: "--branch <name>",
+                  desc: "Git branch to work on (checks out the branch before starting; default: current branch)",
+                },
+                {
                   flag: "--pr",
                   desc: "Create a PR/MR after session completes",
                 },

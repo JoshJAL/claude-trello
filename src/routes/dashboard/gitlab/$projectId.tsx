@@ -189,12 +189,13 @@ function GitLabProjectPage() {
           canStart={activeIssues.length > 0}
           activeCardCount={activeIssues.length}
           source="gitlab"
+          gitlabProjectId={numericProjectId}
           runningLabel={
             sequential.isRunning
               ? "Session running"
               : `Parallel session running (${parallel.agents.size} agents)`
           }
-          onStart={({ cwd, userMessage, mode, concurrency, providerId, webMode }) => {
+          onStart={({ cwd, userMessage, mode, concurrency, providerId, webMode, selectedBranch }) => {
             // Only include issues that have at least one incomplete task
             const issuesWithWork = activeIssues.filter(
               (issue) => issue.tasks.some((t) => !t.checked),
@@ -227,6 +228,7 @@ function GitLabProjectPage() {
               source: "gitlab" as const,
               gitlabProjectId: numericProjectId,
               webMode,
+              selectedBranch,
             };
 
             if (mode === "parallel" && !webMode) {

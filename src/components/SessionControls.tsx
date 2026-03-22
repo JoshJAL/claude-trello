@@ -2,9 +2,11 @@ import { useReducer } from "react";
 import { useIntegrationStatus } from "#/hooks/useIntegrationStatus";
 import { useGitHubRepos } from "#/hooks/useGitHubRepos";
 import { useGitLabProjects } from "#/hooks/useGitLabProjects";
+import { useBranches } from "#/hooks/useBranches";
 import type { AiProviderId } from "#/lib/providers/types";
 import { WebModeBanner } from "./session/WebModeBanner";
 import { RepoLinker } from "./session/RepoLinker";
+import { BranchSelector } from "./session/BranchSelector";
 import { SessionToolbar } from "./session/SessionToolbar";
 
 interface SessionControlsProps {
@@ -12,6 +14,12 @@ interface SessionControlsProps {
   canStart: boolean;
   activeCardCount?: number;
   source?: "trello" | "github" | "gitlab";
+  /** GitHub owner for branch fetching (GitHub source pages) */
+  githubOwner?: string;
+  /** GitHub repo for branch fetching (GitHub source pages) */
+  githubRepo?: string;
+  /** GitLab project ID for branch fetching (GitLab source pages) */
+  gitlabProjectId?: number;
   onStart: (opts: {
     cwd: string;
     userMessage?: string;
@@ -21,6 +29,7 @@ interface SessionControlsProps {
     webMode?: boolean;
     linkedRepo?: { owner: string; repo: string };
     linkedGitlabProjectId?: number;
+    selectedBranch?: string;
   }) => void;
   onStop: () => void;
   runningLabel?: string;
@@ -36,6 +45,7 @@ interface ControlsState {
   concurrency: number;
   providerId: AiProviderId;
   linkedRepoKey: string;
+  selectedBranch: string;
 }
 
 type ControlsAction =
@@ -45,7 +55,8 @@ type ControlsAction =
   | { type: "SET_MODE"; value: "sequential" | "parallel" }
   | { type: "SET_CONCURRENCY"; value: number }
   | { type: "SET_PROVIDER"; value: AiProviderId }
-  | { type: "SET_LINKED_REPO"; value: string };
+  | { type: "SET_LINKED_REPO"; value: string }
+  | { type: "SET_BRANCH"; value: string };
 
 function controlsReducer(state: ControlsState, action: ControlsAction): ControlsState {
   switch (action.type) {
@@ -62,7 +73,9 @@ function controlsReducer(state: ControlsState, action: ControlsAction): Controls
     case "SET_PROVIDER":
       return { ...state, providerId: action.value };
     case "SET_LINKED_REPO":
-      return { ...state, linkedRepoKey: action.value };
+      return { ...state, linkedRepoKey: action.value, selectedBranch: "" };
+    case "SET_BRANCH":
+      return { ...state, selectedBranch: action.value };
   }
 }
 
@@ -71,6 +84,9 @@ export function SessionControls({
   canStart,
   activeCardCount,
   source = "trello",
+  githubOwner: propsGithubOwner,
+  githubRepo: propsGithubRepo,
+  gitlabProjectId: propsGitlabProjectId,
   onStart,
   onStop,
   runningLabel,
@@ -92,6 +108,7 @@ export function SessionControls({
     concurrency: 3,
     providerId: configuredProviders[0] ?? "claude",
     linkedRepoKey: "",
+    selectedBranch: "",
   });
 
   const showRepoLinker = source === "trello" && (githubLinked || gitlabLinked);
@@ -108,6 +125,23 @@ export function SessionControls({
     ? Number(state.linkedRepoKey.slice(7))
     : undefined;
 
+  // Determine branch query params — prefer props (GitHub/GitLab pages), fall back to linked repo (Trello)
+  const effectiveOwner = propsGithubOwner ?? linkedRepo?.owner;
+  const effectiveRepo = propsGithubRepo ?? linkedRepo?.repo;
+  const effectiveProjectId = propsGitlabProjectId ?? linkedGitlabProjectId;
+  const branchSource: "github" | "gitlab" | "trello" =
+    effectiveOwner && effectiveRepo ? "github" : effectiveProjectId ? "gitlab" : "trello";
+
+  const showBranchSelector = state.webMode && (branchSource === "github" || branchSource === "gitlab");
+
+  const { data: branches, isLoading: branchesLoading } = useBranches(
+    branchSource,
+    effectiveOwner,
+    effectiveRepo,
+    effectiveProjectId,
+    showBranchSelector,
+  );
+
   function handleStart() {
     if (!state.webMode && !state.cwd.trim()) return;
     onStart({
@@ -119,6 +153,7 @@ export function SessionControls({
       webMode: state.webMode,
       linkedRepo,
       linkedGitlabProjectId,
+      selectedBranch: state.selectedBranch || undefined,
     });
   }
 
@@ -143,6 +178,15 @@ export function SessionControls({
             gitlabLinked={gitlabLinked}
             ghRepos={ghRepos}
             glProjects={glProjects}
+          />
+        )}
+
+        {showBranchSelector && !isRunning && (
+          <BranchSelector
+            branches={branches ?? []}
+            selectedBranch={state.selectedBranch}
+            onBranchChange={(v) => dispatch({ type: "SET_BRANCH", value: v })}
+            isLoading={branchesLoading}
           />
         )}
 

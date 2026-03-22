@@ -100,6 +100,7 @@ export const Route = createFileRoute("/api/claude/session")({
           5,
         );
         const webMode = body.webMode as boolean | undefined;
+        const selectedBranch = body.selectedBranch as string | undefined;
 
         // GitHub-specific params
         const githubOwner = body.githubOwner as string | undefined;
@@ -365,6 +366,7 @@ export const Route = createFileRoute("/api/claude/session")({
             boardId: boardData.board.id,
             issueTitle: firstIssueTitle,
             providerName: providerId,
+            selectedBranch,
           });
 
           const provider = await getProvider(providerId, "web", webConfig);
@@ -695,6 +697,7 @@ function buildWebConfig(
     boardId: string;
     issueTitle?: string;
     providerName?: string;
+    selectedBranch?: string;
   },
 ): WebModeConfig {
   // Build the combined tool set: web coding tools + source task tools
@@ -707,6 +710,7 @@ function buildWebConfig(
       fileShas: new Map(),
       issueTitle: opts.issueTitle,
       providerName: opts.providerName,
+      workingBranch: opts.selectedBranch || undefined,
     };
     const webTools = createWebToolSet(ctx);
     const sourceTools = createGitHubSourceToolSet(
@@ -729,6 +733,7 @@ function buildWebConfig(
       fileShas: new Map(),
       issueTitle: opts.issueTitle,
       providerName: opts.providerName,
+      workingBranch: opts.selectedBranch || undefined,
     };
     const webTools = createWebToolSet(ctx);
     const sourceTools = createGitLabSourceToolSet(
@@ -752,6 +757,7 @@ function buildWebConfig(
       fileShas: new Map(),
       issueTitle: opts.issueTitle,
       providerName: opts.providerName,
+      workingBranch: opts.selectedBranch || undefined,
     };
     const webTools = createWebToolSet(ctx);
     const trelloTools = createTrelloToolSet(opts.trelloToken, opts.boardId);
@@ -771,6 +777,7 @@ function buildWebConfig(
       fileShas: new Map(),
       issueTitle: opts.issueTitle,
       providerName: opts.providerName,
+      workingBranch: opts.selectedBranch || undefined,
     };
     const webTools = createWebToolSet(ctx);
     const trelloTools = createTrelloToolSet(opts.trelloToken, opts.boardId);

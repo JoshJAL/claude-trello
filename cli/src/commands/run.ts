@@ -1,4 +1,6 @@
 import { resolve } from "path";
+import { execFile } from "child_process";
+import { promisify } from "util";
 import { Command } from "commander";
 import { select, confirm, input } from "@inquirer/prompts";
 import chalk from "chalk";
@@ -49,6 +51,7 @@ export const runCommand = new Command("run")
     "Max concurrent agents in parallel mode (default: 3)",
     "3",
   )
+  .option("--branch <name>", "Git branch to work on (local: checks out the branch; cloud: commits to it)")
   .option("--pr", "Create a PR/MR after session completes")
   .option("--no-pr", "Skip PR/MR creation even if automation is enabled")
   .action(
@@ -60,6 +63,7 @@ export const runCommand = new Command("run")
       provider?: string;
       parallel?: boolean;
       concurrency?: string;
+      branch?: string;
       pr?: boolean;
     }) => {
       if (!isLoggedIn()) {
@@ -252,6 +256,7 @@ export const runCommand = new Command("run")
           credentials,
           activeCardCount,
           userMessage: opts.message,
+          branch: opts.branch,
           sourceExtra,
         });
       } else if (source === "gitlab") {
@@ -384,6 +389,7 @@ export const runCommand = new Command("run")
           credentials,
           activeCardCount,
           userMessage: opts.message,
+          branch: opts.branch,
           sourceExtra,
         });
       } else {
@@ -525,6 +531,7 @@ export const runCommand = new Command("run")
           credentials,
           activeCardCount,
           userMessage: opts.message,
+          branch: opts.branch,
           sourceExtra: {},
         });
       }
@@ -544,6 +551,7 @@ interface SourceSessionOpts {
   credentials: Credentials;
   activeCardCount: number;
   userMessage?: string;
+  branch?: string;
   sourceExtra: {
     githubToken?: string;
     githubOwner?: string;
@@ -572,6 +580,9 @@ async function runSourceSession(opts: SourceSessionOpts): Promise<void> {
   console.log(`\n  ${chalk.dim(`Working directory: ${cwd}`)}`);
   console.log(`  ${chalk.dim(`Task source: ${source}`)}`);
   console.log(`  ${chalk.dim(`AI provider: ${providerLabel}`)}`);
+  if (opts.branch) {
+    console.log(`  ${chalk.dim(`Branch: ${opts.branch}`)}`);
+  }
 
   if (isParallel) {
     console.log(
@@ -608,6 +619,22 @@ async function runSourceSession(opts: SourceSessionOpts): Promise<void> {
     abortController.abort();
   };
   process.on("SIGINT", sigintHandler);
+
+  // ── Branch checkout (local mode) ──────────────────────────────────
+  if (opts.branch) {
+    const execAsync = promisify(execFile);
+    try {
+      await execAsync("git", ["checkout", opts.branch], { cwd });
+      console.log(chalk.dim(`  Switched to branch '${opts.branch}'`));
+    } catch (err) {
+      console.error(
+        chalk.red(
+          `Failed to checkout branch '${opts.branch}': ${err instanceof Error ? err.message : "Unknown error"}`,
+        ),
+      );
+      process.exit(1);
+    }
+  }
 
   try {
     const sessionOpts = {

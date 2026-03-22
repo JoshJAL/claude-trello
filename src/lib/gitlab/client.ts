@@ -103,6 +103,17 @@ export async function addNote(
   );
 }
 
+export async function getBranches(
+  token: string,
+  projectId: number,
+): Promise<string[]> {
+  const branches = await gitlabFetch<Array<{ name: string }>>(
+    `/projects/${projectId}/repository/branches?per_page=100`,
+    token,
+  );
+  return branches.map((b) => b.name);
+}
+
 export async function createMergeRequest(
   token: string,
   projectId: number,
