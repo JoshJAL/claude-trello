@@ -1651,6 +1651,16 @@ If WebSocket connection fails or webhooks can't be registered (e.g., user's Trel
 - All Trello mutations go through a `useMutation` with **optimistic updates** — the checkbox should toggle immediately, then reconcile with server state.
 - Use `invariant` (from `@tanstack/react-router`) for runtime assertions in loaders.
 
+### Changelog Updates
+
+When pushing changes that are large enough to be user-visible (new features, significant improvements, meaningful bug fixes), **add an entry to `src/lib/updates.ts`** before committing. This powers the in-app Updates page and the notification banner.
+
+- Add the entry to the **top** of the `UPDATES` array (newest first)
+- Use the `id` format `"YYYY-MM-DD-slug"`
+- Include `details` sections with headings, descriptions, and code examples for anything non-trivial
+- Set `type` to `"feature"`, `"improvement"`, or `"fix"`
+- Small internal refactors, dependency bumps, or dev-only changes don't need an entry
+
 ---
 
 ## Security Notes
