@@ -17,11 +17,12 @@ export function ConnectGitLab({
     setLoading(true);
     try {
       const res = await fetch("/api/gitlab/authorize");
-      if (!res.ok) throw new Error("Failed to get authorize URL");
-      const { url } = await res.json();
-      window.location.href = url;
-    } catch {
-      setError("Failed to connect GitLab");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? `Failed to get authorize URL (${res.status})`);
+      if (!data.url) throw new Error("No authorize URL returned");
+      window.location.href = data.url;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to connect GitLab");
       setLoading(false);
     }
   }
