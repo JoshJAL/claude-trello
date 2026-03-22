@@ -14,6 +14,8 @@ export function BoardPanel({
   boardId,
   boardName,
   polling = false,
+  onWorkOnThis,
+  isSessionRunning,
 }: BoardPanelProps) {
   const { data, isLoading, error } = useBoardData(boardId, polling);
   const checkMutation = useCheckItem();
