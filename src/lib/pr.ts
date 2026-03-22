@@ -145,7 +145,7 @@ export function generatePrBody(params: PrBodyParams): string {
  * Generate a branch name from the automation config pattern.
  * Pattern variables: {source}, {id}, {slug}
  */
-export function generateBranchName(
+export function generateShortBranchName(
   pattern: string,
   source: string,
   id: string,
