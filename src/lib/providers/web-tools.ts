@@ -162,7 +162,10 @@ async function ensureWorkingBranch(ctx: WebToolContext): Promise<string> {
   if (ctx.workingBranch) return ctx.workingBranch;
 
   // Create a working branch on first write
-  const branchName = `taskpilot/${Date.now()}`;
+  const branchType = ctx.issueTitle.toLowerCase().includes('fix') ? 'bug' : 'feature';
+  const providerName = ctx.providerName.toLowerCase();
+  const summary = ctx.issueTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 50);
+  const branchName = `${branchType}/${providerName}-${summary}`;
 
   if (ctx.source === "github" && ctx.githubOwner && ctx.githubRepo) {
     if (!ctx.defaultBranch) {
