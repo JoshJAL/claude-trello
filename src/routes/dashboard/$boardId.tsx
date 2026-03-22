@@ -42,6 +42,13 @@ function BoardPage() {
   const handleWorkOnThis = (card: TrelloCard) => {
     if (!data) return;
     
+    // Check if card has any incomplete tasks
+    const hasIncompleteTask = card.checklists.some(checklist =>
+      checklist.checkItems.some(item => item.state !== "complete")
+    );
+    
+    if (!hasIncompleteTask) return;
+    
     const singleCardBoardData = {
       board: { id: boardId, name: boardName },
       cards: [card],
