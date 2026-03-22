@@ -113,6 +113,44 @@ function GitHubRepoPage() {
 
   const activeIssues = issues?.filter((i) => i.state === "open") ?? [];
 
+  const handleWorkOnThis = (issue: GitHubIssueWithTasks) => {
+    // Only include this single issue that has at least one incomplete task
+    const hasIncompleteTask = issue.tasks.some((t) => !t.checked);
+    if (!hasIncompleteTask) return;
+
+    const singleIssueBoardData = {
+      board: { id: `${owner}/${repo}`, name: `${owner}/${repo}` },
+      cards: [{
+        id: String(issue.number),
+        name: issue.title,
+        desc: issue.body ?? "",
+        checklists: issue.tasks.length > 0
+          ? [
+              {
+                id: "tasks",
+                name: "Tasks",
+                checkItems: issue.tasks.map((t) => ({
+                  id: `task-${t.index}`,
+                  name: t.text,
+                  state: t.checked ? "complete" : "incomplete",
+                })),
+              },
+            ]
+          : [],
+      }],
+    };
+
+    const opts = {
+      providerId: "claude" as const,
+      source: "github" as const,
+      githubOwner: owner,
+      githubRepo: repo,
+      webMode: true,
+    };
+
+    sequential.start(singleIssueBoardData, "", undefined, opts);
+  };
+
   return (
     <main className="page-wrap px-4 py-8">
       <div className="mx-auto max-w-4xl space-y-6">
