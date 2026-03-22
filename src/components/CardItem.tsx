@@ -10,6 +10,8 @@ interface CardItemProps {
     state: "complete" | "incomplete",
   ) => void;
   done?: boolean;
+  onWorkOnThis?: (card: TrelloCard) => void;
+  isSessionRunning?: boolean;
 }
 
 export function CardItem({ card, onCheckToggle, done }: CardItemProps) {
