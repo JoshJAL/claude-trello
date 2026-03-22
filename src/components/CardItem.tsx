@@ -24,6 +24,10 @@ export function CardItem({ card, onCheckToggle, done, onWorkOnThis, isSessionRun
       sum + cl.checkItems.filter((i) => i.state === "complete").length,
     0,
   );
+  
+  const hasIncompleteTask = card.checklists.some(checklist =>
+    checklist.checkItems.some(item => item.state !== "complete")
+  );
 
   return (
     <div
