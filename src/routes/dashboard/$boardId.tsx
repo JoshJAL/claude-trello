@@ -48,11 +48,16 @@ function BoardPage() {
       doneListId: data.doneListId ?? undefined,
     };
 
-    // Start a sequential session with just this card (web mode for simplicity)
+    // Determine if we're in a deployed environment (cloud mode)
+    const isDeployed = typeof window !== "undefined" &&
+      !window.location.hostname.startsWith("localhost") &&
+      !window.location.hostname.startsWith("127.0.0.1");
+
+    // Start a sequential session with just this card (use cloud mode if deployed)
     sequential.start(singleCardBoardData, "", undefined, { 
       providerId: "claude", 
       source: "trello", 
-      webMode: true 
+      webMode: isDeployed 
     });
   };
 
