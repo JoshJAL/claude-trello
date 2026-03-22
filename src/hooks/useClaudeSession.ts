@@ -51,6 +51,7 @@ export function useClaudeSession(boardId: string) {
       setLogs([]);
       setPendingQuestion(null);
       idCounter.current = 0;
+      pendingToolInputs.current.clear();
 
       try {
         const res = await fetch("/api/claude/session", {
