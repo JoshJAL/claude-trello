@@ -83,6 +83,7 @@ export function SessionLog({
             <span className="whitespace-pre-wrap break-words">
               {entry.content}
             </span>
+            {entry.diff && <DiffViewer diff={entry.diff} />}
           </div>
         ))}
         <div ref={bottomRef} />
