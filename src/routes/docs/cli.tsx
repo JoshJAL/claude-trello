@@ -365,10 +365,10 @@ npx taskpilot-cli login`}</CodeBlock>
 #
 #   Working directory: /home/you/my-project
 #
-# ? Start Claude Code session? (4 active cards) Yes
+# ? Start AI session? (4 active cards) Yes
 #
 # ✓ Credentials loaded
-# Starting Claude Code session...
+# Starting session...
 #
 #   Session initialized (model: claude-sonnet-4-20250514)
 #
