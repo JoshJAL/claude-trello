@@ -27,7 +27,7 @@ async function gitlabFetch<T>(
 
 export async function getProjects(token: string): Promise<GitLabProject[]> {
   return gitlabFetch<GitLabProject[]>(
-    "/projects?membership=true&order_by=last_activity_at&per_page=100",
+    "/projects?membership=true&simple=true&min_access_level=20&order_by=last_activity_at&per_page=50",
     token,
   );
 }

@@ -54,10 +54,10 @@ export function SessionControls({
   );
   const [linkedRepoKey, setLinkedRepoKey] = useState("");
 
-  // Fetch repos/projects for Trello linking
+  // Fetch repos/projects for Trello linking — only when needed
   const showRepoLinker = source === "trello" && (githubLinked || gitlabLinked);
-  const { data: ghRepos } = useGitHubRepos();
-  const { data: glProjects } = useGitLabProjects();
+  const { data: ghRepos } = useGitHubRepos(showRepoLinker && githubLinked);
+  const { data: glProjects } = useGitLabProjects(showRepoLinker && gitlabLinked);
 
   // Parse the selected repo key: "github:owner/repo" or "gitlab:projectId"
   const linkedRepo = linkedRepoKey.startsWith("github:")
