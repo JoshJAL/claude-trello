@@ -78,7 +78,7 @@ function GitLabDashboardPage() {
             );
           })
         : [],
-    [projects, debouncedQ],
+    [projects, debouncedQ, visibilityFilter],
   );
 
   // True while the user is still typing (debounce window)
