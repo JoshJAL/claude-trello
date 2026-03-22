@@ -73,4 +73,4 @@ export type {
   ProviderCardAgentParams,
   AgentMessage,
 } from "./types.js";
-export { AI_PROVIDERS, AI_PROVIDER_IDS } from "./types.js";
+export { AI_PROVIDERS } from "./types.js";

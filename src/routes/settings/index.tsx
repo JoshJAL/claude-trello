@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { ConnectTrello } from "#/components/ConnectTrello";
 import { ConnectGitHub } from "#/components/ConnectGitHub";
@@ -119,17 +119,17 @@ function BudgetSection() {
   const updateBudget = useUpdateBudget();
   const [budgetInput, setBudgetInput] = useState("");
   const [threshold, setThreshold] = useState(80);
+  const [synced, setSynced] = useState(false);
 
-  useEffect(() => {
-    if (budget) {
-      setBudgetInput(
-        budget.monthlyBudgetCents !== null
-          ? (budget.monthlyBudgetCents / 100).toFixed(2)
-          : "",
-      );
-      setThreshold(budget.budgetAlertThreshold);
-    }
-  }, [budget]);
+  if (budget && !synced) {
+    setBudgetInput(
+      budget.monthlyBudgetCents !== null
+        ? (budget.monthlyBudgetCents / 100).toFixed(2)
+        : "",
+    );
+    setThreshold(budget.budgetAlertThreshold);
+    setSynced(true);
+  }
 
   const handleSave = () => {
     const dollars = parseFloat(budgetInput);
@@ -156,13 +156,14 @@ function BudgetSection() {
 
       <div className="space-y-4">
         <div>
-          <label className="mb-1 block text-xs font-medium text-(--sea-ink-soft)">
+          <label htmlFor="monthly-budget" className="mb-1 block text-xs font-medium text-(--sea-ink-soft)">
             Monthly Limit (USD)
           </label>
           <div className="flex gap-2">
             <div className="relative flex-1">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-(--sea-ink-soft)">$</span>
               <input
+                id="monthly-budget"
                 type="number"
                 min="0"
                 step="0.01"
@@ -183,10 +184,11 @@ function BudgetSection() {
         </div>
 
         <div>
-          <label className="mb-1 block text-xs font-medium text-(--sea-ink-soft)">
+          <label htmlFor="budget-threshold" className="mb-1 block text-xs font-medium text-(--sea-ink-soft)">
             Alert Threshold: {threshold}%
           </label>
           <input
+            id="budget-threshold"
             type="range"
             min="10"
             max="100"

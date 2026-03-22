@@ -39,10 +39,10 @@ function DetailSection({ section }: { section: UpdateDetailSection }) {
         {section.heading}
       </h3>
       <div className="text-sm leading-relaxed text-(--sea-ink-soft)">
-        {section.body.split("\n\n").map((paragraph, i) => (
-          <p key={i} className={i > 0 ? "mt-3" : ""}>
-            {paragraph.split("\n").map((line, j, arr) => (
-              <span key={j}>
+        {section.body.split("\n\n").map((paragraph, pIdx) => (
+          <p key={paragraph.slice(0, 40)} className={pIdx > 0 ? "mt-3" : ""}>
+            {paragraph.split("\n").map((line, lIdx, arr) => (
+              <span key={line.slice(0, 40) || `line-${lIdx}`}>
                 {line.startsWith("- ") ? (
                   <span className="ml-2 block">
                     <span className="mr-1.5 text-(--lagoon)">-</span>
@@ -51,7 +51,7 @@ function DetailSection({ section }: { section: UpdateDetailSection }) {
                 ) : (
                   line
                 )}
-                {j < arr.length - 1 && !line.startsWith("- ") && <br />}
+                {lIdx < arr.length - 1 && !line.startsWith("- ") && <br />}
               </span>
             ))}
           </p>
@@ -125,8 +125,8 @@ function UpdateDetailPage() {
         {update.details && update.details.length > 0 && (
           <div className="island-shell rounded-2xl p-8">
             <div className="space-y-8">
-              {update.details.map((section, i) => (
-                <DetailSection key={i} section={section} />
+              {update.details.map((section) => (
+                <DetailSection key={section.heading} section={section} />
               ))}
             </div>
           </div>

@@ -140,8 +140,9 @@ function GitHubDashboardPage() {
             <>
               <div className="relative mb-4">
                 <div className="mb-4">
-                  <label className="mr-2">Filter:</label>
+                  <label htmlFor="github-visibility-filter" className="mr-2">Filter:</label>
                   <select
+                    id="github-visibility-filter"
                     value={visibilityFilter}
                     onChange={(e) => setVisibilityFilter(e.target.value)}
                     className="rounded border border-(--shore-line) bg-white px-2 py-1 text-(--sea-ink) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"

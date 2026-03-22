@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback, useSyncExternalStore } from "react";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 import { signOut, useSession } from "#/lib/auth-client";
 import { useUpdates } from "#/hooks/useUpdates";
@@ -23,9 +23,17 @@ import {
 
 const STORAGE_KEY = "sidebar-collapsed";
 
-function getInitialCollapsed(): boolean {
-  if (typeof window === "undefined") return false;
+function subscribeToStorage(cb: () => void) {
+  window.addEventListener("storage", cb);
+  return () => window.removeEventListener("storage", cb);
+}
+
+function getCollapsedSnapshot(): boolean {
   return window.localStorage.getItem(STORAGE_KEY) === "true";
+}
+
+function getCollapsedServerSnapshot(): boolean {
+  return false;
 }
 
 interface SidebarLinkProps {
@@ -77,19 +85,14 @@ export default function Sidebar() {
   const { data: session } = useSession();
   const { unseenCount } = useUpdates();
   const { status: wsStatus } = useRealtime();
-  const [collapsed, setCollapsed] = useState(false);
+  const collapsed = useSyncExternalStore(subscribeToStorage, getCollapsedSnapshot, getCollapsedServerSnapshot);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  useEffect(() => {
-    setCollapsed(getInitialCollapsed());
-  }, []);
-
   const toggleCollapsed = useCallback(() => {
-    setCollapsed((prev) => {
-      const next = !prev;
-      window.localStorage.setItem(STORAGE_KEY, String(next));
-      return next;
-    });
+    const next = !getCollapsedSnapshot();
+    window.localStorage.setItem(STORAGE_KEY, String(next));
+    // Trigger storage event for useSyncExternalStore
+    window.dispatchEvent(new Event("storage"));
   }, []);
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
@@ -316,7 +319,11 @@ export default function Sidebar() {
       {mobileOpen && (
         <div
           className="sidebar-backdrop md:hidden"
+          role="button"
+          tabIndex={0}
+          aria-label="Close menu"
           onClick={closeMobile}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") closeMobile(); }}
         />
       )}
 

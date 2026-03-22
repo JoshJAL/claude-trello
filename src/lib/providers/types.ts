@@ -28,8 +28,6 @@ export const AI_PROVIDERS: Record<
   },
 };
 
-export const AI_PROVIDER_IDS: AiProviderId[] = ["claude", "openai", "groq"];
-
 // ── Normalized Agent Message ────────────────────────────────────────────────
 
 export interface AgentMessage {

@@ -22,9 +22,9 @@ export function DiffViewer({ diff }: DiffViewerProps) {
       
       {/* Diff lines */}
       <div className="space-y-0.5">
-        {diff.lines.map((line, index) => (
+        {diff.lines.map((line, lineIdx) => (
           <div
-            key={index}
+            key={`${line.type}-${lineIdx}-${line.content.slice(0, 20)}`}
             className={`${
               line.type === 'add' 
                 ? 'bg-green-900/30 text-green-300' 

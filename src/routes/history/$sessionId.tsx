@@ -313,9 +313,9 @@ function SessionDetailPage() {
 
           {eventsLoading && (
             <div className="space-y-1">
-              {[1, 2, 3, 4, 5].map((i) => (
+              {["skel-1", "skel-2", "skel-3", "skel-4", "skel-5"].map((id) => (
                 <div
-                  key={i}
+                  key={id}
                   className="h-6 animate-pulse rounded bg-(--foam)"
                 />
               ))}

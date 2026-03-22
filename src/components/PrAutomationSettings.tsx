@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { PrAutomationConfig } from "#/lib/types";
 import { DEFAULT_PR_AUTOMATION_CONFIG } from "#/lib/types";
@@ -51,16 +51,17 @@ export function PrAutomationSettings() {
   });
 
   const [localConfig, setLocalConfig] = useState<PrAutomationConfig>(
-    DEFAULT_PR_AUTOMATION_CONFIG,
+    () => config ?? DEFAULT_PR_AUTOMATION_CONFIG,
   );
   const [hasChanges, setHasChanges] = useState(false);
 
-  useEffect(() => {
-    if (config) {
-      setLocalConfig(config);
-      setHasChanges(false);
-    }
-  }, [config]);
+  // Sync when server data loads (only on first load, not on every refetch)
+  const configLoaded = !!config;
+  const [synced, setSynced] = useState(false);
+  if (configLoaded && !synced) {
+    setLocalConfig(config);
+    setSynced(true);
+  }
 
   const mutation = useMutation({
     mutationFn: updateAutomationConfig,
@@ -147,10 +148,11 @@ export function PrAutomationSettings() {
 
           {/* Branch naming pattern */}
           <div>
-            <label className="block text-sm font-medium text-(--sea-ink) mb-1">
+            <label htmlFor="branch-pattern" className="block text-sm font-medium text-(--sea-ink) mb-1">
               Branch naming pattern
             </label>
             <input
+              id="branch-pattern"
               type="text"
               value={localConfig.branchNamingPattern}
               onChange={(e) =>
