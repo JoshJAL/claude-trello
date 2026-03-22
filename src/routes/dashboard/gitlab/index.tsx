@@ -13,6 +13,9 @@ export const Route = createFileRoute("/dashboard/gitlab/")({
     }
     return { user: session.user };
   },
+  validateSearch: {
+    q: String
+  },
   component: GitLabDashboardPage,
   pendingComponent: PageSkeleton,
 });
