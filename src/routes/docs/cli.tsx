@@ -853,15 +853,15 @@ npx taskpilot-cli run \\
 
             <details className="island-shell rounded-xl">
               <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
-                Claude asked me a question — what do I do?
+                The agent asked me a question — what do I do?
               </summary>
               <div className="border-t border-(--line) px-5 py-4 text-sm text-(--sea-ink-soft)">
-                Sometimes Claude needs clarification before proceeding. The
+                Sometimes the agent needs clarification before proceeding. The
                 question will appear in yellow in your terminal with a{" "}
                 <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                   &gt;
                 </code>{" "}
-                prompt. Type your answer and press Enter — Claude will continue
+                prompt. Type your answer and press Enter — the agent will continue
                 working.
               </div>
             </details>
