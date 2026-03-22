@@ -1,7 +1,7 @@
-import { readFileSync, writeFileSync, existsSync, statSync } from "fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from "fs";
 import { execFile } from "child_process";
 import { promisify } from "util";
-import { resolve, relative, isAbsolute } from "path";
+import { resolve, relative, isAbsolute, dirname } from "path";
 
 const exec = promisify(execFile);
 
@@ -224,6 +224,7 @@ function readFile(
 
 function writeFile(cwd: string, filePath: string, content: string): string {
   const absPath = safePath(cwd, filePath);
+  mkdirSync(dirname(absPath), { recursive: true });
   writeFileSync(absPath, content, "utf8");
   return `File written: ${filePath}`;
 }

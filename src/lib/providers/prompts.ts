@@ -5,10 +5,14 @@ const CODING_TOOLS_HELP = `- read_file: Read file contents with line numbers
 - search_files: Search for regex patterns in files (uses ripgrep)
 - list_files: List files matching a glob pattern`;
 
-const EDITING_RULES = `When editing files:
-- Always read a file before editing it
-- Use edit_file for targeted changes (preferred over write_file for existing files)
-- Verify changes work by running relevant tests or checks with bash`;
+const EDITING_RULES = `CRITICAL RULES:
+- NEVER mark a task as complete unless you have actually written or edited the code for it.
+- If a tool call fails (e.g. write_file returns an error), do NOT mark the task complete. Fix the error and retry.
+- Always read existing files before editing them to understand the codebase.
+- Use list_files and search_files first to find the right files to modify.
+- Use edit_file for targeted changes (preferred over write_file for existing files).
+- Verify changes work by running relevant tests or checks with bash when available.
+- Work methodically: read the code, plan your change, make the change, verify it, THEN mark complete.`;
 
 export const GENERIC_AGENT_SYSTEM_PROMPT = `You are a coding agent operating on a codebase. You have been given tasks from a Trello board.
 
