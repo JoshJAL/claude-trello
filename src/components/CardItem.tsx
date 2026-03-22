@@ -41,7 +41,7 @@ export function CardItem({ card, onCheckToggle, done, onWorkOnThis, isSessionRun
           {card.name}
         </h3>
         <div className="flex items-center gap-2">
-          {!done && onWorkOnThis && (
+          {!done && onWorkOnThis && hasIncompleteTask && (
             <button
               onClick={() => onWorkOnThis(card)}
               disabled={isSessionRunning}
