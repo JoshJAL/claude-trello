@@ -68,6 +68,9 @@ function GitLabDashboardPage() {
     () =>
       projects
         ? projects.filter((project) => {
+          if (visibilityFilter === 'Public' && project.visibility !== 'public') return false;
+          if (visibilityFilter === 'Private' && project.visibility !== 'private') return false;
+          if (visibilityFilter === 'Internal' && project.visibility !== 'internal') return false;
             const query = debouncedQ.toLowerCase();
             return (
               project.path_with_namespace.toLowerCase().includes(query) ||
