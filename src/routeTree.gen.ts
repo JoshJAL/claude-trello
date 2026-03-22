@@ -19,6 +19,9 @@ import { Route as OnboardingTrelloRouteImport } from './routes/onboarding/trello
 import { Route as OnboardingApiKeyRouteImport } from './routes/onboarding/api-key'
 import { Route as DocsCliRouteImport } from './routes/docs/cli'
 import { Route as DashboardBoardIdRouteImport } from './routes/dashboard/$boardId'
+import { Route as DashboardGitlabIndexRouteImport } from './routes/dashboard/gitlab/index'
+import { Route as DashboardGithubIndexRouteImport } from './routes/dashboard/github/index'
+import { Route as DashboardGitlabProjectIdRouteImport } from './routes/dashboard/gitlab/$projectId'
 import { Route as ApiTrelloConnectRouteImport } from './routes/api/trello/connect'
 import { Route as ApiTrelloChecklistRouteImport } from './routes/api/trello/checklist'
 import { Route as ApiTrelloCardsRouteImport } from './routes/api/trello/cards'
@@ -27,9 +30,22 @@ import { Route as ApiTrelloBoardsRouteImport } from './routes/api/trello/boards'
 import { Route as ApiTrelloAuthorizeRouteImport } from './routes/api/trello/authorize'
 import { Route as ApiSettingsStatusRouteImport } from './routes/api/settings/status'
 import { Route as ApiSettingsApikeyRouteImport } from './routes/api/settings/apikey'
+import { Route as ApiGitlabTaskRouteImport } from './routes/api/gitlab/task'
+import { Route as ApiGitlabProjectsRouteImport } from './routes/api/gitlab/projects'
+import { Route as ApiGitlabIssuesRouteImport } from './routes/api/gitlab/issues'
+import { Route as ApiGitlabConnectRouteImport } from './routes/api/gitlab/connect'
+import { Route as ApiGitlabCallbackRouteImport } from './routes/api/gitlab/callback'
+import { Route as ApiGitlabAuthorizeRouteImport } from './routes/api/gitlab/authorize'
+import { Route as ApiGithubTaskRouteImport } from './routes/api/github/task'
+import { Route as ApiGithubReposRouteImport } from './routes/api/github/repos'
+import { Route as ApiGithubIssuesRouteImport } from './routes/api/github/issues'
+import { Route as ApiGithubConnectRouteImport } from './routes/api/github/connect'
+import { Route as ApiGithubCallbackRouteImport } from './routes/api/github/callback'
+import { Route as ApiGithubAuthorizeRouteImport } from './routes/api/github/authorize'
 import { Route as ApiCliCredentialsRouteImport } from './routes/api/cli/credentials'
 import { Route as ApiClaudeSessionRouteImport } from './routes/api/claude/session'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as DashboardGithubOwnerRepoRouteImport } from './routes/dashboard/github/$owner.$repo'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -81,6 +97,22 @@ const DashboardBoardIdRoute = DashboardBoardIdRouteImport.update({
   path: '/dashboard/$boardId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardGitlabIndexRoute = DashboardGitlabIndexRouteImport.update({
+  id: '/dashboard/gitlab/',
+  path: '/dashboard/gitlab/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardGithubIndexRoute = DashboardGithubIndexRouteImport.update({
+  id: '/dashboard/github/',
+  path: '/dashboard/github/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardGitlabProjectIdRoute =
+  DashboardGitlabProjectIdRouteImport.update({
+    id: '/dashboard/gitlab/$projectId',
+    path: '/dashboard/gitlab/$projectId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiTrelloConnectRoute = ApiTrelloConnectRouteImport.update({
   id: '/api/trello/connect',
   path: '/api/trello/connect',
@@ -121,6 +153,66 @@ const ApiSettingsApikeyRoute = ApiSettingsApikeyRouteImport.update({
   path: '/api/settings/apikey',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGitlabTaskRoute = ApiGitlabTaskRouteImport.update({
+  id: '/api/gitlab/task',
+  path: '/api/gitlab/task',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGitlabProjectsRoute = ApiGitlabProjectsRouteImport.update({
+  id: '/api/gitlab/projects',
+  path: '/api/gitlab/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGitlabIssuesRoute = ApiGitlabIssuesRouteImport.update({
+  id: '/api/gitlab/issues',
+  path: '/api/gitlab/issues',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGitlabConnectRoute = ApiGitlabConnectRouteImport.update({
+  id: '/api/gitlab/connect',
+  path: '/api/gitlab/connect',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGitlabCallbackRoute = ApiGitlabCallbackRouteImport.update({
+  id: '/api/gitlab/callback',
+  path: '/api/gitlab/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGitlabAuthorizeRoute = ApiGitlabAuthorizeRouteImport.update({
+  id: '/api/gitlab/authorize',
+  path: '/api/gitlab/authorize',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGithubTaskRoute = ApiGithubTaskRouteImport.update({
+  id: '/api/github/task',
+  path: '/api/github/task',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGithubReposRoute = ApiGithubReposRouteImport.update({
+  id: '/api/github/repos',
+  path: '/api/github/repos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGithubIssuesRoute = ApiGithubIssuesRouteImport.update({
+  id: '/api/github/issues',
+  path: '/api/github/issues',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGithubConnectRoute = ApiGithubConnectRouteImport.update({
+  id: '/api/github/connect',
+  path: '/api/github/connect',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGithubCallbackRoute = ApiGithubCallbackRouteImport.update({
+  id: '/api/github/callback',
+  path: '/api/github/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGithubAuthorizeRoute = ApiGithubAuthorizeRouteImport.update({
+  id: '/api/github/authorize',
+  path: '/api/github/authorize',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCliCredentialsRoute = ApiCliCredentialsRouteImport.update({
   id: '/api/cli/credentials',
   path: '/api/cli/credentials',
@@ -136,6 +228,12 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardGithubOwnerRepoRoute =
+  DashboardGithubOwnerRepoRouteImport.update({
+    id: '/dashboard/github/$owner/$repo',
+    path: '/dashboard/github/$owner/$repo',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -151,6 +249,18 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/claude/session': typeof ApiClaudeSessionRoute
   '/api/cli/credentials': typeof ApiCliCredentialsRoute
+  '/api/github/authorize': typeof ApiGithubAuthorizeRoute
+  '/api/github/callback': typeof ApiGithubCallbackRoute
+  '/api/github/connect': typeof ApiGithubConnectRoute
+  '/api/github/issues': typeof ApiGithubIssuesRoute
+  '/api/github/repos': typeof ApiGithubReposRoute
+  '/api/github/task': typeof ApiGithubTaskRoute
+  '/api/gitlab/authorize': typeof ApiGitlabAuthorizeRoute
+  '/api/gitlab/callback': typeof ApiGitlabCallbackRoute
+  '/api/gitlab/connect': typeof ApiGitlabConnectRoute
+  '/api/gitlab/issues': typeof ApiGitlabIssuesRoute
+  '/api/gitlab/projects': typeof ApiGitlabProjectsRoute
+  '/api/gitlab/task': typeof ApiGitlabTaskRoute
   '/api/settings/apikey': typeof ApiSettingsApikeyRoute
   '/api/settings/status': typeof ApiSettingsStatusRoute
   '/api/trello/authorize': typeof ApiTrelloAuthorizeRoute
@@ -159,6 +269,10 @@ export interface FileRoutesByFullPath {
   '/api/trello/cards': typeof ApiTrelloCardsRoute
   '/api/trello/checklist': typeof ApiTrelloChecklistRoute
   '/api/trello/connect': typeof ApiTrelloConnectRoute
+  '/dashboard/gitlab/$projectId': typeof DashboardGitlabProjectIdRoute
+  '/dashboard/github/': typeof DashboardGithubIndexRoute
+  '/dashboard/gitlab/': typeof DashboardGitlabIndexRoute
+  '/dashboard/github/$owner/$repo': typeof DashboardGithubOwnerRepoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -174,6 +288,18 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/claude/session': typeof ApiClaudeSessionRoute
   '/api/cli/credentials': typeof ApiCliCredentialsRoute
+  '/api/github/authorize': typeof ApiGithubAuthorizeRoute
+  '/api/github/callback': typeof ApiGithubCallbackRoute
+  '/api/github/connect': typeof ApiGithubConnectRoute
+  '/api/github/issues': typeof ApiGithubIssuesRoute
+  '/api/github/repos': typeof ApiGithubReposRoute
+  '/api/github/task': typeof ApiGithubTaskRoute
+  '/api/gitlab/authorize': typeof ApiGitlabAuthorizeRoute
+  '/api/gitlab/callback': typeof ApiGitlabCallbackRoute
+  '/api/gitlab/connect': typeof ApiGitlabConnectRoute
+  '/api/gitlab/issues': typeof ApiGitlabIssuesRoute
+  '/api/gitlab/projects': typeof ApiGitlabProjectsRoute
+  '/api/gitlab/task': typeof ApiGitlabTaskRoute
   '/api/settings/apikey': typeof ApiSettingsApikeyRoute
   '/api/settings/status': typeof ApiSettingsStatusRoute
   '/api/trello/authorize': typeof ApiTrelloAuthorizeRoute
@@ -182,6 +308,10 @@ export interface FileRoutesByTo {
   '/api/trello/cards': typeof ApiTrelloCardsRoute
   '/api/trello/checklist': typeof ApiTrelloChecklistRoute
   '/api/trello/connect': typeof ApiTrelloConnectRoute
+  '/dashboard/gitlab/$projectId': typeof DashboardGitlabProjectIdRoute
+  '/dashboard/github': typeof DashboardGithubIndexRoute
+  '/dashboard/gitlab': typeof DashboardGitlabIndexRoute
+  '/dashboard/github/$owner/$repo': typeof DashboardGithubOwnerRepoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -198,6 +328,18 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/claude/session': typeof ApiClaudeSessionRoute
   '/api/cli/credentials': typeof ApiCliCredentialsRoute
+  '/api/github/authorize': typeof ApiGithubAuthorizeRoute
+  '/api/github/callback': typeof ApiGithubCallbackRoute
+  '/api/github/connect': typeof ApiGithubConnectRoute
+  '/api/github/issues': typeof ApiGithubIssuesRoute
+  '/api/github/repos': typeof ApiGithubReposRoute
+  '/api/github/task': typeof ApiGithubTaskRoute
+  '/api/gitlab/authorize': typeof ApiGitlabAuthorizeRoute
+  '/api/gitlab/callback': typeof ApiGitlabCallbackRoute
+  '/api/gitlab/connect': typeof ApiGitlabConnectRoute
+  '/api/gitlab/issues': typeof ApiGitlabIssuesRoute
+  '/api/gitlab/projects': typeof ApiGitlabProjectsRoute
+  '/api/gitlab/task': typeof ApiGitlabTaskRoute
   '/api/settings/apikey': typeof ApiSettingsApikeyRoute
   '/api/settings/status': typeof ApiSettingsStatusRoute
   '/api/trello/authorize': typeof ApiTrelloAuthorizeRoute
@@ -206,6 +348,10 @@ export interface FileRoutesById {
   '/api/trello/cards': typeof ApiTrelloCardsRoute
   '/api/trello/checklist': typeof ApiTrelloChecklistRoute
   '/api/trello/connect': typeof ApiTrelloConnectRoute
+  '/dashboard/gitlab/$projectId': typeof DashboardGitlabProjectIdRoute
+  '/dashboard/github/': typeof DashboardGithubIndexRoute
+  '/dashboard/gitlab/': typeof DashboardGitlabIndexRoute
+  '/dashboard/github/$owner/$repo': typeof DashboardGithubOwnerRepoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -223,6 +369,18 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/claude/session'
     | '/api/cli/credentials'
+    | '/api/github/authorize'
+    | '/api/github/callback'
+    | '/api/github/connect'
+    | '/api/github/issues'
+    | '/api/github/repos'
+    | '/api/github/task'
+    | '/api/gitlab/authorize'
+    | '/api/gitlab/callback'
+    | '/api/gitlab/connect'
+    | '/api/gitlab/issues'
+    | '/api/gitlab/projects'
+    | '/api/gitlab/task'
     | '/api/settings/apikey'
     | '/api/settings/status'
     | '/api/trello/authorize'
@@ -231,6 +389,10 @@ export interface FileRouteTypes {
     | '/api/trello/cards'
     | '/api/trello/checklist'
     | '/api/trello/connect'
+    | '/dashboard/gitlab/$projectId'
+    | '/dashboard/github/'
+    | '/dashboard/gitlab/'
+    | '/dashboard/github/$owner/$repo'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -246,6 +408,18 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/claude/session'
     | '/api/cli/credentials'
+    | '/api/github/authorize'
+    | '/api/github/callback'
+    | '/api/github/connect'
+    | '/api/github/issues'
+    | '/api/github/repos'
+    | '/api/github/task'
+    | '/api/gitlab/authorize'
+    | '/api/gitlab/callback'
+    | '/api/gitlab/connect'
+    | '/api/gitlab/issues'
+    | '/api/gitlab/projects'
+    | '/api/gitlab/task'
     | '/api/settings/apikey'
     | '/api/settings/status'
     | '/api/trello/authorize'
@@ -254,6 +428,10 @@ export interface FileRouteTypes {
     | '/api/trello/cards'
     | '/api/trello/checklist'
     | '/api/trello/connect'
+    | '/dashboard/gitlab/$projectId'
+    | '/dashboard/github'
+    | '/dashboard/gitlab'
+    | '/dashboard/github/$owner/$repo'
   id:
     | '__root__'
     | '/'
@@ -269,6 +447,18 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/claude/session'
     | '/api/cli/credentials'
+    | '/api/github/authorize'
+    | '/api/github/callback'
+    | '/api/github/connect'
+    | '/api/github/issues'
+    | '/api/github/repos'
+    | '/api/github/task'
+    | '/api/gitlab/authorize'
+    | '/api/gitlab/callback'
+    | '/api/gitlab/connect'
+    | '/api/gitlab/issues'
+    | '/api/gitlab/projects'
+    | '/api/gitlab/task'
     | '/api/settings/apikey'
     | '/api/settings/status'
     | '/api/trello/authorize'
@@ -277,6 +467,10 @@ export interface FileRouteTypes {
     | '/api/trello/cards'
     | '/api/trello/checklist'
     | '/api/trello/connect'
+    | '/dashboard/gitlab/$projectId'
+    | '/dashboard/github/'
+    | '/dashboard/gitlab/'
+    | '/dashboard/github/$owner/$repo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -293,6 +487,18 @@ export interface RootRouteChildren {
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiClaudeSessionRoute: typeof ApiClaudeSessionRoute
   ApiCliCredentialsRoute: typeof ApiCliCredentialsRoute
+  ApiGithubAuthorizeRoute: typeof ApiGithubAuthorizeRoute
+  ApiGithubCallbackRoute: typeof ApiGithubCallbackRoute
+  ApiGithubConnectRoute: typeof ApiGithubConnectRoute
+  ApiGithubIssuesRoute: typeof ApiGithubIssuesRoute
+  ApiGithubReposRoute: typeof ApiGithubReposRoute
+  ApiGithubTaskRoute: typeof ApiGithubTaskRoute
+  ApiGitlabAuthorizeRoute: typeof ApiGitlabAuthorizeRoute
+  ApiGitlabCallbackRoute: typeof ApiGitlabCallbackRoute
+  ApiGitlabConnectRoute: typeof ApiGitlabConnectRoute
+  ApiGitlabIssuesRoute: typeof ApiGitlabIssuesRoute
+  ApiGitlabProjectsRoute: typeof ApiGitlabProjectsRoute
+  ApiGitlabTaskRoute: typeof ApiGitlabTaskRoute
   ApiSettingsApikeyRoute: typeof ApiSettingsApikeyRoute
   ApiSettingsStatusRoute: typeof ApiSettingsStatusRoute
   ApiTrelloAuthorizeRoute: typeof ApiTrelloAuthorizeRoute
@@ -301,6 +507,10 @@ export interface RootRouteChildren {
   ApiTrelloCardsRoute: typeof ApiTrelloCardsRoute
   ApiTrelloChecklistRoute: typeof ApiTrelloChecklistRoute
   ApiTrelloConnectRoute: typeof ApiTrelloConnectRoute
+  DashboardGitlabProjectIdRoute: typeof DashboardGitlabProjectIdRoute
+  DashboardGithubIndexRoute: typeof DashboardGithubIndexRoute
+  DashboardGitlabIndexRoute: typeof DashboardGitlabIndexRoute
+  DashboardGithubOwnerRepoRoute: typeof DashboardGithubOwnerRepoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -375,6 +585,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardBoardIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/gitlab/': {
+      id: '/dashboard/gitlab/'
+      path: '/dashboard/gitlab'
+      fullPath: '/dashboard/gitlab/'
+      preLoaderRoute: typeof DashboardGitlabIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/github/': {
+      id: '/dashboard/github/'
+      path: '/dashboard/github'
+      fullPath: '/dashboard/github/'
+      preLoaderRoute: typeof DashboardGithubIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/gitlab/$projectId': {
+      id: '/dashboard/gitlab/$projectId'
+      path: '/dashboard/gitlab/$projectId'
+      fullPath: '/dashboard/gitlab/$projectId'
+      preLoaderRoute: typeof DashboardGitlabProjectIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/trello/connect': {
       id: '/api/trello/connect'
       path: '/api/trello/connect'
@@ -431,6 +662,90 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSettingsApikeyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/gitlab/task': {
+      id: '/api/gitlab/task'
+      path: '/api/gitlab/task'
+      fullPath: '/api/gitlab/task'
+      preLoaderRoute: typeof ApiGitlabTaskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/gitlab/projects': {
+      id: '/api/gitlab/projects'
+      path: '/api/gitlab/projects'
+      fullPath: '/api/gitlab/projects'
+      preLoaderRoute: typeof ApiGitlabProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/gitlab/issues': {
+      id: '/api/gitlab/issues'
+      path: '/api/gitlab/issues'
+      fullPath: '/api/gitlab/issues'
+      preLoaderRoute: typeof ApiGitlabIssuesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/gitlab/connect': {
+      id: '/api/gitlab/connect'
+      path: '/api/gitlab/connect'
+      fullPath: '/api/gitlab/connect'
+      preLoaderRoute: typeof ApiGitlabConnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/gitlab/callback': {
+      id: '/api/gitlab/callback'
+      path: '/api/gitlab/callback'
+      fullPath: '/api/gitlab/callback'
+      preLoaderRoute: typeof ApiGitlabCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/gitlab/authorize': {
+      id: '/api/gitlab/authorize'
+      path: '/api/gitlab/authorize'
+      fullPath: '/api/gitlab/authorize'
+      preLoaderRoute: typeof ApiGitlabAuthorizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/github/task': {
+      id: '/api/github/task'
+      path: '/api/github/task'
+      fullPath: '/api/github/task'
+      preLoaderRoute: typeof ApiGithubTaskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/github/repos': {
+      id: '/api/github/repos'
+      path: '/api/github/repos'
+      fullPath: '/api/github/repos'
+      preLoaderRoute: typeof ApiGithubReposRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/github/issues': {
+      id: '/api/github/issues'
+      path: '/api/github/issues'
+      fullPath: '/api/github/issues'
+      preLoaderRoute: typeof ApiGithubIssuesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/github/connect': {
+      id: '/api/github/connect'
+      path: '/api/github/connect'
+      fullPath: '/api/github/connect'
+      preLoaderRoute: typeof ApiGithubConnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/github/callback': {
+      id: '/api/github/callback'
+      path: '/api/github/callback'
+      fullPath: '/api/github/callback'
+      preLoaderRoute: typeof ApiGithubCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/github/authorize': {
+      id: '/api/github/authorize'
+      path: '/api/github/authorize'
+      fullPath: '/api/github/authorize'
+      preLoaderRoute: typeof ApiGithubAuthorizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/cli/credentials': {
       id: '/api/cli/credentials'
       path: '/api/cli/credentials'
@@ -452,6 +767,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/github/$owner/$repo': {
+      id: '/dashboard/github/$owner/$repo'
+      path: '/dashboard/github/$owner/$repo'
+      fullPath: '/dashboard/github/$owner/$repo'
+      preLoaderRoute: typeof DashboardGithubOwnerRepoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -469,6 +791,18 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiClaudeSessionRoute: ApiClaudeSessionRoute,
   ApiCliCredentialsRoute: ApiCliCredentialsRoute,
+  ApiGithubAuthorizeRoute: ApiGithubAuthorizeRoute,
+  ApiGithubCallbackRoute: ApiGithubCallbackRoute,
+  ApiGithubConnectRoute: ApiGithubConnectRoute,
+  ApiGithubIssuesRoute: ApiGithubIssuesRoute,
+  ApiGithubReposRoute: ApiGithubReposRoute,
+  ApiGithubTaskRoute: ApiGithubTaskRoute,
+  ApiGitlabAuthorizeRoute: ApiGitlabAuthorizeRoute,
+  ApiGitlabCallbackRoute: ApiGitlabCallbackRoute,
+  ApiGitlabConnectRoute: ApiGitlabConnectRoute,
+  ApiGitlabIssuesRoute: ApiGitlabIssuesRoute,
+  ApiGitlabProjectsRoute: ApiGitlabProjectsRoute,
+  ApiGitlabTaskRoute: ApiGitlabTaskRoute,
   ApiSettingsApikeyRoute: ApiSettingsApikeyRoute,
   ApiSettingsStatusRoute: ApiSettingsStatusRoute,
   ApiTrelloAuthorizeRoute: ApiTrelloAuthorizeRoute,
@@ -477,6 +811,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiTrelloCardsRoute: ApiTrelloCardsRoute,
   ApiTrelloChecklistRoute: ApiTrelloChecklistRoute,
   ApiTrelloConnectRoute: ApiTrelloConnectRoute,
+  DashboardGitlabProjectIdRoute: DashboardGitlabProjectIdRoute,
+  DashboardGithubIndexRoute: DashboardGithubIndexRoute,
+  DashboardGitlabIndexRoute: DashboardGitlabIndexRoute,
+  DashboardGithubOwnerRepoRoute: DashboardGithubOwnerRepoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

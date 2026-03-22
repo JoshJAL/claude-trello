@@ -3,7 +3,7 @@ interface OnboardingStepsProps {
 }
 
 const steps = [
-  { number: 1, label: "Connect Trello" },
+  { number: 1, label: "Task Source" },
   { number: 2, label: "API Key" },
 ] as const;
 

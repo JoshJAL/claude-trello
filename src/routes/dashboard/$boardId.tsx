@@ -1,11 +1,13 @@
 import { createFileRoute, redirect, Link } from "@tanstack/react-router";
-import { useState } from "react";
 import { getSession } from "#/lib/auth.functions";
 import { BoardPanel } from "#/components/BoardPanel";
 import { SessionLog } from "#/components/SessionLog";
+import { ParallelSessionView } from "#/components/ParallelSessionView";
+import { SessionControls } from "#/components/SessionControls";
 import { PageSkeleton } from "#/components/PageSkeleton";
 import { useBoardData, useBoards } from "#/hooks/useBoardData";
 import { useClaudeSession } from "#/hooks/useClaudeSession";
+import { useParallelSession } from "#/hooks/useParallelSession";
 
 export const Route = createFileRoute("/dashboard/$boardId")({
   beforeLoad: async () => {
@@ -21,29 +23,20 @@ export const Route = createFileRoute("/dashboard/$boardId")({
 
 function BoardPage() {
   const { boardId } = Route.useParams();
-  const { isRunning, logs, error, pendingQuestion, start, stop, sendMessage } =
-    useClaudeSession(boardId);
-  const [cwd, setCwd] = useState("");
-  const [initialMessage, setInitialMessage] = useState("");
+  const sequential = useClaudeSession(boardId);
+  const parallel = useParallelSession(boardId);
+
+  const isRunning = sequential.isRunning || parallel.isRunning;
 
   const { data } = useBoardData(boardId, isRunning);
   const { data: boards } = useBoards();
   const boardName = boards?.find((b) => b.id === boardId)?.name ?? boardId;
 
-  function handleStartSession() {
-    if (!data?.cards) return;
-    if (!cwd.trim()) return;
-
-    start(
-      {
-        board: { id: boardId, name: boardName },
-        cards: data.cards,
-        doneListId: data.doneListId ?? undefined,
-      },
-      cwd.trim(),
-      initialMessage.trim() || undefined,
-    );
-  }
+  const activeCards = data?.cards
+    ? data.doneListId
+      ? data.cards.filter((c) => c.idList !== data.doneListId)
+      : data.cards
+    : [];
 
   return (
     <main className="page-wrap px-4 py-8">
@@ -57,89 +50,63 @@ function BoardPage() {
           </Link>
         </div>
 
-        {/* Session controls — sticky so stop button is always reachable */}
-        <div className="sticky top-14 z-40 -mx-4 bg-[var(--sand)] px-4 py-3">
-          <div className="island-shell flex flex-col gap-3 rounded-xl p-4">
-            <div className="flex items-end gap-3">
-              <div className="flex-1">
-                <label
-                  htmlFor="cwd"
-                  className="mb-1 block text-xs font-medium text-[var(--sea-ink-soft)]"
-                >
-                  Project directory
-                </label>
-                <input
-                  id="cwd"
-                  type="text"
-                  value={cwd}
-                  onChange={(e) => setCwd(e.target.value)}
-                  disabled={isRunning}
-                  placeholder="/home/user/my-project"
-                  className="w-full rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-50 dark:bg-white/5"
-                />
-              </div>
+        <SessionControls
+          isRunning={isRunning}
+          canStart={!!data?.cards && data.cards.length > 0}
+          activeCardCount={activeCards.length}
+          runningLabel={
+            sequential.isRunning
+              ? `Session running`
+              : `Parallel session running (${parallel.agents.size} agents)`
+          }
+          onStart={({ cwd, userMessage, mode, concurrency, providerId }) => {
+            if (!data?.cards) return;
 
-              {!isRunning && (
-                <div className="flex-1">
-                  <label
-                    htmlFor="initial-message"
-                    className="mb-1 block text-xs font-medium text-[var(--sea-ink-soft)]"
-                  >
-                    Initial instructions{" "}
-                    <span className="font-normal text-[var(--shore-line)]">
-                      (optional)
-                    </span>
-                  </label>
-                  <textarea
-                    id="initial-message"
-                    value={initialMessage}
-                    onChange={(e) => setInitialMessage(e.target.value)}
-                    placeholder='e.g. "Check the development branch for comparison" or "Focus on the API cards first"'
-                    rows={2}
-                    className="w-full resize-none rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 dark:bg-white/5"
-                  />
-                </div>
-              )}
+            const boardData = {
+              board: { id: boardId, name: boardName },
+              cards: data.cards,
+              doneListId: data.doneListId ?? undefined,
+            };
 
-              {isRunning ? (
-                <button
-                  onClick={stop}
-                  className="shrink-0 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
-                >
-                  Stop Session
-                </button>
-              ) : (
-                <button
-                  onClick={handleStartSession}
-                  disabled={!data?.cards || data.cards.length === 0 || !cwd.trim()}
-                  className="shrink-0 rounded-lg bg-[var(--lagoon)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
-                >
-                  Start Claude Session
-                </button>
-              )}
-            </div>
+            const opts = { providerId, source: "trello" as const };
 
-            {isRunning && (
-              <p className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
-                Session running in {cwd}
-              </p>
-            )}
-          </div>
-        </div>
+            if (mode === "parallel") {
+              parallel.start(boardData, cwd, concurrency, userMessage, opts);
+            } else {
+              sequential.start(boardData, cwd, userMessage, opts);
+            }
+          }}
+          onStop={() => {
+            if (sequential.isRunning) sequential.stop();
+            if (parallel.isRunning) parallel.stop();
+          }}
+        />
 
-        {error && (
+        {(sequential.error || parallel.error) && (
           <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">
-            {error}
+            {sequential.error || parallel.error}
           </div>
         )}
 
-        <SessionLog
-          logs={logs}
-          isRunning={isRunning}
-          pendingQuestion={pendingQuestion}
-          onSendMessage={sendMessage}
-        />
+        {/* Session output — sequential or parallel */}
+        {sequential.isRunning || sequential.logs.length > 0 ? (
+          <SessionLog
+            logs={sequential.logs}
+            isRunning={sequential.isRunning}
+            pendingQuestion={sequential.pendingQuestion}
+            onSendMessage={sequential.sendMessage}
+          />
+        ) : null}
+
+        {parallel.isRunning ||
+        parallel.agents.size > 0 ||
+        parallel.summary ? (
+          <ParallelSessionView
+            agents={parallel.agents}
+            agentLogs={parallel.agentLogs}
+            summary={parallel.summary}
+          />
+        ) : null}
 
         <BoardPanel boardId={boardId} boardName={boardName} polling={isRunning} />
       </div>

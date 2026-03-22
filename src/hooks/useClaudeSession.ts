@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import type { BoardData } from "#/lib/types";
+import type { AiProviderId } from "#/lib/providers/types";
 
 export interface SessionLogEntry {
   id: number;
@@ -28,7 +29,18 @@ export function useClaudeSession(boardId: string) {
   }, []);
 
   const start = useCallback(
-    async (boardData: BoardData, cwd: string, userMessage?: string) => {
+    async (
+      boardData: BoardData,
+      cwd: string,
+      userMessage?: string,
+      options?: {
+        providerId?: AiProviderId;
+        source?: "trello" | "github" | "gitlab";
+        githubOwner?: string;
+        githubRepo?: string;
+        gitlabProjectId?: number;
+      },
+    ) => {
       setIsRunning(true);
       setError(null);
       setLogs([]);
@@ -39,7 +51,16 @@ export function useClaudeSession(boardId: string) {
         const res = await fetch("/api/claude/session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ boardData, cwd, userMessage }),
+          body: JSON.stringify({
+            boardData,
+            cwd,
+            userMessage,
+            providerId: options?.providerId,
+            source: options?.source,
+            githubOwner: options?.githubOwner,
+            githubRepo: options?.githubRepo,
+            gitlabProjectId: options?.gitlabProjectId,
+          }),
         });
 
         if (!res.ok) {

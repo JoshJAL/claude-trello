@@ -61,7 +61,7 @@ export function CardItem({ card, onCheckToggle, done }: CardItemProps) {
             )}
             <div className="flex flex-col">
               {checklist.checkItems
-                .sort((a, b) => a.pos - b.pos)
+                .sort((a, b) => (a.pos ?? 0) - (b.pos ?? 0))
                 .map((item) => (
                   <ChecklistItem
                     key={item.id}

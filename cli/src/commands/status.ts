@@ -9,12 +9,12 @@ export const statusCommand = new Command("status")
   .action(async () => {
     const config = getConfig();
 
-    console.log(chalk.bold("\nClaude Trello Bridge — Status\n"));
+    console.log(chalk.bold("\nTaskPilot — Status\n"));
     console.log(`  Server:  ${chalk.dim(getServerUrl())}`);
 
     if (!isLoggedIn()) {
       console.log(`  Auth:    ${chalk.red("Not logged in")}`);
-      console.log(chalk.dim("\n  Run `claude-trello login` to sign in.\n"));
+      console.log(chalk.dim("\n  Run `taskpilot login` to sign in.\n"));
       return;
     }
 
@@ -32,10 +32,17 @@ export const statusCommand = new Command("status")
         `  Trello:  ${status.trelloLinked ? chalk.green("Connected") : chalk.red("Not connected")}`,
       );
       console.log(
+        `  GitHub:  ${status.githubLinked ? chalk.green("Connected") : chalk.dim("Not connected")}`,
+      );
+      console.log(
+        `  GitLab:  ${status.gitlabLinked ? chalk.green("Connected") : chalk.dim("Not connected")}`,
+      );
+      console.log(
         `  API Key: ${status.hasApiKey ? chalk.green("Configured") : chalk.red("Not set")}`,
       );
 
-      if (!status.trelloLinked || !status.hasApiKey) {
+      const hasAnySource = status.trelloLinked || status.githubLinked || status.gitlabLinked;
+      if (!hasAnySource || !status.hasApiKey) {
         console.log(
           chalk.dim(
             "\n  Complete setup at your web dashboard to use the CLI.\n",
@@ -43,7 +50,7 @@ export const statusCommand = new Command("status")
         );
       } else {
         console.log(
-          chalk.green("\n  Ready to go! Run `claude-trello run` to start.\n"),
+          chalk.green("\n  Ready to go! Run `taskpilot run` to start.\n"),
         );
       }
     } catch (err) {

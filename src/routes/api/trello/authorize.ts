@@ -26,7 +26,7 @@ export const Route = createFileRoute("/api/trello/authorize")({
         const authorizeUrl =
           `https://trello.com/1/authorize?` +
           `expiration=never` +
-          `&name=ClaudeTrelloBridge` +
+          `&name=TaskPilot` +
           `&scope=read,write` +
           `&response_type=token` +
           `&key=${apiKey}` +

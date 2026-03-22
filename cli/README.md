@@ -1,29 +1,29 @@
-# claude-trello-cli
+# taskpilot-cli
 
-Point [Claude Code](https://docs.anthropic.com/en/docs/claude-code) at a Trello board and work through tasks from your terminal. Claude reads your cards and checklists, makes the code changes, and checks items off on Trello as it goes.
+Point AI coding agents at task boards and work through items from your terminal. Agents read your cards and checklists, make the code changes, and check items off as they go.
 
 ## Quick Start
 
 ```bash
-npx claude-trello-cli register   # create an account (or `login` if you have one)
-npx claude-trello-cli setup      # connect Trello + save your Anthropic API key
+npx taskpilot-cli register   # create an account (or `login` if you have one)
+npx taskpilot-cli setup      # connect Trello + save your API key
 cd ~/my-project
-npx claude-trello-cli run        # pick a board and start working
+npx taskpilot-cli run        # pick a board and start working
 ```
 
 Everything happens in your terminal — no web app required.
 
 ## What It Does
 
-1. You sign in with your [Claude Trello Bridge](https://github.com/JoshJAL/claude-trello) account
+1. You sign in with your [TaskPilot](https://github.com/JoshJAL/claude-trello) account
 2. You pick a Trello board from your connected boards
 3. The CLI shows you all active cards and their checklist items
-4. Claude Code launches locally in your working directory
-5. As Claude completes each task, the checklist item gets checked off on Trello
+4. An AI coding agent launches locally in your working directory
+5. As the agent completes each task, the checklist item gets checked off on Trello
 6. When all items on a card are done, the card moves to your Done list
 
 ```
-$ npx claude-trello-cli run
+$ npx taskpilot-cli run
 
 ? Select a board:
 ❯ My Project Board
@@ -65,16 +65,16 @@ Moving on to "Add dark mode support"...
 **Run instantly** with npx (no install needed):
 
 ```bash
-npx claude-trello-cli login
+npx taskpilot-cli login
 ```
 
 **Or install globally** for a shorter command:
 
 ```bash
-npm install -g claude-trello-cli
+npm install -g taskpilot-cli
 
-claude-trello login
-claude-trello run
+taskpilot login
+taskpilot run
 ```
 
 ## Prerequisites
@@ -85,49 +85,49 @@ claude-trello run
 
 ## Commands
 
-### `claude-trello-cli register`
+### `taskpilot-cli register`
 
 Create a new account. You'll be prompted for your name, email, and password.
 
 ```bash
-npx claude-trello-cli register
-npx claude-trello-cli register --server https://your-self-hosted-instance.com
+npx taskpilot-cli register
+npx taskpilot-cli register --server https://your-self-hosted-instance.com
 ```
 
 | Flag | Description |
 |------|-------------|
 | `-s, --server <url>` | Server URL (default: `https://ct.joshualevine.me`) |
 
-### `claude-trello-cli login`
+### `taskpilot-cli login`
 
-Sign in with your email and password. Your session is stored at `~/.config/claude-trello/config.json` with restricted file permissions.
+Sign in with your email and password. Your session is stored at `~/.config/taskpilot/config.json` with restricted file permissions.
 
 ```bash
-npx claude-trello-cli login
-npx claude-trello-cli login --server https://your-app.vercel.app
+npx taskpilot-cli login
+npx taskpilot-cli login --server https://your-app.vercel.app
 ```
 
 | Flag | Description |
 |------|-------------|
 | `-s, --server <url>` | Server URL (default: `https://ct.joshualevine.me`) |
 
-### `claude-trello-cli setup`
+### `taskpilot-cli setup`
 
 Interactive wizard that walks you through connecting Trello and saving your Anthropic API key. Opens your browser for Trello authorization and polls until complete.
 
 ```bash
-npx claude-trello-cli setup
+npx taskpilot-cli setup
 ```
 
-### `claude-trello-cli run`
+### `taskpilot-cli run`
 
-The main command. Select a board interactively, review the cards, and launch a Claude Code session.
+The main command. Select a board interactively, review the cards, and launch an AI coding session.
 
 ```bash
-npx claude-trello-cli run
-npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5
-npx claude-trello-cli run --dir ~/projects/my-api
-npx claude-trello-cli run --message "Check the development branch for comparison"
+npx taskpilot-cli run
+npx taskpilot-cli run --board 60d5e2a3f1a2b40017c3d4e5
+npx taskpilot-cli run --dir ~/projects/my-api
+npx taskpilot-cli run --message "Check the development branch for comparison"
 ```
 
 Without `--message`, you'll be prompted interactively before the session starts. Press Enter to skip.
@@ -136,14 +136,14 @@ Without `--message`, you'll be prompted interactively before the session starts.
 |------|-------------|
 | `-b, --board <id>` | Board ID — skip interactive selection |
 | `-d, --dir <path>` | Working directory (default: current directory) |
-| `-m, --message <text>` | Initial instructions for Claude (e.g. "focus on API cards first") |
+| `-m, --message <text>` | Initial instructions for the agent (e.g. "focus on API cards first") |
 
-### `claude-trello-cli boards`
+### `taskpilot-cli boards`
 
 List all your Trello boards with their IDs. Useful for grabbing a board ID to pass to `run --board`.
 
 ```bash
-npx claude-trello-cli boards
+npx taskpilot-cli boards
 
 # Your Trello Boards (3):
 #
@@ -152,29 +152,29 @@ npx claude-trello-cli boards
 #   Personal Tasks    612a3b4c5d6e7f8a9b0c1d2e
 ```
 
-### `claude-trello-cli status`
+### `taskpilot-cli status`
 
 Check your auth and integration status.
 
 ```bash
-npx claude-trello-cli status
+npx taskpilot-cli status
 
-# Claude Trello Bridge — Status
+# TaskPilot — Status
 #
 #   Server:  https://ct.joshualevine.me
 #   Auth:    Signed in as Your Name
 #   Trello:  Connected
 #   API Key: Configured
 #
-#   Ready to go! Run `claude-trello run` to start.
+#   Ready to go! Run `taskpilot run` to start.
 ```
 
-### `claude-trello-cli logout`
+### `taskpilot-cli logout`
 
 Clear your stored session.
 
 ```bash
-npx claude-trello-cli logout
+npx taskpilot-cli logout
 ```
 
 ## How It Works
@@ -197,9 +197,9 @@ Your Terminal                    Web App Server              Trello API
      │   cards, API key, token       │                          │
      │<──────────────────────────────│                          │
      │                               │                          │
-     │  4. Launch Claude Code locally                           │
+     │  4. Launch AI agent locally                              │
      │  ┌─────────────────────┐                                 │
-     │  │ Claude reads/edits  │                                 │
+     │  │ Agent reads/edits   │                                 │
      │  │ your codebase       │                                 │
      │  │                     │  5. check_trello_item           │
      │  │ Task complete ──────│────────────────────────────────>│
@@ -210,14 +210,14 @@ Your Terminal                    Web App Server              Trello API
 
 1. **Authenticate** — Signs in to the web app, stores a session cookie locally
 2. **Fetch board data** — Gets your boards, cards, and checklists via the web app's API
-3. **Load credentials** — Your encrypted Anthropic API key is decrypted server-side and sent once for the session
-4. **Run Claude Code locally** — Launches in your working directory with full codebase access
-5. **Update Trello** — As Claude finishes each checklist item, it calls the Trello API directly to check it off
+3. **Load credentials** — Your encrypted API key is decrypted server-side and sent once for the session
+4. **Run AI agent locally** — Launches in your working directory with full codebase access
+5. **Update Trello** — As the agent finishes each checklist item, it calls the Trello API directly to check it off
 6. **Move cards** — When all items on a card are done, the card moves to your Done list
 
 ## Security
 
-- Your **Anthropic API key is encrypted at rest** (AES-256-GCM) in the web app's database and only decrypted for the duration of a session
+- Your **API keys are encrypted at rest** (AES-256-GCM) in the web app's database and only decrypted for the duration of a session
 - The local config file is written with **restricted permissions** (`600` — owner-only read/write)
 - API credentials are **held in memory only** during a session — never written to disk by the CLI
 - Claude Code runs with `acceptEdits` permission mode — it can read and edit files but requires approval for shell commands
@@ -225,16 +225,16 @@ Your Terminal                    Web App Server              Trello API
 ## Troubleshooting
 
 **"Session expired" error**
-Run `npx claude-trello-cli login` again to re-authenticate.
+Run `npx taskpilot-cli login` again to re-authenticate.
 
 **"Trello not connected" or "API key not configured"**
-The CLI uses your web app account's integrations. Go to the web dashboard, complete onboarding (connect Trello and save your Anthropic API key), then try the CLI again.
+The CLI uses your web app account's integrations. Go to the web dashboard, complete onboarding (connect Trello and save your API key), then try the CLI again.
 
 **Can I use the CLI without the web server running?**
 No — the CLI authenticates against and fetches data from the web app. You need either a local dev server or a deployed instance running.
 
 **Claude asked me a question — what do I do?**
-Sometimes Claude needs clarification. The question appears in yellow with a `>` prompt. Type your answer and press Enter — Claude will continue working.
+Sometimes the agent needs clarification. The question appears in yellow with a `>` prompt. Type your answer and press Enter — the agent will continue working.
 
 ## License
 

@@ -5,6 +5,27 @@ import type {
   IntegrationStatus,
   CardsResponse,
 } from "./types.js";
+import type { GitHubRepo, GitHubIssue, ParsedTask } from "./github.js";
+
+export interface GitLabProject {
+  id: number;
+  path_with_namespace: string;
+  name: string;
+  description: string | null;
+  web_url: string;
+  visibility: "public" | "internal" | "private";
+}
+
+export interface GitLabIssue {
+  iid: number;
+  id: number;
+  title: string;
+  description: string | null;
+  state: "opened" | "closed";
+  web_url: string;
+  labels: string[];
+  tasks: ParsedTask[];
+}
 
 export class ApiError extends Error {
   constructor(
@@ -23,7 +44,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   if (!cookie) {
     throw new ApiError(
       401,
-      "Not logged in. Run `claude-trello login` first.",
+      "Not logged in. Run `taskpilot login` first.",
     );
   }
 
@@ -41,7 +62,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   if (res.status === 401) {
     throw new ApiError(
       401,
-      "Session expired. Run `claude-trello login` to re-authenticate.",
+      "Session expired. Run `taskpilot login` to re-authenticate.",
     );
   }
 
@@ -168,6 +189,34 @@ export async function getBoardData(boardId: string): Promise<CardsResponse> {
   );
 }
 
-export async function getCredentials(): Promise<Credentials> {
-  return apiFetch<Credentials>("/api/cli/credentials");
+export async function getCredentials(providerId?: string): Promise<Credentials> {
+  const params = new URLSearchParams();
+  if (providerId) params.set("providerId", providerId);
+  const qs = params.toString();
+  return apiFetch<Credentials>(`/api/cli/credentials${qs ? `?${qs}` : ""}`);
+}
+
+export async function getGitHubRepos(): Promise<GitHubRepo[]> {
+  return apiFetch<GitHubRepo[]>("/api/github/repos");
+}
+
+export async function getGitHubIssues(
+  owner: string,
+  repo: string,
+): Promise<Array<GitHubIssue & { tasks: ParsedTask[] }>> {
+  return apiFetch<Array<GitHubIssue & { tasks: ParsedTask[] }>>(
+    `/api/github/issues?owner=${encodeURIComponent(owner)}&repo=${encodeURIComponent(repo)}`,
+  );
+}
+
+export async function getGitLabProjects(): Promise<GitLabProject[]> {
+  return apiFetch<GitLabProject[]>("/api/gitlab/projects");
+}
+
+export async function getGitLabIssues(
+  projectId: number,
+): Promise<GitLabIssue[]> {
+  return apiFetch<GitLabIssue[]>(
+    `/api/gitlab/issues?projectId=${projectId}`,
+  );
 }

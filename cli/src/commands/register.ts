@@ -6,12 +6,12 @@ import { signUp } from "../lib/api.js";
 import { saveConfig, getServerUrl } from "../lib/config.js";
 
 export const registerCommand = new Command("register")
-  .description("Create a new Claude Trello Bridge account")
+  .description("Create a new TaskPilot account")
   .option("-s, --server <url>", "Server URL (default: https://ct.joshualevine.me)")
   .action(async (opts: { server?: string }) => {
     const serverUrl = opts.server || getServerUrl();
 
-    console.log(chalk.bold("Create a Claude Trello Bridge account"));
+    console.log(chalk.bold("Create a TaskPilot account"));
     console.log(chalk.dim(`Server: ${serverUrl}\n`));
 
     const name = await input({ message: "Name:" });
@@ -40,7 +40,7 @@ export const registerCommand = new Command("register")
       );
       console.log(
         chalk.dim(
-          "\n  Run `claude-trello setup` to connect Trello and add your API key.\n",
+          "\n  Run `taskpilot setup` to connect Trello and add your API key.\n",
         ),
       );
     } catch (err) {

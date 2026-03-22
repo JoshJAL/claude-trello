@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import type { IntegrationStatus } from "#/lib/types";
+import type { AiProviderId } from "#/lib/providers/types";
 
 async function fetchIntegrationStatus(): Promise<IntegrationStatus> {
   const res = await fetch("/api/settings/status");
@@ -13,10 +14,23 @@ export function useIntegrationStatus() {
     queryFn: fetchIntegrationStatus,
   });
 
+  const configuredProviders: AiProviderId[] =
+    data?.configuredProviders ?? [];
+
+  const trelloLinked = data?.trelloLinked ?? false;
+  const githubLinked = data?.githubLinked ?? false;
+  const gitlabLinked = data?.gitlabLinked ?? false;
+  const hasApiKey = data?.hasApiKey ?? false;
+  const hasTaskSource = trelloLinked || githubLinked || gitlabLinked;
+
   return {
-    trelloLinked: data?.trelloLinked ?? false,
-    hasApiKey: data?.hasApiKey ?? false,
-    isReady: (data?.trelloLinked && data?.hasApiKey) ?? false,
+    trelloLinked,
+    githubLinked,
+    gitlabLinked,
+    hasApiKey,
+    configuredProviders,
+    hasTaskSource,
+    isReady: hasTaskSource && hasApiKey,
     isLoading,
     refetch,
   };

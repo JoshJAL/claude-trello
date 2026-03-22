@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 // Better Auth manages these tables — export names must match BA model names
 export const user = sqliteTable("user", {
@@ -54,13 +54,37 @@ export const verification = sqliteTable("verification", {
 });
 
 // Our custom table — one row per user
+// NOTE: encryptedAnthropicApiKey is deprecated — use provider_keys table instead.
+// Kept for backward compat during migration.
 export const userSettings = sqliteTable("user_settings", {
   userId: text("userId")
     .primaryKey()
     .references(() => user.id, { onDelete: "cascade" }),
-  // Anthropic API key encrypted with AES-256-GCM via encrypt.ts
-  // Format: "<iv_hex>:<authTag_hex>:<ciphertext_hex>"
+  // DEPRECATED: Use provider_keys table. Kept for migration.
   encryptedAnthropicApiKey: text("encryptedAnthropicApiKey"),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
 });
+
+// Multi-provider API key storage — one row per (user, provider)
+// Encrypted with AES-256-GCM via encrypt.ts
+// Format: "<iv_hex>:<authTag_hex>:<ciphertext_hex>"
+export const providerKeys = sqliteTable(
+  "provider_keys",
+  {
+    id: text("id").primaryKey(),
+    userId: text("userId")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    providerId: text("providerId").notNull(), // 'claude' | 'openai' | 'groq'
+    encryptedApiKey: text("encryptedApiKey").notNull(),
+    createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
+    updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
+  },
+  (table) => [
+    uniqueIndex("provider_keys_user_provider_idx").on(
+      table.userId,
+      table.providerId,
+    ),
+  ],
+);

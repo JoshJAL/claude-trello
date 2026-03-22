@@ -154,6 +154,16 @@ TRELLO_API_SECRET=
 # Callback URL auto-handled by Better Auth:
 # {BETTER_AUTH_URL}/api/auth/callback/trello
 
+# GitHub — OAuth credentials for GitHub integration
+# From https://github.com/settings/developers (OAuth Apps)
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+# GitLab — OAuth credentials for GitLab integration
+# From https://gitlab.com/-/user_settings/applications
+GITLAB_CLIENT_ID=
+GITLAB_CLIENT_SECRET=
+
 # App
 BASE_URL=http://localhost:3000
 ```
@@ -791,212 +801,55 @@ pnpm start
 
 ---
 
-## Implementation Order (Suggested)
+## Implementation Phases
 
-Work through these phases in order. Check them off as you go.
-
-- [ ] **Phase 1 — Scaffold**
-  - [ ] Init TanStack Start project with Router + Query
-  - [ ] Set up Tailwind v4
-  - [ ] Add `.env.example` and env validation
-  - [ ] Create folder structure as defined above
-
-- [ ] **Phase 2 — Database**
-  - [ ] Install `drizzle-orm`, `@libsql/client`, `drizzle-kit`
-  - [ ] Create a Turso database: `turso db create <name>` (requires Turso CLI — `brew install tursodatabase/tap/turso`)
-  - [ ] Copy `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` into `.env`
-  - [ ] Define schema in `app/lib/db/schema.ts` (users, sessions, accounts, verifications, user_settings)
-  - [ ] Set up Drizzle client in `app/lib/db/index.ts` using `@libsql/client`
-  - [ ] Configure `drizzle.config.ts` with `dialect: "turso"`
-  - [ ] Run initial migration: `pnpm drizzle-kit push`
-
-- [ ] **Phase 3 — Authentication**
-  - [ ] Install and configure `better-auth` with Drizzle adapter, `emailAndPassword` plugin, and Trello `genericOAuth` plugin (`app/lib/auth.ts`)
-  - [ ] Set up Better Auth client with `emailAndPasswordClient` + `genericOAuthClient` plugins (`app/lib/auth-client.ts`)
-  - [ ] Add Better Auth catch-all API route (`app/routes/api/auth/[...all].ts`)
-  - [ ] Build `AuthForm.tsx` — shared controlled form, accepts `mode: "sign-in" | "register"` prop
-  - [ ] Build `app/routes/index.tsx` — sign-in page, redirects to dashboard or onboarding on success
-  - [ ] Build `app/routes/register.tsx` — registration page, redirects to onboarding on success
-  - [ ] Protect dashboard and settings routes — redirect unauthenticated to `/`
-
-- [ ] **Phase 4 — Onboarding & Settings**
-  - [ ] Build `app/lib/encrypt.ts` — AES-256-GCM encrypt/decrypt
-  - [ ] Build `GET /api/settings/status` — returns `{ trelloLinked, hasApiKey }`
-  - [ ] Build `POST/DELETE /api/settings/apikey` — validate, encrypt, upsert user_settings
-  - [ ] Build `useIntegrationStatus` hook
-  - [ ] Build `ConnectTrello.tsx` → calls `linkSocialAccount({ provider: "trello" })`
-  - [ ] Build `ApiKeyForm.tsx` — masked input, save/revoke, status indicator
-  - [ ] Build `OnboardingSteps.tsx` step indicator
-  - [ ] Build `onboarding/trello.tsx` (step 1) and `onboarding/api-key.tsx` (step 2)
-  - [ ] Build `settings/index.tsx` — Trello + API key management
-  - [ ] Route guard: if `!trelloLinked` → `/onboarding/trello`; if `!hasApiKey` → `/onboarding/api-key`
-
-- [ ] **Phase 5 — Trello Integration**
-  - [ ] Build `trello.ts` API client (reads token via `getLinkedAccount` server-side)
-  - [ ] Implement board/card/checklist fetching via `createServerFn`
-  - [ ] `useBoardData` hook with TanStack Query + polling
-
-- [ ] **Phase 6 — UI**
-  - [ ] `BoardPanel` — renders cards grouped by list
-  - [ ] `CardItem` — name, description, checklist summary
-  - [ ] `ChecklistItem` — name + checkbox, optimistic update on mutation
-  - [ ] Dashboard route layout with settings nav link
-
-- [ ] **Phase 7 — Claude Code Session**
-  - [ ] Build `prompts.ts` with board-to-prompt serializer
-  - [ ] Implement `claude.ts` session launcher — accepts user's decrypted API key
-  - [ ] SSE route for streaming session output
-  - [ ] `SessionLog.tsx` to render live output
-  - [ ] Register `check_trello_item` tool and handle callbacks
-
-- [x] **Phase 8 — Polish**
-  - [x] Error boundaries on all async routes
-  - [x] Loading skeletons for board panel
-  - [x] Session history (store past runs)
-  - [x] Webhook support for real-time Trello updates
-
-- [x] **Phase 9 — CLI Tool** (`claude-trello-cli` npm package)
-  - [x] Standalone npm package — `npx claude-trello-cli` (no project install needed)
-  - [x] `register` — create account from terminal
-  - [x] `login` / `logout` — session stored at `~/.config/claude-trello/`
-  - [x] `setup` — connect Trello (opens browser, polls) + save API key
-  - [x] `run` — interactive board select → Claude Code session with live output
-  - [x] `boards` / `status` — list boards, check integrations
-  - [x] `--message` flag for initial instructions
-  - [x] Descriptive tool output (file paths, commands, search patterns)
-  - [x] MCP tools run locally via Trello API
-  - [x] Default server: `https://ct.joshualevine.me`
-
-- [x] **Phase 10 — Documentation**
-  - [x] `/docs/cli` page on web app with full CLI reference
-  - [x] npm README with quick start, commands, examples, security notes
-  - [x] Landing page (`claude-trello-frontend` repo) — hero, how it works, features, CLI docs, CTA
-
-- [ ] **Phase 11 — Parallel Agents**
-  - [ ] Phase 11a: Types — `ParallelSessionConfig`, `AgentStatus`, `ParallelEvent`, `ParallelSessionSummary`
-  - [ ] Phase 11b: Prompts — `PARALLEL_AGENT_SYSTEM_PROMPT`, `buildParallelCardPrompt()`
-  - [ ] Phase 11c: Git helpers — `src/lib/git.ts` (worktree create/remove/merge, diff stats, branch/sha utils)
-  - [ ] Phase 11d: Per-card agent launcher — `launchCardAgent()` in `src/lib/claude.ts`
-  - [ ] Phase 11e: Orchestrator — `src/lib/parallel.ts` (`launchParallelSession()` → `AsyncGenerator<ParallelEvent>`)
-  - [ ] Phase 11f: Web API — extend `session.ts` POST with `mode: 'parallel'`, multiplexed SSE
-  - [ ] Phase 11g: Web UI — mode toggle, concurrency slider, `ParallelSessionView.tsx`, `AgentStatusRow.tsx`
-  - [ ] Phase 11h: CLI parallel — `--parallel` / `--concurrency` flags, multi-agent status display
-  - [ ] Phase 11i: Safety — per-agent cost budget, cost estimate warning, global subprocess cap
+All phases are complete. See **PROGRESS.md** for detailed phase history and sub-phase checklists.
 
 ---
 
 ## Parallel Agents Architecture (Phase 11)
 
-### Overview
+One agent per card, each in an isolated **git worktree**. Configurable `maxConcurrency` (default 3, max 5). Merges sequentially with conflict detection. Per-agent cost budget ($2 default). Key files: `src/lib/parallel.ts`, `src/lib/git.ts`, `src/lib/claude.ts` (`launchCardAgent()`).
 
-Instead of a single Claude Code session working through cards sequentially, parallel mode launches **one agent per card**, each in its own **git worktree**. After all agents finish, branches merge back and the user gets a unified summary with diffs.
+---
 
-### Design Decisions
+## Multi-AI Provider Architecture (Phase 12)
 
-| Decision | Rationale |
-|----------|-----------|
-| One agent per card | Cards are coherent work units; checklist items within a card are usually dependent |
-| Git worktrees for isolation | Each agent gets its own branch + working copy, preventing file conflicts |
-| Configurable `maxConcurrency` (default 3) | Bounds subprocess count, API rate limits, and memory |
-| Merge sequentially after completion | Conflicts are detected and reported, not auto-resolved |
+Claude (via Agent SDK), OpenAI (`gpt-4o`), and Groq (`llama-3.3-70b`) supported. `ProviderAdapter` interface + factory in `src/lib/providers/`. Generic agent loop with function calling for non-Claude providers. Per-provider API keys stored in `provider_keys` table (encrypted). Key validation: Claude `sk-ant-api03-`, OpenAI `sk-` (not `sk-ant-`), Groq `gsk_`.
 
-### Key Types (`src/lib/types.ts`)
+---
 
-```typescript
-interface ParallelSessionConfig {
-  mode: 'sequential' | 'parallel';
-  maxConcurrency: number;  // default 3
-}
+## Task Source Integrations (Phases 13–14)
 
-interface AgentStatus {
-  cardId: string;
-  cardName: string;
-  state: 'queued' | 'running' | 'completed' | 'failed' | 'merging' | 'conflict';
-  branch?: string;
-  worktreePath?: string;
-  checklistTotal: number;
-  checklistDone: number;
-  error?: string;
-  costUsd?: number;
-  durationMs?: number;
-}
+### Shared Pattern
 
-// Discriminated union streamed via SSE (web) or yielded (CLI)
-type ParallelEvent =
-  | { type: 'agent_queued'; cardId: string; cardName: string }
-  | { type: 'agent_started'; cardId: string; branch: string; worktreePath: string }
-  | { type: 'agent_message'; cardId: string; message: SDKMessage }
-  | { type: 'agent_completed'; cardId: string; status: AgentStatus }
-  | { type: 'agent_failed'; cardId: string; error: string }
-  | { type: 'merge_started'; cardId: string }
-  | { type: 'merge_completed'; cardId: string; success: boolean; conflicts?: string[] }
-  | { type: 'summary'; summary: ParallelSessionSummary }
+All task sources (Trello, GitHub, GitLab) follow the same architecture:
+- OAuth token stored in `account` table with source-specific `providerId`
+- Custom OAuth flow: `authorize` → `callback` → `connect` API routes
+- Source-specific API client in `src/lib/{source}/client.ts`
+- MCP tools for task updates in `src/lib/{source}/tools.ts`
+- Shared markdown task list parser in `src/lib/tasks/parser.ts` (GitHub/GitLab)
+- Unified `TaskSource`, `TaskCard`, `TaskBoardData` types in `src/lib/tasks/types.ts`
+- Dashboard routes: `/dashboard/$boardId` (Trello), `/dashboard/github/$owner/$repo`, `/dashboard/gitlab/$projectId`
 
-interface ParallelSessionSummary {
-  agents: AgentStatus[];
-  totalCostUsd: number;
-  totalDurationMs: number;
-  integrationBranch: string;
-  mergeConflicts: Array<{ cardId: string; files: string[] }>;
-  diffStats: { filesChanged: number; insertions: number; deletions: number };
-}
+### Environment Variables
+
+```bash
+GITHUB_CLIENT_ID=         # From GitHub OAuth App settings
+GITHUB_CLIENT_SECRET=
+GITLAB_CLIENT_ID=         # From GitLab OAuth Application settings
+GITLAB_CLIENT_SECRET=
 ```
 
-### Orchestration Flow (`src/lib/parallel.ts`)
+### Key Differences
 
-```
-launchParallelSession(params) → AsyncGenerator<ParallelEvent>
-```
-
-1. **Snapshot git state** — record current branch + HEAD SHA as baseline for diffs
-2. **Create worktrees** — `git worktree add -b parallel/<session>/<card-id> <path> HEAD` per card
-3. **Launch agents with concurrency limit** — semaphore pattern, `maxConcurrency` simultaneous `query()` calls
-4. **Stream tagged events** — each `ParallelEvent` carries a `cardId` so consumers can demux
-5. **Merge after completion** — `git merge --no-ff <agent-branch>` sequentially into an integration branch
-6. **Generate summary** — per-card status, diff stats (`git diff --stat`), merge conflict list
-7. **Cleanup** — remove worktrees and agent branches (keep integration branch)
-
-### Per-Card Agent (`src/lib/claude.ts` → `launchCardAgent()`)
-
-Each agent gets:
-- **System prompt**: `PARALLEL_AGENT_SYSTEM_PROMPT` — "You are assigned ONE card. Focus exclusively on it. Commit your changes."
-- **User prompt**: `buildParallelCardPrompt()` — only the assigned card's data, not the whole board
-- **MCP tools**: Same `check_trello_item` + `move_card_to_done`, scoped to the card
-- **Working directory**: The agent's worktree path
-- **Lower `maxTurns`**: 30 (single card is scoped work)
-
-### Git Worktree Helpers (`src/lib/git.ts`)
-
-```typescript
-createWorktree(cwd, branchName): Promise<string>     // returns worktree path
-removeWorktree(path): Promise<void>
-mergeWorktreeBranch(cwd, branch, target): Promise<{ success: boolean; conflicts: string[] }>
-getDiffStats(cwd, base, head): Promise<{ filesChanged, insertions, deletions }>
-getCurrentBranch(cwd): Promise<string>
-getCurrentSha(cwd): Promise<string>
-```
-
-Worktrees symlink `node_modules` to avoid reinstalling dependencies per agent.
-
-### Web App Changes
-
-- **API route** (`session.ts`): Accept `mode: 'parallel'` + `maxConcurrency`. Stream `ParallelEvent` via SSE.
-- **Hook**: New `useParallelSession` — per-agent log maps (`Map<cardId, logs[]>`), agent status tracking, summary state.
-- **UI**: Mode toggle (Sequential/Parallel), concurrency slider. `ParallelSessionView.tsx` with agent status grid + tabbed log panels. Summary panel with diff stats after completion.
-
-### CLI Changes
-
-- **Flags**: `--parallel` / `-p`, `--concurrency <n>` / `-c <n>`
-- **Output**: Multi-line status rows updated in place (card name, progress bar, state). Full summary with diff stats at the end.
-- **Runner**: `runParallelSession()` in `cli/src/lib/runner.ts` mirrors the server-side orchestrator.
-
-### Safety
-
-- One orchestration per user (parallel counts as one unit)
-- Per-agent cost budget (default $2) via `maxCostUsd` option
-- Cost estimate warning before launch: "This will launch N agents"
-- Global subprocess cap: max 5 concurrent Claude Code processes per user
-- Merge conflicts reported in summary, branch left unmerged for manual resolution
+| Aspect | GitHub | GitLab |
+|--------|--------|--------|
+| Issue ID field | `number` | `iid` (project-scoped) |
+| Body field | `body` | `description` |
+| Close method | `PATCH { state: "closed" }` | `PUT { state_event: "close" }` |
+| PR/MR | Pull Request | Merge Request |
+| API base | `api.github.com` | `gitlab.com/api/v4` |
 
 ---
 

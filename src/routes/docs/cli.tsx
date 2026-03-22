@@ -16,7 +16,7 @@ import { useState, useCallback } from "react";
 export const Route = createFileRoute("/docs/cli")({
   component: CliDocsPage,
   head: () => ({
-    meta: [{ title: "CLI Documentation — Claude Trello Bridge" }],
+    meta: [{ title: "CLI Documentation — TaskPilot" }],
   }),
 });
 
@@ -149,7 +149,7 @@ function CliDocsPage() {
             Claude work through your tasks — checking off items as it goes.
           </p>
           <a
-            href="https://www.npmjs.com/package/claude-trello-cli"
+            href="https://www.npmjs.com/package/taskpilot-cli"
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-[var(--shore-line)] px-3 py-1.5 text-sm font-semibold text-[var(--sea-ink)] no-underline transition hover:bg-[var(--foam)]"
@@ -171,17 +171,17 @@ function CliDocsPage() {
             </code>{" "}
             — no install required:
           </p>
-          <CodeBlock copyText="npx claude-trello-cli login">
-            npx claude-trello-cli login
+          <CodeBlock copyText="npx taskpilot-cli login">
+            npx taskpilot-cli login
           </CodeBlock>
           <p className="mt-4 mb-3 text-sm text-[var(--sea-ink-soft)]">
             Or install globally for a shorter command:
           </p>
-          <CodeBlock copyText="npm install -g claude-trello-cli">{`npm install -g claude-trello-cli
+          <CodeBlock copyText="npm install -g taskpilot-cli">{`npm install -g taskpilot-cli
 
 # Then use anywhere:
-claude-trello login
-claude-trello run`}</CodeBlock>
+taskpilot login
+taskpilot run`}</CodeBlock>
         </section>
 
         {/* ── Prerequisites ────────────────────────────────────────── */}
@@ -247,11 +247,11 @@ claude-trello run`}</CodeBlock>
           <p className="mb-4 text-sm text-[var(--sea-ink-soft)]">
             All examples use{" "}
             <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
-              npx claude-trello-cli
+              npx taskpilot-cli
             </code>
             . If you installed globally, replace with just{" "}
             <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
-              claude-trello
+              taskpilot
             </code>
             .
           </p>
@@ -261,12 +261,12 @@ claude-trello run`}</CodeBlock>
                 Create a new account, or sign in if you already have one:
               </p>
               <CodeBlock
-                copyText="npx claude-trello-cli register"
+                copyText="npx taskpilot-cli register"
               >{`# New user — create an account
-npx claude-trello-cli register
+npx taskpilot-cli register
 
 # Returning user — sign in
-npx claude-trello-cli login`}</CodeBlock>
+npx taskpilot-cli login`}</CodeBlock>
             </StepCard>
 
             <StepCard number={2} icon={Settings} title="Connect Trello and API key">
@@ -275,10 +275,10 @@ npx claude-trello-cli login`}</CodeBlock>
                 browser) and saving your Anthropic API key:
               </p>
               <CodeBlock
-                copyText="npx claude-trello-cli setup"
-              >{`npx claude-trello-cli setup
+                copyText="npx taskpilot-cli setup"
+              >{`npx taskpilot-cli setup
 
-# Claude Trello Bridge — Setup
+# TaskPilot — Setup
 #
 #   1. Trello Not connected
 #
@@ -294,7 +294,7 @@ npx claude-trello-cli login`}</CodeBlock>
 # ? Paste your Anthropic API key: sk-ant-api03-••••••
 #   ✓ API key saved (encrypted on server)
 #
-#   All set! Run \`claude-trello run\` to start a session.`}</CodeBlock>
+#   All set! Run \`taskpilot run\` to start a session.`}</CodeBlock>
             </StepCard>
 
             <StepCard number={3} icon={FolderOpen} title="Navigate to your project">
@@ -313,8 +313,8 @@ npx claude-trello-cli login`}</CodeBlock>
                 Select a Trello board, review the cards, and launch Claude Code:
               </p>
               <CodeBlock
-                copyText="npx claude-trello-cli run"
-              >{`npx claude-trello-cli run
+                copyText="npx taskpilot-cli run"
+              >{`npx taskpilot-cli run
 
 # ? Select a board:
 # ❯ My Project Board
@@ -361,7 +361,7 @@ npx claude-trello-cli login`}</CodeBlock>
           </h2>
           <div className="space-y-4">
             <CommandRef
-              command="npx claude-trello-cli register"
+              command="npx taskpilot-cli register"
               description="Create a new account (email, password, name)"
               flags={[
                 {
@@ -371,7 +371,7 @@ npx claude-trello-cli login`}</CodeBlock>
               ]}
             />
             <CommandRef
-              command="npx claude-trello-cli login"
+              command="npx taskpilot-cli login"
               description="Sign in to an existing account"
               flags={[
                 {
@@ -381,15 +381,15 @@ npx claude-trello-cli login`}</CodeBlock>
               ]}
             />
             <CommandRef
-              command="npx claude-trello-cli setup"
+              command="npx taskpilot-cli setup"
               description="Connect Trello and save your Anthropic API key (interactive wizard)"
             />
             <CommandRef
-              command="npx claude-trello-cli logout"
+              command="npx taskpilot-cli logout"
               description="Clear your stored session"
             />
             <CommandRef
-              command="npx claude-trello-cli run"
+              command="npx taskpilot-cli run"
               description="Select a board and start a Claude Code session"
               flags={[
                 {
@@ -407,11 +407,11 @@ npx claude-trello-cli login`}</CodeBlock>
               ]}
             />
             <CommandRef
-              command="npx claude-trello-cli boards"
+              command="npx taskpilot-cli boards"
               description="List all your Trello boards with their IDs"
             />
             <CommandRef
-              command="npx claude-trello-cli status"
+              command="npx taskpilot-cli status"
               description="Check auth and integration status"
             />
           </div>
@@ -527,15 +527,15 @@ npx claude-trello-cli login`}</CodeBlock>
               <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
                 Get the board ID from{" "}
                 <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
-                  npx claude-trello-cli boards
+                  npx taskpilot-cli boards
                 </code>{" "}
                 and pass it directly:
               </p>
-              <CodeBlock copyText='npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5'>{`npx claude-trello-cli boards
+              <CodeBlock copyText='npx taskpilot-cli run --board 60d5e2a3f1a2b40017c3d4e5'>{`npx taskpilot-cli boards
 #   My Project Board  60d5e2a3f1a2b40017c3d4e5
 #   Side Project      507f1f77bcf86cd799439011
 
-npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
+npx taskpilot-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
             </div>
 
             <div>
@@ -546,8 +546,8 @@ npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
                 Point Claude Code at a specific project without navigating there
                 first:
               </p>
-              <CodeBlock copyText="npx claude-trello-cli run --dir ~/projects/my-api">
-                npx claude-trello-cli run --dir ~/projects/my-api
+              <CodeBlock copyText="npx taskpilot-cli run --dir ~/projects/my-api">
+                npx taskpilot-cli run --dir ~/projects/my-api
               </CodeBlock>
             </div>
 
@@ -559,17 +559,17 @@ npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
                 Verify everything is set up correctly before starting a session:
               </p>
               <CodeBlock
-                copyText="npx claude-trello-cli status"
-              >{`npx claude-trello-cli status
+                copyText="npx taskpilot-cli status"
+              >{`npx taskpilot-cli status
 
-# Claude Trello Bridge — Status
+# TaskPilot — Status
 #
 #   Server:  https://ct.joshualevine.me
 #   Auth:    Signed in as Your Name
 #   Trello:  Connected
 #   API Key: Configured
 #
-#   Ready to go! Run \`claude-trello run\` to start.`}</CodeBlock>
+#   Ready to go! Run \`taskpilot run\` to start.`}</CodeBlock>
             </div>
 
             <div>
@@ -585,12 +585,12 @@ npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
                 , the CLI will prompt you interactively (press Enter to skip).
               </p>
               <CodeBlock
-                copyText={'npx claude-trello-cli run --message "Check the development branch for comparison"'}
+                copyText={'npx taskpilot-cli run --message "Check the development branch for comparison"'}
               >{`# Give Claude context before it starts
-npx claude-trello-cli run --message "Check the development branch for comparison"
+npx taskpilot-cli run --message "Check the development branch for comparison"
 
 # Or be more specific
-npx claude-trello-cli run --message "Focus on the API cards first, skip frontend for now"
+npx taskpilot-cli run --message "Focus on the API cards first, skip frontend for now"
 
 # Without --message, you'll be prompted interactively:
 # ? Instructions for Claude (optional — press Enter to skip):`}</CodeBlock>
@@ -604,12 +604,12 @@ npx claude-trello-cli run --message "Focus on the API cards first, skip frontend
                 Combine flags for a non-interactive launch:
               </p>
               <CodeBlock
-                copyText={'npx claude-trello-cli run --board 60d5e2a3f1a2b40017c3d4e5 --dir ~/projects/my-api --message "Just go"'}
+                copyText={'npx taskpilot-cli run --board 60d5e2a3f1a2b40017c3d4e5 --dir ~/projects/my-api --message "Just go"'}
               >{`# Login once
-npx claude-trello-cli login
+npx taskpilot-cli login
 
 # Then run from anywhere with all options
-npx claude-trello-cli run \\
+npx taskpilot-cli run \\
   --board 60d5e2a3f1a2b40017c3d4e5 \\
   --dir ~/projects/my-api \\
   --message "Just go"`}</CodeBlock>
@@ -630,7 +630,7 @@ npx claude-trello-cli run \\
               <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
                 Your login session has expired. Run{" "}
                 <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
-                  npx claude-trello-cli login
+                  npx taskpilot-cli login
                 </code>{" "}
                 again to re-authenticate.
               </div>
@@ -672,7 +672,7 @@ npx claude-trello-cli run \\
               <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
                 Your session cookie and server URL are stored at{" "}
                 <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
-                  ~/.config/claude-trello/config.json
+                  ~/.config/taskpilot/config.json
                 </code>{" "}
                 with restricted file permissions (
                 <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
@@ -680,7 +680,7 @@ npx claude-trello-cli run \\
                 </code>
                 ). Run{" "}
                 <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
-                  npx claude-trello-cli logout
+                  npx taskpilot-cli logout
                 </code>{" "}
                 to clear it.
               </div>

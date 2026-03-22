@@ -3,6 +3,7 @@ import { OnboardingSteps } from "#/components/OnboardingSteps";
 import { ApiKeyForm } from "#/components/ApiKeyForm";
 import { PageSkeleton } from "#/components/PageSkeleton";
 import { getSession } from "#/lib/auth.functions";
+import type { AiProviderId } from "#/lib/providers/types";
 
 export const Route = createFileRoute("/onboarding/api-key")({
   beforeLoad: async () => {
@@ -15,6 +16,12 @@ export const Route = createFileRoute("/onboarding/api-key")({
   pendingComponent: PageSkeleton,
 });
 
+const PROVIDERS: Array<{ id: AiProviderId; label: string }> = [
+  { id: "claude", label: "Anthropic (Claude)" },
+  { id: "openai", label: "OpenAI (ChatGPT)" },
+  { id: "groq", label: "Groq" },
+];
+
 function OnboardingApiKeyPage() {
   const navigate = useNavigate();
 
@@ -23,16 +30,26 @@ function OnboardingApiKeyPage() {
       <div className="island-shell w-full max-w-md rounded-2xl p-8">
         <OnboardingSteps currentStep={2} />
         <h2 className="mt-6 mb-2 text-center text-xl font-bold text-[var(--sea-ink)]">
-          Add your Anthropic API key
+          Configure an AI Provider
         </h2>
         <p className="mb-6 text-center text-sm text-[var(--sea-ink-soft)]">
-          Claude Code uses your own API key. It is encrypted before storage and
-          never displayed.
+          Add at least one API key. Your keys are encrypted before storage and
+          never displayed. You can add more providers later in Settings.
         </p>
-        <ApiKeyForm
-          hasKey={false}
-          onSaved={() => navigate({ to: "/dashboard" })}
-        />
+        <div className="space-y-5">
+          {PROVIDERS.map((provider) => (
+            <div key={provider.id}>
+              <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+                {provider.label}
+              </h3>
+              <ApiKeyForm
+                providerId={provider.id}
+                hasKey={false}
+                onSaved={() => navigate({ to: "/dashboard" })}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </main>
   );

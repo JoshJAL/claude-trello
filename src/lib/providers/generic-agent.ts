@@ -1,0 +1,230 @@
+import { CODING_TOOLS, executeTool } from "./tools.js";
+import type { ToolDefinition } from "./tools.js";
+import type { AgentMessage, ProviderSession } from "./types.js";
+import {
+  updateCheckItem,
+  moveCard,
+  findOrCreateDoneList,
+} from "#/lib/trello";
+
+export interface GenericAgentConfig {
+  systemPrompt: string;
+  userPrompt: string;
+  cwd: string;
+  maxTurns: number;
+  trelloToken: string;
+  boardId: string;
+  abortController?: AbortController;
+  /** Provider-specific chat completion function */
+  chatCompletion: ChatCompletionFn;
+}
+
+export interface ChatMessage {
+  role: "system" | "user" | "assistant" | "tool";
+  content: string | null;
+  tool_calls?: ToolCall[];
+  tool_call_id?: string;
+}
+
+export interface ToolCall {
+  id: string;
+  type: "function";
+  function: { name: string; arguments: string };
+}
+
+export type ChatCompletionFn = (
+  messages: ChatMessage[],
+  tools: ToolDefinition[],
+  signal?: AbortSignal,
+) => Promise<{
+  content: string | null;
+  tool_calls: ToolCall[];
+}>;
+
+/**
+ * Generic agent loop that works with any chat completion API
+ * that supports function calling (OpenAI, Groq, etc.).
+ */
+export function createGenericAgentSession(
+  config: GenericAgentConfig,
+): ProviderSession {
+  let closed = false;
+
+  const allTools: ToolDefinition[] = [
+    ...CODING_TOOLS,
+    {
+      name: "check_trello_item",
+      description:
+        "Mark a Trello checklist item as complete once the corresponding code task is done.",
+      parameters: {
+        type: "object",
+        properties: {
+          checkItemId: {
+            type: "string",
+            description: "The Trello checklist item ID",
+          },
+          cardId: {
+            type: "string",
+            description: "The Trello card ID",
+          },
+        },
+        required: ["checkItemId", "cardId"],
+      },
+    },
+    {
+      name: "move_card_to_done",
+      description:
+        "Move a Trello card to the Done list after all its checklist items are completed.",
+      parameters: {
+        type: "object",
+        properties: {
+          cardId: {
+            type: "string",
+            description: "The Trello card ID to move to Done",
+          },
+        },
+        required: ["cardId"],
+      },
+    },
+  ];
+
+  async function handleToolCall(
+    toolCall: ToolCall,
+  ): Promise<string> {
+    const name = toolCall.function.name;
+    let input: Record<string, unknown>;
+    try {
+      input = JSON.parse(toolCall.function.arguments);
+    } catch {
+      return `Error: Invalid JSON arguments for tool ${name}`;
+    }
+
+    // Handle Trello tools
+    if (name === "check_trello_item") {
+      try {
+        await updateCheckItem(
+          config.trelloToken,
+          input.cardId as string,
+          input.checkItemId as string,
+          "complete",
+        );
+        return `Marked checklist item ${input.checkItemId} as complete on card ${input.cardId}`;
+      } catch (err) {
+        return `Error: ${err instanceof Error ? err.message : "Failed to update Trello"}`;
+      }
+    }
+
+    if (name === "move_card_to_done") {
+      try {
+        const doneListId = await findOrCreateDoneList(
+          config.trelloToken,
+          config.boardId,
+        );
+        await moveCard(config.trelloToken, input.cardId as string, doneListId);
+        return `Moved card ${input.cardId} to Done list`;
+      } catch (err) {
+        return `Error: ${err instanceof Error ? err.message : "Failed to move card"}`;
+      }
+    }
+
+    // Handle coding tools
+    try {
+      return await executeTool(name, input, config.cwd);
+    } catch (err) {
+      return `Error: ${err instanceof Error ? err.message : "Tool execution failed"}`;
+    }
+  }
+
+  const session: ProviderSession = {
+    async *[Symbol.asyncIterator](): AsyncGenerator<AgentMessage> {
+      const messages: ChatMessage[] = [
+        { role: "system", content: config.systemPrompt },
+        { role: "user", content: config.userPrompt },
+      ];
+
+      yield { type: "system", content: "Session started" };
+
+      for (let turn = 0; turn < config.maxTurns; turn++) {
+        if (closed || config.abortController?.signal.aborted) break;
+
+        let response: { content: string | null; tool_calls: ToolCall[] };
+        try {
+          response = await config.chatCompletion(
+            messages,
+            allTools,
+            config.abortController?.signal,
+          );
+        } catch (err) {
+          yield {
+            type: "error",
+            content: err instanceof Error ? err.message : "Chat completion failed",
+          };
+          break;
+        }
+
+        // Yield assistant text
+        if (response.content) {
+          yield { type: "assistant", content: response.content };
+        }
+
+        // If no tool calls, the agent is done
+        if (!response.tool_calls || response.tool_calls.length === 0) {
+          messages.push({
+            role: "assistant",
+            content: response.content,
+          });
+          break;
+        }
+
+        // Add assistant message with tool calls
+        messages.push({
+          role: "assistant",
+          content: response.content,
+          tool_calls: response.tool_calls,
+        });
+
+        // Execute each tool call
+        for (const toolCall of response.tool_calls) {
+          if (closed || config.abortController?.signal.aborted) break;
+
+          yield {
+            type: "tool_use",
+            toolName: toolCall.function.name,
+            toolInput: safeParseJson(toolCall.function.arguments),
+          };
+
+          const result = await handleToolCall(toolCall);
+
+          yield {
+            type: "tool_result",
+            toolName: toolCall.function.name,
+            toolResult: result,
+          };
+
+          messages.push({
+            role: "tool",
+            content: result,
+            tool_call_id: toolCall.id,
+          });
+        }
+      }
+
+      yield { type: "done" };
+    },
+    close() {
+      closed = true;
+    },
+  };
+
+  return session;
+}
+
+function safeParseJson(
+  json: string,
+): Record<string, unknown> {
+  try {
+    return JSON.parse(json);
+  } catch {
+    return {};
+  }
+}

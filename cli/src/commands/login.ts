@@ -6,12 +6,12 @@ import { signIn } from "../lib/api.js";
 import { saveConfig, getServerUrl } from "../lib/config.js";
 
 export const loginCommand = new Command("login")
-  .description("Sign in to Claude Trello Bridge")
+  .description("Sign in to TaskPilot")
   .option("-s, --server <url>", "Server URL (default: https://ct.joshualevine.me)")
   .action(async (opts: { server?: string }) => {
     const serverUrl = opts.server || getServerUrl();
 
-    console.log(chalk.bold("Sign in to Claude Trello Bridge"));
+    console.log(chalk.bold("Sign in to TaskPilot"));
     console.log(chalk.dim(`Server: ${serverUrl}\n`));
 
     const email = await input({ message: "Email:" });

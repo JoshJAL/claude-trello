@@ -55,11 +55,11 @@ export function BoardPanel({
   const doneListId = data.doneListId;
   const activeCards = data.cards
     .filter((c) => c.idList !== doneListId)
-    .sort((a, b) => a.pos - b.pos);
+    .sort((a, b) => (a.pos ?? 0) - (b.pos ?? 0));
   const doneCards = doneListId
     ? data.cards
         .filter((c) => c.idList === doneListId)
-        .sort((a, b) => a.pos - b.pos)
+        .sort((a, b) => (a.pos ?? 0) - (b.pos ?? 0))
     : [];
 
   return (

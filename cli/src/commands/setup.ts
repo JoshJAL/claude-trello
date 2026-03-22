@@ -43,13 +43,13 @@ export const setupCommand = new Command("setup")
     if (!isLoggedIn()) {
       console.log(
         chalk.red(
-          "Not logged in. Run `claude-trello register` or `claude-trello login` first.",
+          "Not logged in. Run `taskpilot register` or `taskpilot login` first.",
         ),
       );
       process.exit(1);
     }
 
-    console.log(chalk.bold("\nClaude Trello Bridge — Setup\n"));
+    console.log(chalk.bold("\nTaskPilot — Setup\n"));
 
     const statusSpinner = ora("Checking current status...").start();
     let status;
@@ -114,7 +114,7 @@ export const setupCommand = new Command("setup")
         pollSpinner.succeed("Trello connected!");
       } else {
         pollSpinner.fail(
-          "Timed out waiting for Trello connection. Run `claude-trello setup` to try again.",
+          "Timed out waiting for Trello connection. Run `taskpilot setup` to try again.",
         );
         process.exit(1);
       }
@@ -161,7 +161,7 @@ export const setupCommand = new Command("setup")
     const serverUrl = getServerUrl();
     console.log(
       chalk.green.bold(
-        "\n  All set! Run `claude-trello run` to start a session.\n",
+        "\n  All set! Run `taskpilot run` to start a session.\n",
       ),
     );
     console.log(

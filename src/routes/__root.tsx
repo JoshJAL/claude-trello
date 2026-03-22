@@ -4,7 +4,7 @@ import {
   Scripts,
   createRootRoute,
 } from "@tanstack/react-router";
-import Header from "../components/Header";
+import Sidebar from "../components/Sidebar";
 import { NotFound } from "../components/NotFound";
 import appCss from "../styles.css?url";
 
@@ -15,7 +15,7 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Claude Trello Bridge" },
+      { title: "TaskPilot" },
       { property: "og:image", content: "/opengraph-image.jpeg" },
     ],
     links: [
@@ -38,8 +38,12 @@ function RootLayout() {
         <HeadContent />
       </head>
       <body className="min-h-screen bg-[var(--sand)] font-sans antialiased text-[var(--sea-ink)] [overflow-wrap:anywhere] selection:bg-blue-slate-200/40">
-        <Header />
-        <Outlet />
+        <div className="flex min-h-screen">
+          <Sidebar />
+          <div className="sidebar-content flex-1 overflow-auto">
+            <Outlet />
+          </div>
+        </div>
         <Scripts />
       </body>
     </html>

@@ -9,7 +9,7 @@ export const boardsCommand = new Command("boards")
   .action(async () => {
     if (!isLoggedIn()) {
       console.log(
-        chalk.red("Not logged in. Run `claude-trello login` first."),
+        chalk.red("Not logged in. Run `taskpilot login` first."),
       );
       process.exit(1);
     }

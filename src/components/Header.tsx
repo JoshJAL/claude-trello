@@ -13,7 +13,7 @@ export default function Header() {
             to="/"
             className="inline-flex items-center gap-2 rounded-full border border-(--chip-line) bg-(--chip-bg) px-3 py-1.5 text-sm text-(--sea-ink) no-underline shadow-[0_8px_24px_rgba(14,21,22,0.06)] sm:px-4 sm:py-2"
           >
-            Claude Trello
+            TaskPilot
           </Link>
         </h2>
 

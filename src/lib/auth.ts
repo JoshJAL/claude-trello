@@ -21,7 +21,7 @@ export const auth = betterAuth({
       const { error } = await resend.emails.send({
         from: "noreply@ct.joshualevine.me",
         to: user.email,
-        subject: "Reset your password — Claude Trello Bridge",
+        subject: "Reset your password — TaskPilot",
         html: `<p>Hi ${user.name},</p><p>Click the link below to reset your password:</p><p><a href="${url}">Reset password</a></p><p>If you didn't request this, you can safely ignore this email.</p>`,
       });
       if (error) {

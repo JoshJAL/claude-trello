@@ -10,8 +10,8 @@ export interface TrelloCard {
   id: string;
   name: string;
   desc: string;
-  idList: string;
-  pos: number;
+  idList?: string;
+  pos?: number;
   checklists: TrelloChecklist[];
 }
 
@@ -24,8 +24,8 @@ export interface TrelloChecklist {
 export interface TrelloCheckItem {
   id: string;
   name: string;
-  state: "complete" | "incomplete";
-  pos: number;
+  state: string;
+  pos?: number;
 }
 
 export interface TrelloList {
@@ -44,15 +44,77 @@ export interface Credentials {
   trelloApiKey: string;
   trelloToken: string;
   anthropicApiKey: string;
+  githubToken?: string;
+  gitlabToken?: string;
 }
+
+export type AiProviderId = "claude" | "openai" | "groq";
 
 export interface IntegrationStatus {
   trelloLinked: boolean;
+  githubLinked: boolean;
+  gitlabLinked: boolean;
   hasApiKey: boolean;
+  configuredProviders: AiProviderId[];
 }
 
 export interface CardsResponse {
   cards: TrelloCard[];
   lists: TrelloList[];
   doneListId: string | null;
+}
+
+// ── Parallel Agents (Phase 11) ──────────────────────────────────────────────
+
+export interface ParallelSessionConfig {
+  mode: "sequential" | "parallel";
+  maxConcurrency: number;
+}
+
+export interface AgentStatus {
+  cardId: string;
+  cardName: string;
+  state:
+    | "queued"
+    | "running"
+    | "completed"
+    | "failed"
+    | "merging"
+    | "conflict";
+  branch?: string;
+  worktreePath?: string;
+  checklistTotal: number;
+  checklistDone: number;
+  error?: string;
+  costUsd?: number;
+  durationMs?: number;
+}
+
+export type ParallelEvent =
+  | { type: "agent_queued"; cardId: string; cardName: string }
+  | {
+      type: "agent_started";
+      cardId: string;
+      branch: string;
+      worktreePath: string;
+    }
+  | { type: "agent_message"; cardId: string; message: unknown }
+  | { type: "agent_completed"; cardId: string; status: AgentStatus }
+  | { type: "agent_failed"; cardId: string; error: string }
+  | { type: "merge_started"; cardId: string }
+  | {
+      type: "merge_completed";
+      cardId: string;
+      success: boolean;
+      conflicts?: string[];
+    }
+  | { type: "summary"; summary: ParallelSessionSummary };
+
+export interface ParallelSessionSummary {
+  agents: AgentStatus[];
+  totalCostUsd: number;
+  totalDurationMs: number;
+  integrationBranch: string;
+  mergeConflicts: Array<{ cardId: string; files: string[] }>;
+  diffStats: { filesChanged: number; insertions: number; deletions: number };
 }
