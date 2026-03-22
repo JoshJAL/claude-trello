@@ -60,11 +60,16 @@ function GitHubDashboardPage() {
     setInputValue(urlQ);
   }, [urlQ]);
 
-  // Memoised filter — recomputes only when repos data or debounced query changes
+  // Visibility filter state
+  const [visibilityFilter, setVisibilityFilter] = useState('All');
+
+  // Memoised filter — recomputes only when repos data, debounced query, or visibility filter changes
   const filteredRepos = useMemo(
     () =>
       repos
         ? repos.filter((repo) => {
+          if (visibilityFilter === 'Public' && repo.private) return false;
+          if (visibilityFilter === 'Private' && !repo.private) return false;
             const query = debouncedQ.toLowerCase();
             return (
               repo.full_name.toLowerCase().includes(query) ||
@@ -132,6 +137,18 @@ function GitHubDashboardPage() {
           {githubLinked && repos && repos.length > 0 && (
             <>
               <div className="relative mb-4">
+                <div className="mb-4">
+                  <label className="mr-2">Filter:</label>
+                  <select
+                    value={visibilityFilter}
+                    onChange={(e) => setVisibilityFilter(e.target.value)}
+                    className="border rounded px-2 py-1"
+                  >
+                    <option value="All">All</option>
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+                  </select>
+                </div>
                 <input
                   type="search"
                   value={inputValue}
@@ -146,7 +163,10 @@ function GitHubDashboardPage() {
                 )}
               </div>
 
-              {isPending ? (
+              <p className="mb-2 text-sm text-[var(--sea-ink-soft)]">
+                  Showing {filteredRepos.length} of {repos.length} repositories
+                </p>
+                {isPending ? (
                 <div className="space-y-2">
                   {["pending-1", "pending-2", "pending-3"].map((id) => (
                     <div

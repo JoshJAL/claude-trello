@@ -60,11 +60,17 @@ function GitLabDashboardPage() {
     setInputValue(urlQ);
   }, [urlQ]);
 
-  // Memoised filter — recomputes only when projects data or debounced query changes
+  // Visibility filter state
+  const [visibilityFilter, setVisibilityFilter] = useState('All');
+
+  // Memoised filter — recomputes only when projects data, debounced query, or visibility filter changes
   const filteredProjects = useMemo(
     () =>
       projects
         ? projects.filter((project) => {
+          if (visibilityFilter === 'Public' && project.visibility !== 'public') return false;
+          if (visibilityFilter === 'Private' && project.visibility !== 'private') return false;
+          if (visibilityFilter === 'Internal' && project.visibility !== 'internal') return false;
             const query = debouncedQ.toLowerCase();
             return (
               project.path_with_namespace.toLowerCase().includes(query) ||
@@ -132,6 +138,19 @@ function GitLabDashboardPage() {
           {gitlabLinked && projects && projects.length > 0 && (
             <>
               <div className="relative mb-4">
+                <div className="mb-4">
+                  <label className="mr-2">Filter:</label>
+                  <select
+                    value={visibilityFilter}
+                    onChange={(e) => setVisibilityFilter(e.target.value)}
+                    className="border rounded px-2 py-1"
+                  >
+                    <option value="All">All</option>
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+                    <option value="Internal">Internal</option>
+                  </select>
+                </div>
                 <input
                   type="search"
                   value={inputValue}
@@ -146,7 +165,10 @@ function GitLabDashboardPage() {
                 )}
               </div>
 
-              {isPending ? (
+              <p className="mb-2 text-sm text-[var(--sea-ink-soft)]">
+                  Showing {filteredProjects.length} of {projects.length} projects
+                </p>
+                {isPending ? (
                 <div className="space-y-2">
                   {["pending-1", "pending-2", "pending-3"].map((id) => (
                     <div
