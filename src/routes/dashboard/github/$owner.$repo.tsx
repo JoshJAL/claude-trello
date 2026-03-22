@@ -282,7 +282,12 @@ function GitHubRepoPage() {
         {activeIssues.length > 0 && (
           <div className="space-y-3">
             {activeIssues.map((issue) => (
-              <IssueItem key={issue.number} issue={issue} />
+              <IssueItem 
+                key={issue.number} 
+                issue={issue}
+                onWorkOnThis={handleWorkOnThis}
+                isSessionRunning={isRunning}
+              />
             ))}
           </div>
         )}
