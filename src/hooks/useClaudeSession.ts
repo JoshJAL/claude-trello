@@ -17,8 +17,9 @@ export function useClaudeSession(boardId: string) {
   const [error, setError] = useState<string | null>(null);
   const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
   const idCounter = useRef(0);
+  const pendingToolInputs = useRef<Map<string, Record<string, unknown>>>(new Map());
 
-  const addLog = useCallback((type: string, content: string) => {
+  const addLog = useCallback((type: string, content: string, diff?: FileDiff) => {
     setLogs((prev) => [
       ...prev,
       {
@@ -26,6 +27,7 @@ export function useClaudeSession(boardId: string) {
         type,
         content,
         timestamp: Date.now(),
+        diff,
       },
     ]);
   }, []);
