@@ -77,7 +77,7 @@ function GitHubDashboardPage() {
             );
           })
         : [],
-    [repos, debouncedQ],
+    [repos, debouncedQ, visibilityFilter],
   );
 
   // True while the user is still typing (debounce window)
