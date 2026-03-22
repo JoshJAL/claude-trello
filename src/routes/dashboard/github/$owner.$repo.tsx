@@ -21,7 +21,15 @@ export const Route = createFileRoute("/dashboard/github/$owner/$repo")({
   pendingComponent: PageSkeleton,
 });
 
-function IssueItem({ issue }: { issue: GitHubIssueWithTasks }) {
+function IssueItem({ 
+  issue, 
+  onWorkOnThis, 
+  isSessionRunning 
+}: { 
+  issue: GitHubIssueWithTasks;
+  onWorkOnThis?: (issue: GitHubIssueWithTasks) => void;
+  isSessionRunning?: boolean;
+}) {
   const totalTasks = issue.tasks.length;
   const doneTasks = issue.tasks.filter((t) => t.checked).length;
 
@@ -45,11 +53,23 @@ function IssueItem({ issue }: { issue: GitHubIssueWithTasks }) {
             </div>
           )}
         </div>
-        {totalTasks > 0 && (
-          <span className="shrink-0 text-xs text-[var(--sea-ink-soft)]">
-            {doneTasks}/{totalTasks} tasks
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {onWorkOnThis && (
+            <button
+              onClick={() => onWorkOnThis(issue)}
+              disabled={isSessionRunning}
+              className="shrink-0 rounded-md bg-[var(--lagoon)] px-2 py-1 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-50"
+              title={isSessionRunning ? "Stop current session first" : "Work on this issue only"}
+            >
+              Work on this
+            </button>
+          )}
+          {totalTasks > 0 && (
+            <span className="shrink-0 text-xs text-[var(--sea-ink-soft)]">
+              {doneTasks}/{totalTasks} tasks
+            </span>
+          )}
+        </div>
       </div>
       {totalTasks > 0 && (
         <div className="mt-3 space-y-1">
