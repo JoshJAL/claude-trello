@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { createFileRoute, redirect, Link, useNavigate } from "@tanstack/react-router";
 import { getSession } from "#/lib/auth.functions";
 import { useGitHubRepos } from "#/hooks/useGitHubRepos";
 import { useIntegrationStatus } from "#/hooks/useIntegrationStatus";
+import { useSearchFilter } from "#/hooks/useSearchFilter";
 import { PageSkeleton } from "#/components/PageSkeleton";
 
 export const Route = createFileRoute("/dashboard/github/")({
