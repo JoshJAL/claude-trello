@@ -117,15 +117,21 @@ function GitHubRepoPage() {
           isRunning={isRunning}
           canStart={activeIssues.length > 0}
           activeCardCount={activeIssues.length}
+          source="github"
           runningLabel={
             sequential.isRunning
               ? "Session running"
               : `Parallel session running (${parallel.agents.size} agents)`
           }
-          onStart={({ cwd, userMessage, mode, concurrency, providerId }) => {
+          onStart={({ cwd, userMessage, mode, concurrency, providerId, webMode }) => {
+            // Only include issues that have at least one incomplete task
+            const issuesWithWork = activeIssues.filter(
+              (issue) => issue.tasks.some((t) => !t.checked),
+            );
+
             const boardData = {
               board: { id: `${owner}/${repo}`, name: `${owner}/${repo}` },
-              cards: activeIssues.map((issue) => ({
+              cards: issuesWithWork.map((issue) => ({
                 id: String(issue.number),
                 name: issue.title,
                 desc: issue.body ?? "",
@@ -150,9 +156,10 @@ function GitHubRepoPage() {
               source: "github" as const,
               githubOwner: owner,
               githubRepo: repo,
+              webMode,
             };
 
-            if (mode === "parallel") {
+            if (mode === "parallel" && !webMode) {
               parallel.start(boardData, cwd, concurrency, userMessage, opts);
             } else {
               sequential.start(boardData, cwd, userMessage, opts);

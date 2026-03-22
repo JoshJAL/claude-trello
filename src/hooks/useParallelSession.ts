@@ -64,6 +64,7 @@ export function useParallelSession(boardId: string) {
         githubOwner?: string;
         githubRepo?: string;
         gitlabProjectId?: number;
+        webMode?: boolean;
       },
     ) => {
       setIsRunning(true);
@@ -79,7 +80,7 @@ export function useParallelSession(boardId: string) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             boardData,
-            cwd,
+            cwd: options?.webMode ? undefined : cwd,
             userMessage,
             mode: "parallel",
             maxConcurrency,
@@ -88,6 +89,7 @@ export function useParallelSession(boardId: string) {
             githubOwner: options?.githubOwner,
             githubRepo: options?.githubRepo,
             gitlabProjectId: options?.gitlabProjectId,
+            webMode: options?.webMode,
           }),
         });
 

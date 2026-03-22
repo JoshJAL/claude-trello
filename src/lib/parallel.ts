@@ -142,7 +142,7 @@ export async function* launchParallelSession(
       const useProviderAdapter =
         params.providerId && params.providerId !== "claude";
       const agentSession = useProviderAdapter
-        ? getProvider(params.providerId!).launchCardAgent(agentCardParams)
+        ? (await getProvider(params.providerId!)).launchCardAgent(agentCardParams)
         : launchCardAgent({
             anthropicApiKey,
             trelloToken,

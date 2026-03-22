@@ -17,6 +17,7 @@ import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as OnboardingTrelloRouteImport } from './routes/onboarding/trello'
 import { Route as OnboardingApiKeyRouteImport } from './routes/onboarding/api-key'
+import { Route as DocsWebRouteImport } from './routes/docs/web'
 import { Route as DocsCliRouteImport } from './routes/docs/cli'
 import { Route as DashboardBoardIdRouteImport } from './routes/dashboard/$boardId'
 import { Route as DashboardGitlabIndexRouteImport } from './routes/dashboard/gitlab/index'
@@ -85,6 +86,11 @@ const OnboardingTrelloRoute = OnboardingTrelloRouteImport.update({
 const OnboardingApiKeyRoute = OnboardingApiKeyRouteImport.update({
   id: '/onboarding/api-key',
   path: '/onboarding/api-key',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsWebRoute = DocsWebRouteImport.update({
+  id: '/docs/web',
+  path: '/docs/web',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocsCliRoute = DocsCliRouteImport.update({
@@ -242,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard/$boardId': typeof DashboardBoardIdRoute
   '/docs/cli': typeof DocsCliRoute
+  '/docs/web': typeof DocsWebRoute
   '/onboarding/api-key': typeof OnboardingApiKeyRoute
   '/onboarding/trello': typeof OnboardingTrelloRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -281,6 +288,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard/$boardId': typeof DashboardBoardIdRoute
   '/docs/cli': typeof DocsCliRoute
+  '/docs/web': typeof DocsWebRoute
   '/onboarding/api-key': typeof OnboardingApiKeyRoute
   '/onboarding/trello': typeof OnboardingTrelloRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -321,6 +329,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard/$boardId': typeof DashboardBoardIdRoute
   '/docs/cli': typeof DocsCliRoute
+  '/docs/web': typeof DocsWebRoute
   '/onboarding/api-key': typeof OnboardingApiKeyRoute
   '/onboarding/trello': typeof OnboardingTrelloRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -362,6 +371,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/dashboard/$boardId'
     | '/docs/cli'
+    | '/docs/web'
     | '/onboarding/api-key'
     | '/onboarding/trello'
     | '/dashboard/'
@@ -401,6 +411,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/dashboard/$boardId'
     | '/docs/cli'
+    | '/docs/web'
     | '/onboarding/api-key'
     | '/onboarding/trello'
     | '/dashboard'
@@ -440,6 +451,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/dashboard/$boardId'
     | '/docs/cli'
+    | '/docs/web'
     | '/onboarding/api-key'
     | '/onboarding/trello'
     | '/dashboard/'
@@ -480,6 +492,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   DashboardBoardIdRoute: typeof DashboardBoardIdRoute
   DocsCliRoute: typeof DocsCliRoute
+  DocsWebRoute: typeof DocsWebRoute
   OnboardingApiKeyRoute: typeof OnboardingApiKeyRoute
   OnboardingTrelloRoute: typeof OnboardingTrelloRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
@@ -569,6 +582,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding/api-key'
       fullPath: '/onboarding/api-key'
       preLoaderRoute: typeof OnboardingApiKeyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/web': {
+      id: '/docs/web'
+      path: '/docs/web'
+      fullPath: '/docs/web'
+      preLoaderRoute: typeof DocsWebRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/docs/cli': {
@@ -784,6 +804,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   DashboardBoardIdRoute: DashboardBoardIdRoute,
   DocsCliRoute: DocsCliRoute,
+  DocsWebRoute: DocsWebRoute,
   OnboardingApiKeyRoute: OnboardingApiKeyRoute,
   OnboardingTrelloRoute: OnboardingTrelloRoute,
   DashboardIndexRoute: DashboardIndexRoute,

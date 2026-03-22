@@ -12,12 +12,14 @@ interface SessionControlsProps {
   isRunning: boolean;
   canStart: boolean;
   activeCardCount?: number;
+  source?: "trello" | "github" | "gitlab";
   onStart: (opts: {
     cwd: string;
     userMessage?: string;
     mode: "sequential" | "parallel";
     concurrency: number;
     providerId: AiProviderId;
+    webMode?: boolean;
   }) => void;
   onStop: () => void;
   runningLabel?: string;
@@ -27,12 +29,15 @@ export function SessionControls({
   isRunning,
   canStart,
   activeCardCount,
+  source = "trello",
   onStart,
   onStop,
   runningLabel,
 }: SessionControlsProps) {
   const { configuredProviders } = useIntegrationStatus();
 
+  const isGitSource = source === "github" || source === "gitlab";
+  const [webMode, setWebMode] = useState(isGitSource);
   const [cwd, setCwd] = useState("");
   const [initialMessage, setInitialMessage] = useState("");
   const [mode, setMode] = useState<"sequential" | "parallel">("sequential");
@@ -42,40 +47,58 @@ export function SessionControls({
   );
 
   function handleStart() {
-    if (!cwd.trim()) return;
+    if (!webMode && !cwd.trim()) return;
     onStart({
-      cwd: cwd.trim(),
+      cwd: webMode ? "" : cwd.trim(),
       userMessage: initialMessage.trim() || undefined,
-      mode,
+      mode: webMode ? "sequential" : mode,
       concurrency,
       providerId,
+      webMode,
     });
   }
 
   return (
     <div className="sticky top-0 z-40 -mx-4 bg-[var(--sand)] px-4 py-3">
       <div className="island-shell flex flex-col gap-3 rounded-xl p-4">
-        <div className="flex items-end gap-3">
-          <div className="flex-1">
-            <label
-              htmlFor="cwd"
-              className="mb-1 block text-xs font-medium text-[var(--sea-ink-soft)]"
-            >
-              Project directory
-            </label>
-            <input
-              id="cwd"
-              type="text"
-              value={cwd}
-              onChange={(e) => setCwd(e.target.value)}
-              disabled={isRunning}
-              placeholder="/home/user/my-project"
-              className="w-full rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-50 dark:bg-white/5"
-            />
+        {/* Web mode banner */}
+        {webMode && source === "trello" && !isRunning && (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
+            Web mode for Trello is advisory-only. Use the CLI for full codebase
+            access.
           </div>
+        )}
+
+        {webMode && isGitSource && !isRunning && (
+          <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-800 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-300">
+            Cloud mode — changes will be committed via{" "}
+            {source === "github" ? "GitHub" : "GitLab"} API to a new branch
+          </div>
+        )}
+
+        <div className="flex items-end gap-3">
+          {!webMode && (
+            <div className="flex-1">
+              <label
+                htmlFor="cwd"
+                className="mb-1 block text-xs font-medium text-[var(--sea-ink-soft)]"
+              >
+                Project directory
+              </label>
+              <input
+                id="cwd"
+                type="text"
+                value={cwd}
+                onChange={(e) => setCwd(e.target.value)}
+                disabled={isRunning}
+                placeholder="/home/user/my-project"
+                className="w-full rounded-lg border border-[var(--shore-line)] bg-white/60 px-3 py-2 text-sm text-[var(--sea-ink)] outline-none transition focus:border-[var(--lagoon)] focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-50 dark:bg-white/5"
+              />
+            </div>
+          )}
 
           {!isRunning && (
-            <div className="flex-1">
+            <div className={webMode ? "flex-1" : "flex-1"}>
               <label
                 htmlFor="initial-message"
                 className="mb-1 block text-xs font-medium text-[var(--sea-ink-soft)]"
@@ -106,7 +129,7 @@ export function SessionControls({
           ) : (
             <button
               onClick={handleStart}
-              disabled={!canStart || !cwd.trim()}
+              disabled={!canStart || (!webMode && !cwd.trim())}
               className="shrink-0 rounded-lg bg-[var(--lagoon)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
             >
               Start Session
@@ -114,7 +137,7 @@ export function SessionControls({
           )}
         </div>
 
-        {/* Provider + Mode toggle + concurrency */}
+        {/* Provider + Mode toggle + concurrency + web mode */}
         {!isRunning && (
           <div className="flex flex-wrap items-center gap-4">
             {/* Provider selector */}
@@ -137,33 +160,64 @@ export function SessionControls({
               </div>
             )}
 
+            {/* Web / Local toggle */}
             <div className="flex items-center gap-2">
-              <span className="text-xs text-[var(--sea-ink-soft)]">Mode:</span>
+              <span className="text-xs text-[var(--sea-ink-soft)]">Env:</span>
               <div className="inline-flex rounded-lg border border-[var(--shore-line)] p-0.5">
                 <button
-                  onClick={() => setMode("sequential")}
+                  onClick={() => setWebMode(false)}
                   className={`rounded-md px-3 py-1 text-xs font-medium transition ${
-                    mode === "sequential"
+                    !webMode
                       ? "bg-[var(--lagoon)] text-white"
                       : "text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
                   }`}
                 >
-                  Sequential
+                  Local
                 </button>
                 <button
-                  onClick={() => setMode("parallel")}
+                  onClick={() => setWebMode(true)}
                   className={`rounded-md px-3 py-1 text-xs font-medium transition ${
-                    mode === "parallel"
+                    webMode
                       ? "bg-[var(--lagoon)] text-white"
                       : "text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
                   }`}
                 >
-                  Parallel
+                  Cloud
                 </button>
               </div>
             </div>
 
-            {mode === "parallel" && (
+            {!webMode && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[var(--sea-ink-soft)]">
+                  Mode:
+                </span>
+                <div className="inline-flex rounded-lg border border-[var(--shore-line)] p-0.5">
+                  <button
+                    onClick={() => setMode("sequential")}
+                    className={`rounded-md px-3 py-1 text-xs font-medium transition ${
+                      mode === "sequential"
+                        ? "bg-[var(--lagoon)] text-white"
+                        : "text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                    }`}
+                  >
+                    Sequential
+                  </button>
+                  <button
+                    onClick={() => setMode("parallel")}
+                    className={`rounded-md px-3 py-1 text-xs font-medium transition ${
+                      mode === "parallel"
+                        ? "bg-[var(--lagoon)] text-white"
+                        : "text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                    }`}
+                  >
+                    Parallel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {!webMode && mode === "parallel" && (
               <div className="flex items-center gap-2">
                 <label
                   htmlFor="concurrency"
@@ -186,7 +240,8 @@ export function SessionControls({
               </div>
             )}
 
-            {mode === "parallel" &&
+            {!webMode &&
+              mode === "parallel" &&
               activeCardCount !== undefined &&
               activeCardCount > 0 && (
                 <span className="text-xs text-[var(--sea-ink-soft)]">

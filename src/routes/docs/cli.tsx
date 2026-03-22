@@ -144,9 +144,9 @@ function CliDocsPage() {
             CLI Tool
           </h1>
           <p className="text-base text-[var(--sea-ink-soft)]">
-            Work through Trello boards with Claude Code directly from your
-            terminal. Navigate to any project directory, pick a board, and let
-            Claude work through your tasks — checking off items as it goes.
+            Work through tasks from Trello, GitHub, or GitLab directly from your
+            terminal. Choose your AI provider, navigate to any project directory,
+            and let the agent work through your tasks — checking off items as it goes.
           </p>
           <a
             href="https://www.npmjs.com/package/taskpilot-cli"
@@ -196,19 +196,44 @@ taskpilot run`}</CodeBlock>
                 className="mt-0.5 shrink-0 text-[var(--lagoon)]"
               />
               <span>
-                A <strong className="text-[var(--sea-ink)]">Trello account</strong>{" "}
-                and an{" "}
-                <strong className="text-[var(--sea-ink)]">
-                  Anthropic API key
-                </strong>{" "}
-                from{" "}
+                At least one <strong className="text-[var(--sea-ink)]">task source</strong> connected:{" "}
+                <strong className="text-[var(--sea-ink)]">Trello</strong>,{" "}
+                <strong className="text-[var(--sea-ink)]">GitHub</strong>, or{" "}
+                <strong className="text-[var(--sea-ink)]">GitLab</strong>
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2
+                size={16}
+                className="mt-0.5 shrink-0 text-[var(--lagoon)]"
+              />
+              <span>
+                At least one <strong className="text-[var(--sea-ink)]">AI provider API key</strong>:{" "}
                 <a
                   href="https://console.anthropic.com/settings/keys"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[var(--lagoon)] hover:underline"
                 >
-                  console.anthropic.com
+                  Anthropic (Claude)
+                </a>
+                ,{" "}
+                <a
+                  href="https://platform.openai.com/api-keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--lagoon)] hover:underline"
+                >
+                  OpenAI
+                </a>
+                , or{" "}
+                <a
+                  href="https://console.groq.com/keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--lagoon)] hover:underline"
+                >
+                  Groq
                 </a>
               </span>
             </li>
@@ -233,7 +258,7 @@ taskpilot run`}</CodeBlock>
                 <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
                   npm i -g @anthropic-ai/claude-code
                 </code>
-                )
+                ) — required only when using the Claude provider
               </span>
             </li>
           </ul>
@@ -269,10 +294,10 @@ npx taskpilot-cli register
 npx taskpilot-cli login`}</CodeBlock>
             </StepCard>
 
-            <StepCard number={2} icon={Settings} title="Connect Trello and API key">
+            <StepCard number={2} icon={Settings} title="Connect a task source and API key">
               <p>
-                The setup wizard walks you through connecting Trello (opens your
-                browser) and saving your Anthropic API key:
+                The setup wizard walks you through connecting a task source (Trello,
+                GitHub, or GitLab) and saving your AI provider API key:
               </p>
               <CodeBlock
                 copyText="npx taskpilot-cli setup"
@@ -287,14 +312,18 @@ npx taskpilot-cli login`}</CodeBlock>
 #   ⠋ Waiting for Trello connection...
 #   ✓ Trello connected!
 #
-#   2. Anthropic API Key Not set
+#   2. API Key Not set
 #
 #   Get your key from https://console.anthropic.com/settings/keys
 #
-# ? Paste your Anthropic API key: sk-ant-api03-••••••
+# ? Paste your API key: sk-ant-api03-••••••
 #   ✓ API key saved (encrypted on server)
 #
 #   All set! Run \`taskpilot run\` to start a session.`}</CodeBlock>
+              <p className="text-xs text-[var(--sea-ink-soft)]">
+                You can also connect GitHub and GitLab, or add additional AI provider
+                keys (OpenAI, Groq) from the web app Settings page.
+              </p>
             </StepCard>
 
             <StepCard number={3} icon={FolderOpen} title="Navigate to your project">
@@ -310,7 +339,7 @@ npx taskpilot-cli login`}</CodeBlock>
               title="Run a session"
             >
               <p>
-                Select a Trello board, review the cards, and launch Claude Code:
+                Select a board or repo, review the tasks, and launch an AI session:
               </p>
               <CodeBlock
                 copyText="npx taskpilot-cli run"
@@ -382,7 +411,7 @@ npx taskpilot-cli login`}</CodeBlock>
             />
             <CommandRef
               command="npx taskpilot-cli setup"
-              description="Connect Trello and save your Anthropic API key (interactive wizard)"
+              description="Connect a task source and save your AI provider API key (interactive wizard)"
             />
             <CommandRef
               command="npx taskpilot-cli logout"
@@ -390,11 +419,11 @@ npx taskpilot-cli login`}</CodeBlock>
             />
             <CommandRef
               command="npx taskpilot-cli run"
-              description="Select a board and start a Claude Code session"
+              description="Select a task source and start an AI coding session"
               flags={[
                 {
                   flag: "-b, --board <id>",
-                  desc: "Board ID — skip interactive selection",
+                  desc: "Board/repo ID — skip interactive selection",
                 },
                 {
                   flag: "-d, --dir <path>",
@@ -402,13 +431,33 @@ npx taskpilot-cli login`}</CodeBlock>
                 },
                 {
                   flag: "-m, --message <text>",
-                  desc: 'Initial instructions for Claude (e.g. "check the dev branch for comparison")',
+                  desc: 'Initial instructions for the AI (e.g. "check the dev branch for comparison")',
+                },
+                {
+                  flag: "-s, --source <name>",
+                  desc: "Task source: trello, github, or gitlab (default: trello)",
+                },
+                {
+                  flag: "-P, --provider <name>",
+                  desc: "AI provider: claude, openai, or groq (default: claude)",
+                },
+                {
+                  flag: "-p, --parallel",
+                  desc: "Run one agent per card/issue in parallel (uses git worktrees)",
+                },
+                {
+                  flag: "-c, --concurrency <n>",
+                  desc: "Max concurrent agents in parallel mode (1-5, default: 3)",
                 },
               ]}
             />
             <CommandRef
               command="npx taskpilot-cli boards"
               description="List all your Trello boards with their IDs"
+            />
+            <CommandRef
+              command="npx taskpilot-cli repos"
+              description="List your connected GitHub repositories"
             />
             <CommandRef
               command="npx taskpilot-cli status"
@@ -448,10 +497,11 @@ npx taskpilot-cli login`}</CodeBlock>
                 </div>
                 <p>
                   <strong className="text-[var(--sea-ink)]">
-                    Fetch board data
+                    Fetch task data
                   </strong>{" "}
-                  — Boards, cards, and checklists are fetched via the web app's
-                  API using your stored Trello connection.
+                  — Boards, cards, and checklists (or GitHub/GitLab issues with
+                  task lists) are fetched via the web app's API using your stored
+                  connection.
                 </p>
               </div>
               <div className="flex justify-center">
@@ -468,7 +518,7 @@ npx taskpilot-cli login`}</CodeBlock>
                   <strong className="text-[var(--sea-ink)]">
                     Load credentials
                   </strong>{" "}
-                  — Your Anthropic API key (encrypted in the database) is
+                  — Your AI provider API key (encrypted in the database) is
                   securely retrieved and decrypted for the session.
                 </p>
               </div>
@@ -484,11 +534,11 @@ npx taskpilot-cli login`}</CodeBlock>
                 </div>
                 <p>
                   <strong className="text-[var(--sea-ink)]">
-                    Run Claude Code locally
+                    Run your AI agent locally
                   </strong>{" "}
-                  — Claude Code launches in your working directory with full
-                  access to your codebase. It reads, edits, and creates files to
-                  complete each task.
+                  — The AI agent (Claude, OpenAI, or Groq) launches in your
+                  working directory with full access to your codebase. It reads,
+                  edits, and creates files to complete each task.
                 </p>
               </div>
               <div className="flex justify-center">
@@ -503,11 +553,11 @@ npx taskpilot-cli login`}</CodeBlock>
                 </div>
                 <p>
                   <strong className="text-[var(--sea-ink)]">
-                    Update Trello automatically
+                    Update tasks automatically
                   </strong>{" "}
-                  — As Claude completes each checklist item, it marks it done on
-                  Trello. When all items on a card are finished, the card moves
-                  to your Done list.
+                  — As the agent completes each task, it marks it done on your
+                  task source. On Trello, cards move to Done. On GitHub/GitLab,
+                  task list items get checked and issues can be closed.
                 </p>
               </div>
             </div>
@@ -574,10 +624,10 @@ npx taskpilot-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
 
             <div>
               <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
-                Give Claude extra context with --message
+                Give the agent extra context with --message
               </h3>
               <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
-                Pass initial instructions so Claude knows how to approach the
+                Pass initial instructions so the agent knows how to approach the
                 work. Without{" "}
                 <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
                   --message
@@ -586,14 +636,77 @@ npx taskpilot-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
               </p>
               <CodeBlock
                 copyText={'npx taskpilot-cli run --message "Check the development branch for comparison"'}
-              >{`# Give Claude context before it starts
+              >{`# Give the agent context before it starts
 npx taskpilot-cli run --message "Check the development branch for comparison"
 
 # Or be more specific
 npx taskpilot-cli run --message "Focus on the API cards first, skip frontend for now"
 
 # Without --message, you'll be prompted interactively:
-# ? Instructions for Claude (optional — press Enter to skip):`}</CodeBlock>
+# ? Instructions for the AI (optional — press Enter to skip):`}</CodeBlock>
+            </div>
+
+            <div>
+              <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+                Work from GitHub or GitLab issues
+              </h3>
+              <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
+                Use{" "}
+                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+                  --source
+                </code>{" "}
+                to pull tasks from GitHub issues or GitLab issues instead of Trello:
+              </p>
+              <CodeBlock
+                copyText="npx taskpilot-cli run --source github"
+              >{`# Work through GitHub issues
+npx taskpilot-cli run --source github
+
+# Work through GitLab issues
+npx taskpilot-cli run --source gitlab
+
+# List your GitHub repos first
+npx taskpilot-cli repos`}</CodeBlock>
+            </div>
+
+            <div>
+              <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+                Choose a different AI provider
+              </h3>
+              <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
+                Switch between Claude, OpenAI, or Groq with{" "}
+                <code className="rounded-md border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-xs">
+                  --provider
+                </code>
+                . You must have the corresponding API key saved in Settings.
+              </p>
+              <CodeBlock
+                copyText="npx taskpilot-cli run --provider openai"
+              >{`# Use OpenAI (gpt-4o) instead of Claude
+npx taskpilot-cli run --provider openai
+
+# Use Groq (llama-3.3-70b) for fast inference
+npx taskpilot-cli run --provider groq`}</CodeBlock>
+            </div>
+
+            <div>
+              <h3 className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
+                Run agents in parallel
+              </h3>
+              <p className="mb-3 text-sm text-[var(--sea-ink-soft)]">
+                Launch one agent per card/issue simultaneously using isolated git
+                worktrees. Changes are merged back sequentially when complete.
+              </p>
+              <CodeBlock
+                copyText="npx taskpilot-cli run --parallel"
+              >{`# Run agents in parallel (default: 3 concurrent)
+npx taskpilot-cli run --parallel
+
+# Control concurrency (1-5 agents)
+npx taskpilot-cli run --parallel --concurrency 5
+
+# Combine with other flags
+npx taskpilot-cli run --source github --provider openai --parallel`}</CodeBlock>
             </div>
 
             <div>
@@ -604,13 +717,15 @@ npx taskpilot-cli run --message "Focus on the API cards first, skip frontend for
                 Combine flags for a non-interactive launch:
               </p>
               <CodeBlock
-                copyText={'npx taskpilot-cli run --board 60d5e2a3f1a2b40017c3d4e5 --dir ~/projects/my-api --message "Just go"'}
+                copyText={'npx taskpilot-cli run --source github --provider claude --parallel --dir ~/projects/my-api --message "Just go"'}
               >{`# Login once
 npx taskpilot-cli login
 
 # Then run from anywhere with all options
 npx taskpilot-cli run \\
-  --board 60d5e2a3f1a2b40017c3d4e5 \\
+  --source github \\
+  --provider claude \\
+  --parallel \\
   --dir ~/projects/my-api \\
   --message "Just go"`}</CodeBlock>
             </div>
@@ -638,12 +753,13 @@ npx taskpilot-cli run \\
 
             <details className="island-shell rounded-xl">
               <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-[var(--sea-ink)]">
-                "Trello not connected" or "API key not configured"
+                "Source not connected" or "API key not configured"
               </summary>
               <div className="border-t border-[var(--line)] px-5 py-4 text-sm text-[var(--sea-ink-soft)]">
                 The CLI uses your web app account's integrations. Go to the web
-                dashboard, complete onboarding (connect Trello and save your
-                Anthropic API key), then try the CLI again.
+                dashboard Settings page to connect your task source (Trello,
+                GitHub, or GitLab) and save the API key for your chosen AI
+                provider, then try the CLI again.
               </div>
             </details>
 
@@ -716,7 +832,7 @@ npx taskpilot-cli run \\
                   className="mt-0.5 shrink-0 text-green-600 dark:text-green-400"
                 />
                 <span>
-                  Your Anthropic API key is{" "}
+                  All API keys are{" "}
                   <strong className="text-[var(--sea-ink)]">
                     encrypted at rest
                   </strong>{" "}

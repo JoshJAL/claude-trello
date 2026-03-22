@@ -1,6 +1,7 @@
 import { CODING_TOOLS, executeTool } from "./tools.js";
 import type { ToolDefinition } from "./tools.js";
 import type { AgentMessage, ProviderSession } from "./types.js";
+import type { ToolSet } from "./source-tools.js";
 import {
   updateCheckItem,
   moveCard,
@@ -17,6 +18,8 @@ export interface GenericAgentConfig {
   abortController?: AbortController;
   /** Provider-specific chat completion function */
   chatCompletion: ChatCompletionFn;
+  /** Optional configurable tool set — if provided, replaces hardcoded tools */
+  toolSet?: ToolSet;
 }
 
 export interface ChatMessage {
@@ -44,49 +47,56 @@ export type ChatCompletionFn = (
 /**
  * Generic agent loop that works with any chat completion API
  * that supports function calling (OpenAI, Groq, etc.).
+ *
+ * When `config.toolSet` is provided, uses its definitions and executor
+ * instead of the hardcoded CODING_TOOLS + Trello tools.
  */
 export function createGenericAgentSession(
   config: GenericAgentConfig,
 ): ProviderSession {
   let closed = false;
 
-  const allTools: ToolDefinition[] = [
-    ...CODING_TOOLS,
-    {
-      name: "check_trello_item",
-      description:
-        "Mark a Trello checklist item as complete once the corresponding code task is done.",
-      parameters: {
-        type: "object",
-        properties: {
-          checkItemId: {
-            type: "string",
-            description: "The Trello checklist item ID",
-          },
-          cardId: {
-            type: "string",
-            description: "The Trello card ID",
-          },
-        },
-        required: ["checkItemId", "cardId"],
-      },
-    },
-    {
-      name: "move_card_to_done",
-      description:
-        "Move a Trello card to the Done list after all its checklist items are completed.",
-      parameters: {
-        type: "object",
-        properties: {
-          cardId: {
-            type: "string",
-            description: "The Trello card ID to move to Done",
+  // If a custom toolSet is provided, use it exclusively.
+  // Otherwise, fall back to the legacy hardcoded tools.
+  const allTools: ToolDefinition[] = config.toolSet
+    ? config.toolSet.definitions
+    : [
+        ...CODING_TOOLS,
+        {
+          name: "check_trello_item",
+          description:
+            "Mark a Trello checklist item as complete once the corresponding code task is done.",
+          parameters: {
+            type: "object",
+            properties: {
+              checkItemId: {
+                type: "string",
+                description: "The Trello checklist item ID",
+              },
+              cardId: {
+                type: "string",
+                description: "The Trello card ID",
+              },
+            },
+            required: ["checkItemId", "cardId"],
           },
         },
-        required: ["cardId"],
-      },
-    },
-  ];
+        {
+          name: "move_card_to_done",
+          description:
+            "Move a Trello card to the Done list after all its checklist items are completed.",
+          parameters: {
+            type: "object",
+            properties: {
+              cardId: {
+                type: "string",
+                description: "The Trello card ID to move to Done",
+              },
+            },
+            required: ["cardId"],
+          },
+        },
+      ];
 
   async function handleToolCall(
     toolCall: ToolCall,
@@ -98,6 +108,17 @@ export function createGenericAgentSession(
     } catch {
       return `Error: Invalid JSON arguments for tool ${name}`;
     }
+
+    // If custom toolSet is provided, route all calls through it
+    if (config.toolSet) {
+      try {
+        return await config.toolSet.execute(name, input);
+      } catch (err) {
+        return `Error: ${err instanceof Error ? err.message : "Tool execution failed"}`;
+      }
+    }
+
+    // Legacy path: hardcoded Trello tools + coding tools
 
     // Handle Trello tools
     if (name === "check_trello_item") {

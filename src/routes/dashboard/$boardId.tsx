@@ -59,7 +59,8 @@ function BoardPage() {
               ? `Session running`
               : `Parallel session running (${parallel.agents.size} agents)`
           }
-          onStart={({ cwd, userMessage, mode, concurrency, providerId }) => {
+          source="trello"
+          onStart={({ cwd, userMessage, mode, concurrency, providerId, webMode }) => {
             if (!data?.cards) return;
 
             const boardData = {
@@ -68,9 +69,9 @@ function BoardPage() {
               doneListId: data.doneListId ?? undefined,
             };
 
-            const opts = { providerId, source: "trello" as const };
+            const opts = { providerId, source: "trello" as const, webMode };
 
-            if (mode === "parallel") {
+            if (mode === "parallel" && !webMode) {
               parallel.start(boardData, cwd, concurrency, userMessage, opts);
             } else {
               sequential.start(boardData, cwd, userMessage, opts);

@@ -10,6 +10,7 @@ import {
   Gitlab,
   Settings,
   FileText,
+  Globe,
   LogOut,
   Menu,
   UserCircle,
@@ -147,6 +148,13 @@ export default function Sidebar() {
               onClick={closeMobile}
             />
             <SidebarLink
+              to="/docs/web"
+              icon={Globe}
+              label="Web Docs"
+              collapsed={collapsed}
+              onClick={closeMobile}
+            />
+            <SidebarLink
               to="/docs/cli"
               icon={FileText}
               label="CLI Docs"
@@ -200,6 +208,13 @@ export default function Sidebar() {
               to="/register"
               icon={UserCircle}
               label="Register"
+              collapsed={collapsed}
+              onClick={closeMobile}
+            />
+            <SidebarLink
+              to="/docs/web"
+              icon={Globe}
+              label="Web Docs"
               collapsed={collapsed}
               onClick={closeMobile}
             />

@@ -39,6 +39,7 @@ export function useClaudeSession(boardId: string) {
         githubOwner?: string;
         githubRepo?: string;
         gitlabProjectId?: number;
+        webMode?: boolean;
       },
     ) => {
       setIsRunning(true);
@@ -53,13 +54,14 @@ export function useClaudeSession(boardId: string) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             boardData,
-            cwd,
+            cwd: options?.webMode ? undefined : cwd,
             userMessage,
             providerId: options?.providerId,
             source: options?.source,
             githubOwner: options?.githubOwner,
             githubRepo: options?.githubRepo,
             gitlabProjectId: options?.gitlabProjectId,
+            webMode: options?.webMode,
           }),
         });
 
@@ -105,7 +107,12 @@ export function useClaudeSession(boardId: string) {
               }
 
               if (message.type === "assistant") {
-                const content = message.message?.content;
+                // Web mode: AgentMessage format — content is a string
+                if (typeof message.content === "string") {
+                  addLog("assistant", message.content);
+                }
+                // Local mode: raw Claude Agent SDK format — content is an array
+                const content = message.message?.content ?? message.raw?.message?.content;
                 if (Array.isArray(content)) {
                   for (const block of content) {
                     if (block.type === "text") {
@@ -132,6 +139,19 @@ export function useClaudeSession(boardId: string) {
                     }
                   }
                 }
+              } else if (message.type === "tool_use") {
+                // Web mode tool use events
+                addLog(
+                  "tool",
+                  `Using tool: ${message.toolName}(${JSON.stringify(message.toolInput ?? {})})`,
+                );
+              } else if (message.type === "tool_result") {
+                // Web mode tool result events — show truncated result
+                const result = message.toolResult ?? "";
+                const truncated = result.length > 200
+                  ? result.slice(0, 200) + "..."
+                  : result;
+                addLog("result", `[${message.toolName}] ${truncated}`);
               } else if (message.type === "result") {
                 addLog(
                   "result",

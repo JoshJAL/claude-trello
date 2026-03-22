@@ -7,14 +7,17 @@ interface CardsResponse {
   doneListId: string | null;
 }
 
-async function fetchBoards(): Promise<TrelloBoard[]> {
-  const res = await fetch("/api/trello/boards");
+async function fetchBoards(signal?: AbortSignal): Promise<TrelloBoard[]> {
+  const res = await fetch("/api/trello/boards", { signal });
   if (!res.ok) throw new Error("Failed to fetch boards");
   return res.json();
 }
 
-async function fetchCards(boardId: string): Promise<CardsResponse> {
-  const res = await fetch(`/api/trello/cards?boardId=${boardId}`);
+async function fetchCards(
+  boardId: string,
+  signal?: AbortSignal,
+): Promise<CardsResponse> {
+  const res = await fetch(`/api/trello/cards?boardId=${boardId}`, { signal });
   if (!res.ok) throw new Error("Failed to fetch cards");
   return res.json();
 }
@@ -22,14 +25,14 @@ async function fetchCards(boardId: string): Promise<CardsResponse> {
 export function useBoards() {
   return useQuery({
     queryKey: ["trello", "boards"],
-    queryFn: fetchBoards,
+    queryFn: ({ signal }) => fetchBoards(signal),
   });
 }
 
 export function useBoardData(boardId: string | null, polling: boolean = false) {
   return useQuery({
     queryKey: ["trello", "cards", boardId],
-    queryFn: () => fetchCards(boardId!),
+    queryFn: ({ signal }) => fetchCards(boardId!, signal),
     enabled: !!boardId,
     refetchInterval: polling ? 5000 : false,
   });
