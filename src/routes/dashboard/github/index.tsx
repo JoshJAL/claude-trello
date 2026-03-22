@@ -137,6 +137,18 @@ function GitHubDashboardPage() {
           {githubLinked && repos && repos.length > 0 && (
             <>
               <div className="relative mb-4">
+                <div className="mb-4">
+                  <label className="mr-2">Filter:</label>
+                  <select
+                    value={visibilityFilter}
+                    onChange={(e) => setVisibilityFilter(e.target.value)}
+                    className="border rounded px-2 py-1"
+                  >
+                    <option value="All">All</option>
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+                  </select>
+                </div>
                 <input
                   type="search"
                   value={inputValue}
