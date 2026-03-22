@@ -81,6 +81,8 @@ export function BoardPanel({
               boardId={boardId}
               onCheckToggle={handleCheckToggle}
               done={false}
+              onWorkOnThis={onWorkOnThis}
+              isSessionRunning={isSessionRunning}
             />
           ))}
         </div>
