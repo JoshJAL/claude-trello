@@ -163,7 +163,10 @@ function GitHubDashboardPage() {
                 )}
               </div>
 
-              {isPending ? (
+              <p className="mb-2 text-sm text-[var(--sea-ink-soft)]">
+                  Showing {filteredRepos.length} of {repos.length} repositories
+                </p>
+                {isPending ? (
                 <div className="space-y-2">
                   {["pending-1", "pending-2", "pending-3"].map((id) => (
                     <div
