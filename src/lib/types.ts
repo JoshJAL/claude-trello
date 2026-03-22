@@ -180,7 +180,7 @@ export interface PrAutomationConfig {
   branchNamingPattern: string;
 }
 
-export const DEFAULT_PR_AUTOMATION_CONFIG: PrAutomationConfig = {
+export const DEFAULT_PR_AUTOMATION_CONFIG: { branchNamingPattern: 'taskpilot/{slug}' }: PrAutomationConfig = {
   enabled: false,
   autoDraft: true,
   autoLinkIssue: true,
