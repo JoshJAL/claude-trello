@@ -454,6 +454,10 @@ npx taskpilot-cli login`}</CodeBlock>
                   desc: "Git branch to work on (checks out the branch before starting; default: current branch)",
                 },
                 {
+                  flag: "--workspace <target>",
+                  desc: "Cloud storage workspace — currently web-only (e.g. google:<folderId> or onedrive:<folderId>)",
+                },
+                {
                   flag: "--pr",
                   desc: "Create a PR/MR after session completes",
                 },

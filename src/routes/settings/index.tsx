@@ -3,6 +3,8 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { ConnectTrello } from "#/components/ConnectTrello";
 import { ConnectGitHub } from "#/components/ConnectGitHub";
 import { ConnectGitLab } from "#/components/ConnectGitLab";
+import { ConnectGoogleDrive } from "#/components/ConnectGoogleDrive";
+import { ConnectOneDrive } from "#/components/ConnectOneDrive";
 import { PrAutomationSettings } from "#/components/PrAutomationSettings";
 import { ApiKeyForm } from "#/components/ApiKeyForm";
 import { PageSkeleton } from "#/components/PageSkeleton";
@@ -29,7 +31,7 @@ const PROVIDERS: Array<{ id: AiProviderId; label: string }> = [
 ];
 
 function SettingsPage() {
-  const { trelloLinked, githubLinked, gitlabLinked, configuredProviders, refetch } =
+  const { trelloLinked, githubLinked, gitlabLinked, googleDriveLinked, oneDriveLinked, configuredProviders, refetch } =
     useIntegrationStatus();
 
   return (
@@ -68,6 +70,37 @@ function SettingsPage() {
               </h3>
               <ConnectGitLab
                 isConnected={gitlabLinked}
+                onStatusChange={() => refetch()}
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="island-shell mb-6 rounded-2xl p-6">
+          <h2 className="mb-4 text-lg font-semibold text-(--sea-ink)">
+            Workspaces
+          </h2>
+          <p className="mb-4 text-sm text-(--sea-ink-soft)">
+            Connect cloud storage to use as a workspace for AI agents. Agents
+            can read, write, and edit files — including spreadsheets — directly
+            in your connected storage.
+          </p>
+          <div className="space-y-4">
+            <div>
+              <h3 className="mb-2 text-sm font-semibold text-(--sea-ink)">
+                Google Drive
+              </h3>
+              <ConnectGoogleDrive
+                isConnected={googleDriveLinked}
+                onStatusChange={() => refetch()}
+              />
+            </div>
+            <div>
+              <h3 className="mb-2 text-sm font-semibold text-(--sea-ink)">
+                OneDrive
+              </h3>
+              <ConnectOneDrive
+                isConnected={oneDriveLinked}
                 onStatusChange={() => refetch()}
               />
             </div>

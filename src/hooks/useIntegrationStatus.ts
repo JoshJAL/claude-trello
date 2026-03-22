@@ -20,16 +20,22 @@ export function useIntegrationStatus() {
   const trelloLinked = data?.trelloLinked ?? false;
   const githubLinked = data?.githubLinked ?? false;
   const gitlabLinked = data?.gitlabLinked ?? false;
+  const googleDriveLinked = data?.googleDriveLinked ?? false;
+  const oneDriveLinked = data?.oneDriveLinked ?? false;
   const hasApiKey = data?.hasApiKey ?? false;
   const hasTaskSource = trelloLinked || githubLinked || gitlabLinked;
+  const hasWorkspace = githubLinked || gitlabLinked || googleDriveLinked || oneDriveLinked;
 
   return {
     trelloLinked,
     githubLinked,
     gitlabLinked,
+    googleDriveLinked,
+    oneDriveLinked,
     hasApiKey,
     configuredProviders,
     hasTaskSource,
+    hasWorkspace,
     isReady: hasTaskSource && hasApiKey,
     isLoading,
     refetch,

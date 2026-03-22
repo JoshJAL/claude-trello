@@ -643,6 +643,63 @@ function WebDocsPage() {
           </div>
         </section>
 
+        {/* ── Cloud Storage Workspaces ──────────────────────────── */}
+        <section className="mb-10">
+          <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
+            Cloud Storage Workspaces
+          </h2>
+          <div className="island-shell rounded-2xl p-6">
+            <div className="space-y-4 text-sm text-(--sea-ink-soft)">
+              <p>
+                TaskPilot isn't just for code. Connect{" "}
+                <strong className="text-(--sea-ink)">Google Drive</strong> or{" "}
+                <strong className="text-(--sea-ink)">OneDrive</strong> in
+                Settings and use a cloud storage folder as your workspace.
+                Agents can read, write, and edit files directly in your
+                connected storage.
+              </p>
+              <p className="font-semibold text-(--sea-ink)">
+                Supported file operations
+              </p>
+              <ul className="list-inside list-disc space-y-1">
+                <li>
+                  <strong>Text files</strong> — read, write, edit (find &amp;
+                  replace), search
+                </li>
+                <li>
+                  <strong>Google Sheets / Excel</strong> — read structured
+                  data, update specific cell ranges, append rows
+                </li>
+                <li>
+                  <strong>Google Docs</strong> — read as Markdown, replace
+                  content, create new documents
+                </li>
+                <li>
+                  <strong>Any file</strong> — list, search by name or content
+                </li>
+              </ul>
+              <p className="font-semibold text-(--sea-ink)">How to use</p>
+              <ol className="list-inside list-decimal space-y-1">
+                <li>
+                  Connect Google Drive or OneDrive in{" "}
+                  <strong className="text-(--sea-ink)">Settings</strong>
+                </li>
+                <li>
+                  On a Trello board, open the{" "}
+                  <strong className="text-(--sea-ink)">Workspace</strong>{" "}
+                  dropdown and select your provider
+                </li>
+                <li>Browse and select a folder — files are previewed so you can confirm it's the right one</li>
+                <li>Click <strong className="text-(--sea-ink)">Use this folder</strong>, then start a session</li>
+              </ol>
+              <p>
+                The workspace selector shows subfolders you can navigate into,
+                plus a preview of the files in the current folder.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* ── How It Works ───────────────────────────────────────── */}
         <section className="mb-10">
           <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">

@@ -7,6 +7,7 @@ import type { AiProviderId } from "#/lib/providers/types";
 import { WebModeBanner } from "./session/WebModeBanner";
 import { RepoLinker } from "./session/RepoLinker";
 import { BranchSelector } from "./session/BranchSelector";
+import { WorkspaceTypePicker } from "./session/WorkspaceTypePicker";
 import { SessionToolbar } from "./session/SessionToolbar";
 
 interface SessionControlsProps {
@@ -30,6 +31,7 @@ interface SessionControlsProps {
     linkedRepo?: { owner: string; repo: string };
     linkedGitlabProjectId?: number;
     selectedBranch?: string;
+    linkedWorkspace?: { provider: "google" | "onedrive"; folderId: string };
   }) => void;
   onStop: () => void;
   runningLabel?: string;
@@ -46,6 +48,7 @@ interface ControlsState {
   providerId: AiProviderId;
   linkedRepoKey: string;
   selectedBranch: string;
+  workspaceKey: string;
 }
 
 type ControlsAction =
@@ -56,7 +59,8 @@ type ControlsAction =
   | { type: "SET_CONCURRENCY"; value: number }
   | { type: "SET_PROVIDER"; value: AiProviderId }
   | { type: "SET_LINKED_REPO"; value: string }
-  | { type: "SET_BRANCH"; value: string };
+  | { type: "SET_BRANCH"; value: string }
+  | { type: "SET_WORKSPACE"; value: string };
 
 function controlsReducer(state: ControlsState, action: ControlsAction): ControlsState {
   switch (action.type) {
@@ -76,6 +80,8 @@ function controlsReducer(state: ControlsState, action: ControlsAction): Controls
       return { ...state, linkedRepoKey: action.value, selectedBranch: "" };
     case "SET_BRANCH":
       return { ...state, selectedBranch: action.value };
+    case "SET_WORKSPACE":
+      return { ...state, workspaceKey: action.value, selectedBranch: "" };
   }
 }
 
@@ -92,7 +98,7 @@ export function SessionControls({
   runningLabel,
   onProviderSelect,
 }: SessionControlsProps) {
-  const { configuredProviders, githubLinked, gitlabLinked } = useIntegrationStatus();
+  const { configuredProviders, githubLinked, gitlabLinked, googleDriveLinked, oneDriveLinked } = useIntegrationStatus();
 
   const isGitSource = source === "github" || source === "gitlab";
   const isDeployed =
@@ -109,20 +115,23 @@ export function SessionControls({
     providerId: configuredProviders[0] ?? "claude",
     linkedRepoKey: "",
     selectedBranch: "",
+    workspaceKey: "",
   });
 
-  const showRepoLinker = source === "trello" && (githubLinked || gitlabLinked);
-  const { data: ghRepos } = useGitHubRepos(showRepoLinker && githubLinked);
-  const { data: glProjects } = useGitLabProjects(showRepoLinker && gitlabLinked);
+  const hasAnyWorkspace = githubLinked || gitlabLinked || googleDriveLinked || oneDriveLinked;
+  const showWorkspacePicker = source === "trello" && hasAnyWorkspace;
+  const { data: ghRepos } = useGitHubRepos(showWorkspacePicker && githubLinked);
+  const { data: glProjects } = useGitLabProjects(showWorkspacePicker && gitlabLinked);
 
-  const linkedRepo = state.linkedRepoKey.startsWith("github:")
+  // Derive linked repo / workspace from the unified workspace key
+  const linkedRepo = state.workspaceKey.startsWith("github:")
     ? {
-        owner: state.linkedRepoKey.slice(7).split("/")[0],
-        repo: state.linkedRepoKey.slice(7).split("/")[1],
+        owner: state.workspaceKey.slice(7).split("/")[0],
+        repo: state.workspaceKey.slice(7).split("/")[1],
       }
     : undefined;
-  const linkedGitlabProjectId = state.linkedRepoKey.startsWith("gitlab:")
-    ? Number(state.linkedRepoKey.slice(7))
+  const linkedGitlabProjectId = state.workspaceKey.startsWith("gitlab:")
+    ? Number(state.workspaceKey.slice(7))
     : undefined;
 
   // Determine branch query params — prefer props (GitHub/GitLab pages), fall back to linked repo (Trello)
@@ -142,6 +151,14 @@ export function SessionControls({
     showBranchSelector,
   );
 
+  // Workspace: cloud storage folder (Google Drive or OneDrive)
+  const linkedWorkspace = state.workspaceKey.startsWith("google:") || state.workspaceKey.startsWith("onedrive:")
+    ? {
+        provider: state.workspaceKey.split(":")[0] as "google" | "onedrive",
+        folderId: state.workspaceKey.split(":").slice(1).join(":"),
+      }
+    : undefined;
+
   function handleStart() {
     if (!state.webMode && !state.cwd.trim()) return;
     onStart({
@@ -154,6 +171,7 @@ export function SessionControls({
       linkedRepo,
       linkedGitlabProjectId,
       selectedBranch: state.selectedBranch || undefined,
+      linkedWorkspace,
     });
   }
 
@@ -170,12 +188,14 @@ export function SessionControls({
           />
         )}
 
-        {showRepoLinker && state.webMode && !isRunning && (
-          <RepoLinker
-            linkedRepoKey={state.linkedRepoKey}
-            onLinkedRepoKeyChange={(v) => dispatch({ type: "SET_LINKED_REPO", value: v })}
+        {showWorkspacePicker && state.webMode && !isRunning && (
+          <WorkspaceTypePicker
+            workspaceKey={state.workspaceKey}
+            onWorkspaceKeyChange={(v) => dispatch({ type: "SET_WORKSPACE", value: v })}
             githubLinked={githubLinked}
             gitlabLinked={gitlabLinked}
+            googleDriveLinked={googleDriveLinked}
+            oneDriveLinked={oneDriveLinked}
             ghRepos={ghRepos}
             glProjects={glProjects}
           />

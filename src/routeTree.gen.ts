@@ -53,6 +53,16 @@ import { Route as ApiSettingsBudgetRouteImport } from './routes/api/settings/bud
 import { Route as ApiSettingsAutomationRouteImport } from './routes/api/settings/automation'
 import { Route as ApiSettingsApikeyRouteImport } from './routes/api/settings/apikey'
 import { Route as ApiSessionsSessionIdRouteImport } from './routes/api/sessions/$sessionId'
+import { Route as ApiOnedriveFoldersRouteImport } from './routes/api/onedrive/folders'
+import { Route as ApiOnedriveFilesRouteImport } from './routes/api/onedrive/files'
+import { Route as ApiOnedriveConnectRouteImport } from './routes/api/onedrive/connect'
+import { Route as ApiOnedriveCallbackRouteImport } from './routes/api/onedrive/callback'
+import { Route as ApiOnedriveAuthorizeRouteImport } from './routes/api/onedrive/authorize'
+import { Route as ApiGoogleFoldersRouteImport } from './routes/api/google/folders'
+import { Route as ApiGoogleFilesRouteImport } from './routes/api/google/files'
+import { Route as ApiGoogleConnectRouteImport } from './routes/api/google/connect'
+import { Route as ApiGoogleCallbackRouteImport } from './routes/api/google/callback'
+import { Route as ApiGoogleAuthorizeRouteImport } from './routes/api/google/authorize'
 import { Route as ApiGitlabTaskRouteImport } from './routes/api/gitlab/task'
 import { Route as ApiGitlabProjectsRouteImport } from './routes/api/gitlab/projects'
 import { Route as ApiGitlabIssuesRouteImport } from './routes/api/gitlab/issues'
@@ -298,6 +308,56 @@ const ApiSessionsSessionIdRoute = ApiSessionsSessionIdRouteImport.update({
   path: '/api/sessions/$sessionId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOnedriveFoldersRoute = ApiOnedriveFoldersRouteImport.update({
+  id: '/api/onedrive/folders',
+  path: '/api/onedrive/folders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOnedriveFilesRoute = ApiOnedriveFilesRouteImport.update({
+  id: '/api/onedrive/files',
+  path: '/api/onedrive/files',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOnedriveConnectRoute = ApiOnedriveConnectRouteImport.update({
+  id: '/api/onedrive/connect',
+  path: '/api/onedrive/connect',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOnedriveCallbackRoute = ApiOnedriveCallbackRouteImport.update({
+  id: '/api/onedrive/callback',
+  path: '/api/onedrive/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOnedriveAuthorizeRoute = ApiOnedriveAuthorizeRouteImport.update({
+  id: '/api/onedrive/authorize',
+  path: '/api/onedrive/authorize',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGoogleFoldersRoute = ApiGoogleFoldersRouteImport.update({
+  id: '/api/google/folders',
+  path: '/api/google/folders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGoogleFilesRoute = ApiGoogleFilesRouteImport.update({
+  id: '/api/google/files',
+  path: '/api/google/files',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGoogleConnectRoute = ApiGoogleConnectRouteImport.update({
+  id: '/api/google/connect',
+  path: '/api/google/connect',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGoogleCallbackRoute = ApiGoogleCallbackRouteImport.update({
+  id: '/api/google/callback',
+  path: '/api/google/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGoogleAuthorizeRoute = ApiGoogleAuthorizeRouteImport.update({
+  id: '/api/google/authorize',
+  path: '/api/google/authorize',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGitlabTaskRoute = ApiGitlabTaskRouteImport.update({
   id: '/api/gitlab/task',
   path: '/api/gitlab/task',
@@ -462,6 +522,16 @@ export interface FileRoutesByFullPath {
   '/api/gitlab/issues': typeof ApiGitlabIssuesRoute
   '/api/gitlab/projects': typeof ApiGitlabProjectsRoute
   '/api/gitlab/task': typeof ApiGitlabTaskRoute
+  '/api/google/authorize': typeof ApiGoogleAuthorizeRoute
+  '/api/google/callback': typeof ApiGoogleCallbackRoute
+  '/api/google/connect': typeof ApiGoogleConnectRoute
+  '/api/google/files': typeof ApiGoogleFilesRoute
+  '/api/google/folders': typeof ApiGoogleFoldersRoute
+  '/api/onedrive/authorize': typeof ApiOnedriveAuthorizeRoute
+  '/api/onedrive/callback': typeof ApiOnedriveCallbackRoute
+  '/api/onedrive/connect': typeof ApiOnedriveConnectRoute
+  '/api/onedrive/files': typeof ApiOnedriveFilesRoute
+  '/api/onedrive/folders': typeof ApiOnedriveFoldersRoute
   '/api/sessions/$sessionId': typeof ApiSessionsSessionIdRouteWithChildren
   '/api/settings/apikey': typeof ApiSettingsApikeyRoute
   '/api/settings/automation': typeof ApiSettingsAutomationRoute
@@ -530,6 +600,16 @@ export interface FileRoutesByTo {
   '/api/gitlab/issues': typeof ApiGitlabIssuesRoute
   '/api/gitlab/projects': typeof ApiGitlabProjectsRoute
   '/api/gitlab/task': typeof ApiGitlabTaskRoute
+  '/api/google/authorize': typeof ApiGoogleAuthorizeRoute
+  '/api/google/callback': typeof ApiGoogleCallbackRoute
+  '/api/google/connect': typeof ApiGoogleConnectRoute
+  '/api/google/files': typeof ApiGoogleFilesRoute
+  '/api/google/folders': typeof ApiGoogleFoldersRoute
+  '/api/onedrive/authorize': typeof ApiOnedriveAuthorizeRoute
+  '/api/onedrive/callback': typeof ApiOnedriveCallbackRoute
+  '/api/onedrive/connect': typeof ApiOnedriveConnectRoute
+  '/api/onedrive/files': typeof ApiOnedriveFilesRoute
+  '/api/onedrive/folders': typeof ApiOnedriveFoldersRoute
   '/api/sessions/$sessionId': typeof ApiSessionsSessionIdRouteWithChildren
   '/api/settings/apikey': typeof ApiSettingsApikeyRoute
   '/api/settings/automation': typeof ApiSettingsAutomationRoute
@@ -600,6 +680,16 @@ export interface FileRoutesById {
   '/api/gitlab/issues': typeof ApiGitlabIssuesRoute
   '/api/gitlab/projects': typeof ApiGitlabProjectsRoute
   '/api/gitlab/task': typeof ApiGitlabTaskRoute
+  '/api/google/authorize': typeof ApiGoogleAuthorizeRoute
+  '/api/google/callback': typeof ApiGoogleCallbackRoute
+  '/api/google/connect': typeof ApiGoogleConnectRoute
+  '/api/google/files': typeof ApiGoogleFilesRoute
+  '/api/google/folders': typeof ApiGoogleFoldersRoute
+  '/api/onedrive/authorize': typeof ApiOnedriveAuthorizeRoute
+  '/api/onedrive/callback': typeof ApiOnedriveCallbackRoute
+  '/api/onedrive/connect': typeof ApiOnedriveConnectRoute
+  '/api/onedrive/files': typeof ApiOnedriveFilesRoute
+  '/api/onedrive/folders': typeof ApiOnedriveFoldersRoute
   '/api/sessions/$sessionId': typeof ApiSessionsSessionIdRouteWithChildren
   '/api/settings/apikey': typeof ApiSettingsApikeyRoute
   '/api/settings/automation': typeof ApiSettingsAutomationRoute
@@ -671,6 +761,16 @@ export interface FileRouteTypes {
     | '/api/gitlab/issues'
     | '/api/gitlab/projects'
     | '/api/gitlab/task'
+    | '/api/google/authorize'
+    | '/api/google/callback'
+    | '/api/google/connect'
+    | '/api/google/files'
+    | '/api/google/folders'
+    | '/api/onedrive/authorize'
+    | '/api/onedrive/callback'
+    | '/api/onedrive/connect'
+    | '/api/onedrive/files'
+    | '/api/onedrive/folders'
     | '/api/sessions/$sessionId'
     | '/api/settings/apikey'
     | '/api/settings/automation'
@@ -739,6 +839,16 @@ export interface FileRouteTypes {
     | '/api/gitlab/issues'
     | '/api/gitlab/projects'
     | '/api/gitlab/task'
+    | '/api/google/authorize'
+    | '/api/google/callback'
+    | '/api/google/connect'
+    | '/api/google/files'
+    | '/api/google/folders'
+    | '/api/onedrive/authorize'
+    | '/api/onedrive/callback'
+    | '/api/onedrive/connect'
+    | '/api/onedrive/files'
+    | '/api/onedrive/folders'
     | '/api/sessions/$sessionId'
     | '/api/settings/apikey'
     | '/api/settings/automation'
@@ -808,6 +918,16 @@ export interface FileRouteTypes {
     | '/api/gitlab/issues'
     | '/api/gitlab/projects'
     | '/api/gitlab/task'
+    | '/api/google/authorize'
+    | '/api/google/callback'
+    | '/api/google/connect'
+    | '/api/google/files'
+    | '/api/google/folders'
+    | '/api/onedrive/authorize'
+    | '/api/onedrive/callback'
+    | '/api/onedrive/connect'
+    | '/api/onedrive/files'
+    | '/api/onedrive/folders'
     | '/api/sessions/$sessionId'
     | '/api/settings/apikey'
     | '/api/settings/automation'
@@ -876,6 +996,16 @@ export interface RootRouteChildren {
   ApiGitlabIssuesRoute: typeof ApiGitlabIssuesRoute
   ApiGitlabProjectsRoute: typeof ApiGitlabProjectsRoute
   ApiGitlabTaskRoute: typeof ApiGitlabTaskRoute
+  ApiGoogleAuthorizeRoute: typeof ApiGoogleAuthorizeRoute
+  ApiGoogleCallbackRoute: typeof ApiGoogleCallbackRoute
+  ApiGoogleConnectRoute: typeof ApiGoogleConnectRoute
+  ApiGoogleFilesRoute: typeof ApiGoogleFilesRoute
+  ApiGoogleFoldersRoute: typeof ApiGoogleFoldersRoute
+  ApiOnedriveAuthorizeRoute: typeof ApiOnedriveAuthorizeRoute
+  ApiOnedriveCallbackRoute: typeof ApiOnedriveCallbackRoute
+  ApiOnedriveConnectRoute: typeof ApiOnedriveConnectRoute
+  ApiOnedriveFilesRoute: typeof ApiOnedriveFilesRoute
+  ApiOnedriveFoldersRoute: typeof ApiOnedriveFoldersRoute
   ApiSessionsSessionIdRoute: typeof ApiSessionsSessionIdRouteWithChildren
   ApiSettingsApikeyRoute: typeof ApiSettingsApikeyRoute
   ApiSettingsAutomationRoute: typeof ApiSettingsAutomationRoute
@@ -1209,6 +1339,76 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSessionsSessionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/onedrive/folders': {
+      id: '/api/onedrive/folders'
+      path: '/api/onedrive/folders'
+      fullPath: '/api/onedrive/folders'
+      preLoaderRoute: typeof ApiOnedriveFoldersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/onedrive/files': {
+      id: '/api/onedrive/files'
+      path: '/api/onedrive/files'
+      fullPath: '/api/onedrive/files'
+      preLoaderRoute: typeof ApiOnedriveFilesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/onedrive/connect': {
+      id: '/api/onedrive/connect'
+      path: '/api/onedrive/connect'
+      fullPath: '/api/onedrive/connect'
+      preLoaderRoute: typeof ApiOnedriveConnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/onedrive/callback': {
+      id: '/api/onedrive/callback'
+      path: '/api/onedrive/callback'
+      fullPath: '/api/onedrive/callback'
+      preLoaderRoute: typeof ApiOnedriveCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/onedrive/authorize': {
+      id: '/api/onedrive/authorize'
+      path: '/api/onedrive/authorize'
+      fullPath: '/api/onedrive/authorize'
+      preLoaderRoute: typeof ApiOnedriveAuthorizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/google/folders': {
+      id: '/api/google/folders'
+      path: '/api/google/folders'
+      fullPath: '/api/google/folders'
+      preLoaderRoute: typeof ApiGoogleFoldersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/google/files': {
+      id: '/api/google/files'
+      path: '/api/google/files'
+      fullPath: '/api/google/files'
+      preLoaderRoute: typeof ApiGoogleFilesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/google/connect': {
+      id: '/api/google/connect'
+      path: '/api/google/connect'
+      fullPath: '/api/google/connect'
+      preLoaderRoute: typeof ApiGoogleConnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/google/callback': {
+      id: '/api/google/callback'
+      path: '/api/google/callback'
+      fullPath: '/api/google/callback'
+      preLoaderRoute: typeof ApiGoogleCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/google/authorize': {
+      id: '/api/google/authorize'
+      path: '/api/google/authorize'
+      fullPath: '/api/google/authorize'
+      preLoaderRoute: typeof ApiGoogleAuthorizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/gitlab/task': {
       id: '/api/gitlab/task'
       path: '/api/gitlab/task'
@@ -1442,6 +1642,16 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGitlabIssuesRoute: ApiGitlabIssuesRoute,
   ApiGitlabProjectsRoute: ApiGitlabProjectsRoute,
   ApiGitlabTaskRoute: ApiGitlabTaskRoute,
+  ApiGoogleAuthorizeRoute: ApiGoogleAuthorizeRoute,
+  ApiGoogleCallbackRoute: ApiGoogleCallbackRoute,
+  ApiGoogleConnectRoute: ApiGoogleConnectRoute,
+  ApiGoogleFilesRoute: ApiGoogleFilesRoute,
+  ApiGoogleFoldersRoute: ApiGoogleFoldersRoute,
+  ApiOnedriveAuthorizeRoute: ApiOnedriveAuthorizeRoute,
+  ApiOnedriveCallbackRoute: ApiOnedriveCallbackRoute,
+  ApiOnedriveConnectRoute: ApiOnedriveConnectRoute,
+  ApiOnedriveFilesRoute: ApiOnedriveFilesRoute,
+  ApiOnedriveFoldersRoute: ApiOnedriveFoldersRoute,
   ApiSessionsSessionIdRoute: ApiSessionsSessionIdRouteWithChildren,
   ApiSettingsApikeyRoute: ApiSettingsApikeyRoute,
   ApiSettingsAutomationRoute: ApiSettingsAutomationRoute,

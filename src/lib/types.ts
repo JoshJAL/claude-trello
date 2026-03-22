@@ -4,6 +4,8 @@ export interface IntegrationStatus {
   trelloLinked: boolean;
   githubLinked: boolean;
   gitlabLinked: boolean;
+  googleDriveLinked: boolean;
+  oneDriveLinked: boolean;
   hasApiKey: boolean;
   configuredProviders: Array<"claude" | "openai" | "groq">;
 }

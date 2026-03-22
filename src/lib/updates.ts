@@ -25,6 +25,60 @@ export interface AppUpdate {
  */
 export const UPDATES: AppUpdate[] = [
   {
+    id: "2026-03-22-toast-notifications",
+    date: "2026-03-22",
+    title: "Session Toast Notifications",
+    description:
+      "You now get a toast notification when a session completes, fails, or is stopped — so you don't have to watch the log to know when it's done.",
+    type: "improvement",
+  },
+  {
+    id: "2026-03-22-google-docs",
+    date: "2026-03-22",
+    title: "Google Docs Support",
+    description:
+      "Agents can now read, write, and create Google Docs in your Drive workspace. Documents are read as Markdown and content can be replaced or created from scratch.",
+    type: "feature",
+  },
+  {
+    id: "2026-03-22-workspace-file-preview",
+    date: "2026-03-22",
+    title: "Workspace File Preview & Folder Navigation",
+    description:
+      "The cloud storage workspace picker now shows files alongside folders so you can confirm you've selected the right folder. Navigate into subfolders with breadcrumb navigation.",
+    type: "improvement",
+  },
+  {
+    id: "2026-03-22-workspace-type-picker",
+    date: "2026-03-22",
+    title: "Unified Workspace Selector for Trello",
+    description:
+      "Trello boards now use a two-step workspace picker: first choose your workspace type (GitHub, GitLab, Google Drive, or OneDrive), then select the specific repo or folder.",
+    type: "improvement",
+  },
+  {
+    id: "2026-03-22-cloud-storage-workspaces",
+    date: "2026-03-22",
+    title: "Google Drive & OneDrive Workspaces",
+    description:
+      "AI agents can now work on files in Google Drive and OneDrive folders — not just code repos. Read, write, edit files and spreadsheets directly from your cloud storage.",
+    type: "feature",
+    details: [
+      {
+        heading: "How It Works",
+        body: "Connect Google Drive or OneDrive in Settings via OAuth. When starting a Trello session in cloud mode, a new Workspace selector lets you pick a cloud storage folder. The AI agent gets tools for reading, writing, editing, and searching files — plus specialized tools for spreadsheets (Google Sheets and Excel).",
+      },
+      {
+        heading: "Spreadsheet Support",
+        body: "Agents can read spreadsheet data as structured tables, update specific cell ranges, and append new rows. Google Sheets uses the Sheets API directly. Excel files on OneDrive use the Microsoft Graph Excel endpoints.",
+      },
+      {
+        heading: "CLI Support",
+        body: "Use --workspace google:<folderId> or --workspace onedrive:<folderId> with the run command to specify a cloud storage workspace from the terminal.",
+      },
+    ],
+  },
+  {
     id: "2026-03-22-legal-and-feature-requests",
     date: "2026-03-22",
     title: "Privacy Policy, Terms, Cookie Consent & Feature Requests",

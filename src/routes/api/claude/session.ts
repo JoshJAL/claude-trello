@@ -24,6 +24,10 @@ import {
   WEB_TRELLO_ADVISORY_PROMPT,
   WEB_TRELLO_REPO_SYSTEM_PROMPT,
 } from "#/lib/providers/prompts";
+import { createStorageToolSet } from "#/lib/providers/storage-tools";
+import type { StorageToolContext } from "#/lib/providers/storage-tools";
+import { getValidGoogleToken } from "#/lib/google/token";
+import { getValidOneDriveToken } from "#/lib/onedrive/token";
 import { buildUserPrompt } from "#/lib/prompts";
 import type { BoardData } from "#/lib/types";
 import { SessionWriter, checkBudget } from "#/lib/session-history";
@@ -101,6 +105,10 @@ export const Route = createFileRoute("/api/claude/session")({
         );
         const webMode = body.webMode as boolean | undefined;
         const selectedBranch = body.selectedBranch as string | undefined;
+
+        // Cloud storage workspace params
+        const workspaceProvider = body.workspaceProvider as "google" | "onedrive" | undefined;
+        const workspaceFolderId = body.workspaceFolderId as string | undefined;
 
         // GitHub-specific params
         const githubOwner = body.githubOwner as string | undefined;
@@ -356,6 +364,24 @@ export const Route = createFileRoute("/api/claude/session")({
 
         // ── Web mode ──────────────────────────────────────────────────────
         if (sessionMode === "web") {
+          // Resolve cloud storage workspace token if specified
+          let workspaceToken: string | undefined;
+          if (workspaceProvider && workspaceFolderId) {
+            if (workspaceProvider === "google") {
+              const t = await getValidGoogleToken(userId);
+              if (!t) {
+                return Response.json({ error: "Google Drive not connected" }, { status: 400 });
+              }
+              workspaceToken = t;
+            } else if (workspaceProvider === "onedrive") {
+              const t = await getValidOneDriveToken(userId);
+              if (!t) {
+                return Response.json({ error: "OneDrive not connected" }, { status: 400 });
+              }
+              workspaceToken = t;
+            }
+          }
+
           // Use first card/issue title for branch naming
           const firstIssueTitle = boardData.cards[0]?.name;
           const webConfig = buildWebConfig(source, sourceToken, {
@@ -367,6 +393,9 @@ export const Route = createFileRoute("/api/claude/session")({
             issueTitle: firstIssueTitle,
             providerName: providerId,
             selectedBranch,
+            workspaceProvider,
+            workspaceFolderId,
+            workspaceToken,
           });
 
           const provider = await getProvider(providerId, "web", webConfig);
@@ -698,6 +727,9 @@ function buildWebConfig(
     issueTitle?: string;
     providerName?: string;
     selectedBranch?: string;
+    workspaceProvider?: "google" | "onedrive";
+    workspaceFolderId?: string;
+    workspaceToken?: string;
   },
 ): WebModeConfig {
   // Build the combined tool set: web coding tools + source task tools
@@ -784,6 +816,28 @@ function buildWebConfig(
     return {
       systemPrompt: WEB_TRELLO_REPO_SYSTEM_PROMPT.replace("GitHub", "GitLab").replace("GitHub API", "GitLab API"),
       toolSet: createGuardedToolSet(mergeToolSets(webTools, trelloTools)),
+      buildUserPrompt: buildTrelloWebPrompt,
+    };
+  }
+
+  // Trello + cloud storage workspace: file operations via Google Drive or OneDrive
+  if (opts.workspaceProvider && opts.workspaceFolderId && opts.workspaceToken) {
+    const storageCtx: StorageToolContext = {
+      provider: opts.workspaceProvider,
+      token: opts.workspaceToken,
+      folderId: opts.workspaceFolderId,
+      folderName: "workspace",
+    };
+    const storageTools = createStorageToolSet(storageCtx);
+    const trelloTools = createTrelloToolSet(opts.trelloToken, opts.boardId);
+    const providerLabel = opts.workspaceProvider === "google" ? "Google Drive" : "OneDrive";
+    const docsNote = opts.workspaceProvider === "google"
+      ? "\nFor Google Docs, use read_document, update_document, and create_document."
+      : "";
+    const systemPrompt = `You are operating on files in a ${providerLabel} folder. You can read, write, edit, and search files.\nFor spreadsheets, use read_spreadsheet, update_cells, and append_rows.${docsNote}\nFor text files, use read_file, write_file, and edit_file.\nYou also have Trello task management tools. Work through each card and checklist item in order.\nFor each checklist item you complete, call the check_trello_item tool.\nDo not mark items complete unless the work has actually been done and verified.`;
+    return {
+      systemPrompt,
+      toolSet: createGuardedToolSet(mergeToolSets(storageTools, trelloTools)),
       buildUserPrompt: buildTrelloWebPrompt,
     };
   }

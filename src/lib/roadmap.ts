@@ -150,14 +150,14 @@ export const ROADMAP: RoadmapCategory[] = [
         title: "Google Drive Workspace",
         description:
           "Connect a Google Drive folder as a workspace. Agents can read, write, and edit files — including Google Sheets — directly in your Drive.",
-        status: "planned",
+        status: "done",
       },
       {
         id: "onedrive",
         title: "OneDrive Workspace",
         description:
           "Connect a OneDrive folder as a workspace. Agents can read, write, and edit files — including Excel workbooks — directly in your OneDrive.",
-        status: "planned",
+        status: "done",
       },
     ],
   },

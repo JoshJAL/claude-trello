@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from "react";
 import type { BoardData, PrResult } from "#/lib/types";
 import type { AiProviderId } from "#/lib/providers/types";
 import { generateEditDiff, generateWriteDiff, type FileDiff } from "#/lib/diff";
+import { useToast } from "#/components/Toast";
 
 export interface SessionLogEntry {
   id: number;
@@ -12,6 +13,7 @@ export interface SessionLogEntry {
 }
 
 export function useClaudeSession(boardId: string) {
+  const { toast } = useToast();
   const [isRunning, setIsRunning] = useState(false);
   const [logs, setLogs] = useState<SessionLogEntry[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +48,7 @@ export function useClaudeSession(boardId: string) {
         gitlabProjectId?: number;
         webMode?: boolean;
         selectedBranch?: string;
+        linkedWorkspace?: { provider: "google" | "onedrive"; folderId: string };
       },
     ) => {
       setIsRunning(true);
@@ -71,6 +74,8 @@ export function useClaudeSession(boardId: string) {
             gitlabProjectId: options?.gitlabProjectId,
             webMode: options?.webMode,
             selectedBranch: options?.selectedBranch,
+            workspaceProvider: options?.linkedWorkspace?.provider,
+            workspaceFolderId: options?.linkedWorkspace?.folderId,
           }),
         });
 
@@ -119,6 +124,7 @@ export function useClaudeSession(boardId: string) {
 
               if (message.type === "done") {
                 addLog("system", "Session complete");
+                toast("success", "Session completed successfully");
                 streamEnded = true;
                 break;
               }
@@ -126,6 +132,7 @@ export function useClaudeSession(boardId: string) {
               if (message.type === "error") {
                 setError(message.error);
                 addLog("error", message.error);
+                toast("error", `Session failed: ${message.error}`);
                 streamEnded = true;
                 break;
               }
@@ -241,12 +248,13 @@ export function useClaudeSession(boardId: string) {
         const msg = err instanceof Error ? err.message : "Unknown error";
         setError(msg);
         addLog("error", msg);
+        toast("error", `Session error: ${msg}`);
       } finally {
         setIsRunning(false);
         setPendingQuestion(null);
       }
     },
-    [boardId, addLog],
+    [boardId, addLog, toast],
   );
 
   const sendMessage = useCallback(
@@ -279,7 +287,8 @@ export function useClaudeSession(boardId: string) {
     }
     setIsRunning(false);
     setPendingQuestion(null);
-  }, []);
+    toast("info", "Session stopped");
+  }, [toast]);
 
   return { isRunning, logs, error, pendingQuestion, prResult, start, stop, sendMessage };
 }

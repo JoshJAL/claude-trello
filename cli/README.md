@@ -133,6 +133,7 @@ npx taskpilot-cli run --parallel --concurrency 5
 npx taskpilot-cli run --dir ~/projects/my-api
 npx taskpilot-cli run --message "Check the development branch for comparison"
 npx taskpilot-cli run --branch feature/auth-refactor
+npx taskpilot-cli run --workspace google:1a2b3c4d5e
 ```
 
 Without `--message`, you'll be prompted interactively before the session starts. Press Enter to skip.
@@ -147,6 +148,7 @@ Without `--message`, you'll be prompted interactively before the session starts.
 | `-p, --parallel` | Run one agent per card/issue in parallel (uses git worktrees) |
 | `-c, --concurrency <n>` | Max concurrent agents in parallel mode (1-5, default: 3) |
 | `--branch <name>` | Git branch to work on (local: checks out the branch; cloud: commits to it) |
+| `--workspace <target>` | Cloud storage workspace — currently web-only (e.g. `google:<folderId>` or `onedrive:<folderId>`) |
 | `--pr` | Create a PR/MR after session completes |
 | `--no-pr` | Skip PR/MR creation even if automation is enabled |
 

@@ -49,6 +49,28 @@ export const Route = createFileRoute("/api/settings/status")({
           )
           .limit(1);
 
+        const [googleAccount] = await db
+          .select({ id: account.id })
+          .from(account)
+          .where(
+            and(
+              eq(account.userId, session.user.id),
+              eq(account.providerId, "google"),
+            ),
+          )
+          .limit(1);
+
+        const [onedriveAccount] = await db
+          .select({ id: account.id })
+          .from(account)
+          .where(
+            and(
+              eq(account.userId, session.user.id),
+              eq(account.providerId, "onedrive"),
+            ),
+          )
+          .limit(1);
+
         // Check provider_keys table for configured providers
         const configuredProviders: AiProviderId[] = [];
 
@@ -81,6 +103,8 @@ export const Route = createFileRoute("/api/settings/status")({
           trelloLinked: !!trelloAccount,
           githubLinked: !!githubAccount,
           gitlabLinked: !!gitlabAccount,
+          googleDriveLinked: !!googleAccount,
+          oneDriveLinked: !!onedriveAccount,
           configuredProviders,
           hasApiKey: configuredProviders.length > 0,
         });

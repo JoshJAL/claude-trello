@@ -7,8 +7,10 @@ import type {
 } from "#/lib/types";
 import type { SessionLogEntry } from "#/hooks/useClaudeSession";
 import type { AiProviderId } from "#/lib/providers/types";
+import { useToast } from "#/components/Toast";
 
 export function useParallelSession(boardId: string) {
+  const { toast } = useToast();
   const [isRunning, setIsRunning] = useState(false);
   const [agents, setAgents] = useState<Map<string, AgentStatus>>(new Map());
   const [agentLogs, setAgentLogs] = useState<Map<string, SessionLogEntry[]>>(
@@ -127,12 +129,15 @@ export function useParallelSession(boardId: string) {
                 | { type: "error"; error: string };
 
               if (event.type === "done") {
+                toast("success", "Parallel session completed");
                 streamEnded = true;
                 break;
               }
 
               if (event.type === "error") {
-                setError((event as { error: string }).error);
+                const errMsg = (event as { error: string }).error;
+                setError(errMsg);
+                toast("error", `Parallel session failed: ${errMsg}`);
                 streamEnded = true;
                 break;
               }
@@ -146,11 +151,12 @@ export function useParallelSession(boardId: string) {
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Unknown error";
         setError(msg);
+        toast("error", `Session error: ${msg}`);
       } finally {
         setIsRunning(false);
       }
     },
-    [boardId],
+    [boardId, toast],
   );
 
   function handleParallelEvent(event: ParallelEvent) {
@@ -244,7 +250,8 @@ export function useParallelSession(boardId: string) {
       // Best effort
     }
     setIsRunning(false);
-  }, []);
+    toast("info", "Session stopped");
+  }, [toast]);
 
   return { isRunning, agents, agentLogs, summary, error, start, stop };
 }
