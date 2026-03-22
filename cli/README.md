@@ -348,7 +348,7 @@ The CLI uses your web app account's integrations. Go to the web dashboard Settin
 **Can I use the CLI without the web server running?**
 No — the CLI authenticates against and fetches data from the web app. You need either a local dev server or a deployed instance running.
 
-**Claude asked me a question — what do I do?**
+**The agent asked me a question — what do I do?**
 Sometimes the agent needs clarification. The question appears in yellow with a `>` prompt. Type your answer and press Enter — the agent will continue working.
 
 **Parallel mode has merge conflicts**
