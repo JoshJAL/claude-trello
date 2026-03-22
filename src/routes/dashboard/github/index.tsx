@@ -95,15 +95,15 @@ function GitHubDashboardPage() {
             <>
               <input
                 type="search"
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search repos…"
                 className="mb-4 w-full rounded-xl border border-[var(--shore-line)] bg-white/60 px-4 py-2 text-sm text-[var(--sea-ink)] placeholder-[var(--sea-ink-soft)] outline-none focus:border-[var(--lagoon)] dark:bg-white/5"
               />
 
-              {filteredRepos.length === 0 ? (
+              {isSearching && filteredRepos.length === 0 ? (
                 <p className="text-sm text-[var(--sea-ink-soft)]">
-                  No results for &ldquo;{q}&rdquo;.
+                  No results for &ldquo;{query}&rdquo;.
                 </p>
               ) : (
                 <div className="grid gap-3 sm:grid-cols-2">
