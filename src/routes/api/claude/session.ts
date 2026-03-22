@@ -79,7 +79,7 @@ export const Route = createFileRoute("/api/claude/session")({
           );
         }
 
-        // Validate cwd is an absolute path to an existing directory
+        // Validate cwd is an absolute path
         if (!cwd || !cwd.startsWith("/")) {
           return Response.json(
             { error: "cwd must be an absolute path" },
@@ -87,18 +87,25 @@ export const Route = createFileRoute("/api/claude/session")({
           );
         }
 
-        try {
-          if (!existsSync(cwd) || !statSync(cwd).isDirectory()) {
+        // Only validate directory existence when running locally —
+        // on deployed servers the user's local path won't exist
+        const isLocal =
+          request.headers.get("host")?.startsWith("localhost") ||
+          request.headers.get("host")?.startsWith("127.0.0.1");
+        if (isLocal) {
+          try {
+            if (!existsSync(cwd) || !statSync(cwd).isDirectory()) {
+              return Response.json(
+                { error: "cwd is not a valid directory" },
+                { status: 400 },
+              );
+            }
+          } catch {
             return Response.json(
-              { error: "cwd is not a valid directory" },
+              { error: "cwd is not accessible" },
               { status: 400 },
             );
           }
-        } catch {
-          return Response.json(
-            { error: "cwd is not accessible" },
-            { status: 400 },
-          );
         }
 
         // Get task source token(s)
