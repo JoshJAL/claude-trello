@@ -333,7 +333,7 @@ npx taskpilot-cli login`}</CodeBlock>
               title="Navigate to your project"
             >
               <p>
-                Open your terminal in the codebase you want Claude to work on:
+                Open your terminal in the codebase you want the agent to work on:
               </p>
               <CodeBlock copyText="cd ~/my-project">cd ~/my-project</CodeBlock>
             </StepCard>
