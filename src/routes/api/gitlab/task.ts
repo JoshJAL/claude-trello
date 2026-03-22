@@ -1,9 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { auth } from "#/lib/auth";
-import { db } from "#/lib/db";
-import { account } from "#/lib/db/schema";
-import { eq, and } from "drizzle-orm";
 import { getIssue, updateIssueDescription } from "#/lib/gitlab/client";
+import { getValidGitLabToken } from "#/lib/gitlab/token";
 import { toggleTaskItem } from "#/lib/gitlab/parser";
 
 export const Route = createFileRoute("/api/gitlab/task")({
@@ -32,29 +30,21 @@ export const Route = createFileRoute("/api/gitlab/task")({
           );
         }
 
-        const [gitlabAccount] = await db
-          .select({ accessToken: account.accessToken })
-          .from(account)
-          .where(
-            and(
-              eq(account.userId, session.user.id),
-              eq(account.providerId, "gitlab"),
-            ),
-          )
-          .limit(1);
-
-        if (!gitlabAccount?.accessToken) {
+        let token: string;
+        try {
+          const t = await getValidGitLabToken(session.user.id);
+          if (!t) {
+            return Response.json({ error: "GitLab not connected" }, { status: 400 });
+          }
+          token = t;
+        } catch (err) {
           return Response.json(
-            { error: "GitLab not connected" },
-            { status: 400 },
+            { error: err instanceof Error ? err.message : "GitLab token error" },
+            { status: 401 },
           );
         }
 
-        const issue = await getIssue(
-          gitlabAccount.accessToken,
-          projectId,
-          issueIid,
-        );
+        const issue = await getIssue(token, projectId, issueIid);
 
         if (!issue.description) {
           return Response.json(
@@ -68,12 +58,7 @@ export const Route = createFileRoute("/api/gitlab/task")({
           taskIndex,
           checked ?? true,
         );
-        await updateIssueDescription(
-          gitlabAccount.accessToken,
-          projectId,
-          issueIid,
-          updatedDescription,
-        );
+        await updateIssueDescription(token, projectId, issueIid, updatedDescription);
 
         return Response.json({ success: true });
       },

@@ -27,15 +27,12 @@ export const Route = createFileRoute("/api/gitlab/connect")({
           );
         }
 
-        let accessToken: string;
+        let tokenSet: Awaited<ReturnType<typeof exchangeCodeForToken>>;
         try {
-          accessToken = await exchangeCodeForToken(code);
+          tokenSet = await exchangeCodeForToken(code);
         } catch (err) {
           const message = err instanceof Error ? err.message : "Failed to exchange code for token";
           console.error("[GitLab connect] Token exchange failed:", message);
-          console.error("[GitLab connect] BASE_URL:", process.env.BASE_URL);
-          console.error("[GitLab connect] GITLAB_CLIENT_ID set:", !!process.env.GITLAB_CLIENT_ID);
-          console.error("[GitLab connect] GITLAB_CLIENT_SECRET set:", !!process.env.GITLAB_CLIENT_SECRET);
           return Response.json(
             { error: message },
             { status: 400 },
@@ -44,7 +41,7 @@ export const Route = createFileRoute("/api/gitlab/connect")({
 
         let gitlabUser: { id: number; username: string };
         try {
-          gitlabUser = await verifyToken(accessToken);
+          gitlabUser = await verifyToken(tokenSet.accessToken);
         } catch {
           return Response.json(
             { error: "Invalid GitLab token" },
@@ -53,6 +50,9 @@ export const Route = createFileRoute("/api/gitlab/connect")({
         }
 
         const now = new Date();
+        const expiresAt = tokenSet.expiresIn
+          ? new Date(now.getTime() + tokenSet.expiresIn * 1000)
+          : null;
 
         // Upsert: delete existing gitlab account row, then insert
         await db
@@ -69,7 +69,9 @@ export const Route = createFileRoute("/api/gitlab/connect")({
           userId: session.user.id,
           accountId: String(gitlabUser.id),
           providerId: "gitlab",
-          accessToken,
+          accessToken: tokenSet.accessToken,
+          refreshToken: tokenSet.refreshToken,
+          accessTokenExpiresAt: expiresAt,
           createdAt: now,
           updatedAt: now,
         });

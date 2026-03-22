@@ -29,6 +29,7 @@ import type { BoardData } from "#/lib/types";
 import { SessionWriter, checkBudget } from "#/lib/session-history";
 import { DEFAULT_PR_AUTOMATION_CONFIG } from "#/lib/types";
 import { ensureWebhookRegistered } from "#/lib/webhooks/registration";
+import { getValidGitLabToken } from "#/lib/gitlab/token";
 import {
   createPr,
   generatePrBody,
@@ -189,24 +190,14 @@ export const Route = createFileRoute("/api/claude/session")({
             );
           }
 
-          const [gitlabAccount] = await db
-            .select({ accessToken: account.accessToken })
-            .from(account)
-            .where(
-              and(
-                eq(account.userId, userId),
-                eq(account.providerId, "gitlab"),
-              ),
-            )
-            .limit(1);
-
-          if (!gitlabAccount?.accessToken) {
+          const gitlabToken = await getValidGitLabToken(userId);
+          if (!gitlabToken) {
             return Response.json(
               { error: "GitLab not connected" },
               { status: 400 },
             );
           }
-          sourceToken = gitlabAccount.accessToken;
+          sourceToken = gitlabToken;
         } else {
           const [trelloAccount] = await db
             .select({ accessToken: account.accessToken })
@@ -248,19 +239,9 @@ export const Route = createFileRoute("/api/claude/session")({
 
           // If a GitLab project is linked to this Trello board, also fetch GitLab token
           if (gitlabProjectId && !githubOwner) {
-            const [gitlabAccount] = await db
-              .select({ accessToken: account.accessToken })
-              .from(account)
-              .where(
-                and(
-                  eq(account.userId, userId),
-                  eq(account.providerId, "gitlab"),
-                ),
-              )
-              .limit(1);
-
-            if (gitlabAccount?.accessToken) {
-              sourceToken = gitlabAccount.accessToken;
+            const gitlabToken = await getValidGitLabToken(userId);
+            if (gitlabToken) {
+              sourceToken = gitlabToken;
             }
           }
         }

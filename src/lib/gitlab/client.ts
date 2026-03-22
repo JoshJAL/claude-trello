@@ -130,10 +130,16 @@ export async function createMergeRequest(
   );
 }
 
+export interface GitLabTokenSet {
+  accessToken: string;
+  refreshToken: string | null;
+  expiresIn: number | null; // seconds
+}
+
 /**
- * Exchange an OAuth code for an access token.
+ * Exchange an OAuth code for an access token (and refresh token).
  */
-export async function exchangeCodeForToken(code: string): Promise<string> {
+export async function exchangeCodeForToken(code: string): Promise<GitLabTokenSet> {
   const baseUrl = process.env.BASE_URL || "http://localhost:3000";
   const res = await fetch("https://gitlab.com/oauth/token", {
     method: "POST",
@@ -151,6 +157,8 @@ export async function exchangeCodeForToken(code: string): Promise<string> {
 
   const data = (await res.json()) as {
     access_token?: string;
+    refresh_token?: string;
+    expires_in?: number;
     error?: string;
     error_description?: string;
   };
@@ -160,7 +168,46 @@ export async function exchangeCodeForToken(code: string): Promise<string> {
     throw new Error(`GitLab token exchange failed: ${detail}`);
   }
 
-  return data.access_token;
+  return {
+    accessToken: data.access_token,
+    refreshToken: data.refresh_token ?? null,
+    expiresIn: data.expires_in ?? null,
+  };
+}
+
+/**
+ * Refresh an expired GitLab access token using a refresh token.
+ */
+export async function refreshGitLabToken(refreshToken: string): Promise<GitLabTokenSet> {
+  const res = await fetch("https://gitlab.com/oauth/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      client_id: process.env.GITLAB_CLIENT_ID,
+      client_secret: process.env.GITLAB_CLIENT_SECRET,
+      refresh_token: refreshToken,
+      grant_type: "refresh_token",
+    }),
+  });
+
+  const data = (await res.json()) as {
+    access_token?: string;
+    refresh_token?: string;
+    expires_in?: number;
+    error?: string;
+    error_description?: string;
+  };
+
+  if (!res.ok || data.error || !data.access_token) {
+    const detail = data.error_description ?? data.error ?? `HTTP ${res.status}`;
+    throw new Error(`GitLab token refresh failed: ${detail}`);
+  }
+
+  return {
+    accessToken: data.access_token,
+    refreshToken: data.refresh_token ?? null,
+    expiresIn: data.expires_in ?? null,
+  };
 }
 
 /**
