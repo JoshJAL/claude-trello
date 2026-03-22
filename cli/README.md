@@ -54,8 +54,8 @@ Starting session...
 I'll start by working on "Fix authentication bug"...
   [Read]
   [Edit]
-  ✓ Checked item on Trello
-  ✓ Checked item on Trello
+  ✓ Checked task item
+  ✓ Checked task item
   ✓ Moved card to Done
 Moving on to "Add dark mode support"...
 ```
