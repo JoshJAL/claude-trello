@@ -34,8 +34,23 @@ export const Route = createFileRoute("/api/gitlab/projects")({
           );
         }
 
-        const projects = await getProjects(gitlabAccount.accessToken);
-        return Response.json(projects);
+        try {
+          const projects = await getProjects(gitlabAccount.accessToken);
+          return Response.json(projects);
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "Unknown error";
+          // Token may be expired — return specific error so frontend can prompt re-auth
+          if (message.includes("401")) {
+            return Response.json(
+              { error: "GitLab token expired. Please reconnect GitLab in Settings." },
+              { status: 401 },
+            );
+          }
+          return Response.json(
+            { error: message },
+            { status: 502 },
+          );
+        }
       },
     },
   },
