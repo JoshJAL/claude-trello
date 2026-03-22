@@ -276,12 +276,16 @@ export const Route = createFileRoute("/api/claude/session")({
 
         // ── Web mode ──────────────────────────────────────────────────────
         if (sessionMode === "web") {
+          // Use first card/issue title for branch naming
+          const firstIssueTitle = boardData.cards[0]?.name;
           const webConfig = buildWebConfig(source, sourceToken, {
             githubOwner,
             githubRepo,
             gitlabProjectId,
             trelloToken,
             boardId: boardData.board.id,
+            issueTitle: firstIssueTitle,
+            providerName: providerId,
           });
 
           const provider = await getProvider(providerId, "web", webConfig);
@@ -547,6 +551,8 @@ function buildWebConfig(
     gitlabProjectId?: number;
     trelloToken: string;
     boardId: string;
+    issueTitle?: string;
+    providerName?: string;
   },
 ): WebModeConfig {
   // Build the combined tool set: web coding tools + source task tools
@@ -557,6 +563,8 @@ function buildWebConfig(
       githubOwner: opts.githubOwner,
       githubRepo: opts.githubRepo,
       fileShas: new Map(),
+      issueTitle: opts.issueTitle,
+      providerName: opts.providerName,
     };
     const webTools = createWebToolSet(ctx);
     const sourceTools = createGitHubSourceToolSet(
@@ -577,6 +585,8 @@ function buildWebConfig(
       sourceToken,
       gitlabProjectId: opts.gitlabProjectId,
       fileShas: new Map(),
+      issueTitle: opts.issueTitle,
+      providerName: opts.providerName,
     };
     const webTools = createWebToolSet(ctx);
     const sourceTools = createGitLabSourceToolSet(

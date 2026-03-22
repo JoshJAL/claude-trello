@@ -32,6 +32,9 @@ export interface WebToolContext {
   defaultBranch?: string;
   /** GitHub SHA tracking for file updates */
   fileShas: Map<string, string>;
+  /** Used for descriptive branch naming */
+  issueTitle?: string;
+  providerName?: string;
 }
 
 const WEB_CODING_TOOLS: ToolDefinition[] = [
@@ -162,10 +165,13 @@ async function ensureWorkingBranch(ctx: WebToolContext): Promise<string> {
   if (ctx.workingBranch) return ctx.workingBranch;
 
   // Create a working branch on first write
-  const branchType = ctx.issueTitle.toLowerCase().includes('fix') ? 'bug' : 'feature';
-  const providerName = ctx.providerName.toLowerCase();
-  const summary = ctx.issueTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 50);
-  const branchName = `${branchType}/${providerName}-${summary}`;
+  const title = ctx.issueTitle ?? "";
+  const branchType = title.toLowerCase().includes("fix") || title.toLowerCase().includes("bug") ? "bug" : "feature";
+  const provider = (ctx.providerName ?? "ai").toLowerCase();
+  const summary = title
+    ? title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 50)
+    : `task-${Date.now()}`;
+  const branchName = `${branchType}/${provider}-${summary}`;
 
   if (ctx.source === "github" && ctx.githubOwner && ctx.githubRepo) {
     if (!ctx.defaultBranch) {
