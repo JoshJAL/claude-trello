@@ -13,6 +13,9 @@ export const Route = createFileRoute("/dashboard/github/")({
     }
     return { user: session.user };
   },
+  validateSearch: {
+    q: String
+  },
   component: GitHubDashboardPage,
   pendingComponent: PageSkeleton,
 });
