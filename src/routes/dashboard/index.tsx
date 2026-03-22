@@ -13,6 +13,9 @@ export const Route = createFileRoute("/dashboard/")({
     }
     return { user: session.user };
   },
+  validateSearch: {
+    q: String
+  },
   component: DashboardPage,
   pendingComponent: PageSkeleton,
 });
