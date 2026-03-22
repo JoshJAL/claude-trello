@@ -25,17 +25,20 @@ function DashboardPage() {
   const { trelloLinked } = useIntegrationStatus();
   const { data: boards, isLoading, error } = useBoards();
   const navigate = useNavigate();
-  const [q, setQ] = useState("");
-
-  const filteredBoards = boards
-    ? boards.filter((board) => {
-        const query = q.toLowerCase();
-        return (
-          board.name.toLowerCase().includes(query) ||
-          (board.desc ?? "").toLowerCase().includes(query)
-        );
-      })
-    : [];
+  
+  const {
+    query,
+    setQuery,
+    filteredItems: filteredBoards,
+    isSearching
+  } = useSearchFilter(boards, {
+    filterFn: (board, searchQuery) => {
+      return (
+        board.name.toLowerCase().includes(searchQuery) ||
+        (board.desc ?? "").toLowerCase().includes(searchQuery)
+      );
+    }
+  });
 
   return (
     <main className="page-wrap px-4 py-8">
