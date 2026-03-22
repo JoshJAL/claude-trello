@@ -920,7 +920,7 @@ npx taskpilot-cli run \\
                   className="mt-0.5 shrink-0 text-green-600 dark:text-green-400"
                 />
                 <span>
-                  Claude Code runs with{" "}
+                  The agent runs with{" "}
                   <code className="rounded-md border border-(--line) bg-(--surface) px-1.5 py-0.5 text-xs">
                     acceptEdits
                   </code>{" "}
