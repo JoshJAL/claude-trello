@@ -13,8 +13,10 @@ export const Route = createFileRoute("/dashboard/gitlab/")({
     }
     return { user: session.user };
   },
-  validateSearch: {
-    q: String
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      q: (search.q as string) ?? ''
+    };
   },
   component: GitLabDashboardPage,
   pendingComponent: PageSkeleton,
