@@ -101,11 +101,12 @@ export const Route = createFileRoute("/api/claude/session")({
         }
 
         // Determine session mode: web or local
+        // Deployed instances ALWAYS use web mode — local filesystem doesn't exist
         const isLocal =
           request.headers.get("host")?.startsWith("localhost") ||
           request.headers.get("host")?.startsWith("127.0.0.1");
         const sessionMode: SessionMode =
-          webMode || (!isLocal && !cwd) ? "web" : "local";
+          !isLocal ? "web" : (webMode ? "web" : "local");
 
         // Validate cwd for local mode
         if (sessionMode === "local") {

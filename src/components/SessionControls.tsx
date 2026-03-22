@@ -37,7 +37,10 @@ export function SessionControls({
   const { configuredProviders } = useIntegrationStatus();
 
   const isGitSource = source === "github" || source === "gitlab";
-  const [webMode, setWebMode] = useState(isGitSource);
+  const isDeployed = typeof window !== "undefined" &&
+    !window.location.hostname.startsWith("localhost") &&
+    !window.location.hostname.startsWith("127.0.0.1");
+  const [webMode, setWebMode] = useState(isGitSource || isDeployed);
   const [cwd, setCwd] = useState("");
   const [initialMessage, setInitialMessage] = useState("");
   const [mode, setMode] = useState<"sequential" | "parallel">("sequential");
@@ -160,7 +163,8 @@ export function SessionControls({
               </div>
             )}
 
-            {/* Web / Local toggle */}
+            {/* Web / Local toggle — only show when running locally */}
+            {!isDeployed && (
             <div className="flex items-center gap-2">
               <span className="text-xs text-[var(--sea-ink-soft)]">Env:</span>
               <div className="inline-flex rounded-lg border border-[var(--shore-line)] p-0.5">
@@ -186,6 +190,7 @@ export function SessionControls({
                 </button>
               </div>
             </div>
+            )}
 
             {!webMode && (
               <div className="flex items-center gap-2">
