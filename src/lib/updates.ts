@@ -25,6 +25,28 @@ export interface AppUpdate {
  */
 export const UPDATES: AppUpdate[] = [
   {
+    id: "2026-03-22-legal-and-feature-requests",
+    date: "2026-03-22",
+    title: "Privacy Policy, Terms, Cookie Consent & Feature Requests",
+    description:
+      "Added Privacy Policy, Terms of Service, Cookie Policy pages, a GDPR-compliant cookie consent banner, and a Feature Request form.",
+    type: "feature",
+    details: [
+      {
+        heading: "Legal Pages",
+        body: "Three new public pages are now available: Privacy Policy (/privacy) with a detailed data collection explainer, Terms of Service (/terms), and Cookie Policy (/cookies) listing every cookie and localStorage item used by the app.",
+      },
+      {
+        heading: "Cookie Consent Banner",
+        body: "A non-intrusive banner appears at the bottom of the page for new visitors explaining that TaskPilot uses a single essential authentication cookie. The banner can be dismissed and won't appear again.",
+      },
+      {
+        heading: "Feature Request Form",
+        body: "A new Feature Request page (/feature-request) lets you submit ideas with a title, category, and description. The form pre-fills a GitHub issue and opens it in a new tab for submission.",
+      },
+    ],
+  },
+  {
     id: "2026-03-22-branch-selection",
     date: "2026-03-22",
     title: "Branch Selection for Cloud Mode",

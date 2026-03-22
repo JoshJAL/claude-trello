@@ -5,6 +5,7 @@ import {
   createRootRoute,
 } from "@tanstack/react-router";
 import Sidebar from "../components/Sidebar";
+import ConsentBanner from "../components/ConsentBanner";
 import { NotFound } from "../components/NotFound";
 import { RealtimeProvider } from "../hooks/useRealtimeContext";
 import appCss from "../styles.css?url";
@@ -47,6 +48,7 @@ function RootLayout() {
             </div>
           </div>
         </RealtimeProvider>
+        <ConsentBanner />
         <Scripts />
       </body>
     </html>

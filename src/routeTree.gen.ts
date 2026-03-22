@@ -10,9 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UpdatesRouteImport } from './routes/updates'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as RoadmapRouteImport } from './routes/roadmap'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as FeatureRequestRouteImport } from './routes/feature-request'
+import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UpdatesIndexRouteImport } from './routes/updates/index'
@@ -77,6 +82,16 @@ const UpdatesRoute = UpdatesRouteImport.update({
   path: '/updates',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoadmapRoute = RoadmapRouteImport.update({
+  id: '/roadmap',
+  path: '/roadmap',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -87,9 +102,24 @@ const RegisterRoute = RegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeatureRequestRoute = FeatureRequestRouteImport.update({
+  id: '/feature-request',
+  path: '/feature-request',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnalyticsRoute = AnalyticsRouteImport.update({
@@ -390,9 +420,14 @@ const ApiSessionsSessionIdEventsRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/cookies': typeof CookiesRoute
+  '/feature-request': typeof FeatureRequestRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/roadmap': typeof RoadmapRoute
+  '/terms': typeof TermsRoute
   '/updates': typeof UpdatesRouteWithChildren
   '/api/ws': typeof ApiWsRoute
   '/dashboard/$boardId': typeof DashboardBoardIdRoute
@@ -454,9 +489,14 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/cookies': typeof CookiesRoute
+  '/feature-request': typeof FeatureRequestRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/roadmap': typeof RoadmapRoute
+  '/terms': typeof TermsRoute
   '/api/ws': typeof ApiWsRoute
   '/dashboard/$boardId': typeof DashboardBoardIdRoute
   '/docs/cli': typeof DocsCliRoute
@@ -518,9 +558,14 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/cookies': typeof CookiesRoute
+  '/feature-request': typeof FeatureRequestRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/roadmap': typeof RoadmapRoute
+  '/terms': typeof TermsRoute
   '/updates': typeof UpdatesRouteWithChildren
   '/api/ws': typeof ApiWsRoute
   '/dashboard/$boardId': typeof DashboardBoardIdRoute
@@ -584,9 +629,14 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/analytics'
+    | '/cookies'
+    | '/feature-request'
     | '/forgot-password'
+    | '/privacy'
     | '/register'
     | '/reset-password'
+    | '/roadmap'
+    | '/terms'
     | '/updates'
     | '/api/ws'
     | '/dashboard/$boardId'
@@ -648,9 +698,14 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/analytics'
+    | '/cookies'
+    | '/feature-request'
     | '/forgot-password'
+    | '/privacy'
     | '/register'
     | '/reset-password'
+    | '/roadmap'
+    | '/terms'
     | '/api/ws'
     | '/dashboard/$boardId'
     | '/docs/cli'
@@ -711,9 +766,14 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/analytics'
+    | '/cookies'
+    | '/feature-request'
     | '/forgot-password'
+    | '/privacy'
     | '/register'
     | '/reset-password'
+    | '/roadmap'
+    | '/terms'
     | '/updates'
     | '/api/ws'
     | '/dashboard/$boardId'
@@ -776,9 +836,14 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  CookiesRoute: typeof CookiesRoute
+  FeatureRequestRoute: typeof FeatureRequestRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  PrivacyRoute: typeof PrivacyRoute
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  RoadmapRoute: typeof RoadmapRoute
+  TermsRoute: typeof TermsRoute
   UpdatesRoute: typeof UpdatesRouteWithChildren
   ApiWsRoute: typeof ApiWsRoute
   DashboardBoardIdRoute: typeof DashboardBoardIdRoute
@@ -843,6 +908,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UpdatesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/roadmap': {
+      id: '/roadmap'
+      path: '/roadmap'
+      fullPath: '/roadmap'
+      preLoaderRoute: typeof RoadmapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -857,11 +936,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/forgot-password': {
       id: '/forgot-password'
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feature-request': {
+      id: '/feature-request'
+      path: '/feature-request'
+      fullPath: '/feature-request'
+      preLoaderRoute: typeof FeatureRequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/analytics': {
@@ -1302,9 +1402,14 @@ const ApiSessionsSessionIdRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
+  CookiesRoute: CookiesRoute,
+  FeatureRequestRoute: FeatureRequestRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  PrivacyRoute: PrivacyRoute,
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  RoadmapRoute: RoadmapRoute,
+  TermsRoute: TermsRoute,
   UpdatesRoute: UpdatesRouteWithChildren,
   ApiWsRoute: ApiWsRoute,
   DashboardBoardIdRoute: DashboardBoardIdRoute,

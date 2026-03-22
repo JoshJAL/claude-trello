@@ -19,6 +19,8 @@ import {
   History,
   Sparkles,
   BarChart3,
+  Map,
+  MessageSquarePlus,
 } from "lucide-react";
 
 const STORAGE_KEY = "sidebar-collapsed";
@@ -189,6 +191,20 @@ export default function Sidebar() {
               onClick={closeMobile}
             />
             <SidebarLink
+              to="/roadmap"
+              icon={Map}
+              label="Roadmap"
+              collapsed={collapsed}
+              onClick={closeMobile}
+            />
+            <SidebarLink
+              to="/feature-request"
+              icon={MessageSquarePlus}
+              label="Feature Request"
+              collapsed={collapsed}
+              onClick={closeMobile}
+            />
+            <SidebarLink
               to="/docs/web"
               icon={Globe}
               label="Web Docs"
@@ -252,6 +268,13 @@ export default function Sidebar() {
                 {!collapsed && <span>Sign out</span>}
               </button>
             </div>
+            {!collapsed && (
+              <div className="flex gap-3 px-3 pt-2 text-xs text-(--shore-line)">
+                <a href="/privacy" className="hover:text-(--sea-ink-soft)">Privacy</a>
+                <a href="/terms" className="hover:text-(--sea-ink-soft)">Terms</a>
+                <a href="/cookies" className="hover:text-(--sea-ink-soft)">Cookies</a>
+              </div>
+            )}
           </div>
         </>
       ) : (
@@ -268,6 +291,20 @@ export default function Sidebar() {
               to="/register"
               icon={UserCircle}
               label="Register"
+              collapsed={collapsed}
+              onClick={closeMobile}
+            />
+            <SidebarLink
+              to="/roadmap"
+              icon={Map}
+              label="Roadmap"
+              collapsed={collapsed}
+              onClick={closeMobile}
+            />
+            <SidebarLink
+              to="/feature-request"
+              icon={MessageSquarePlus}
+              label="Feature Request"
               collapsed={collapsed}
               onClick={closeMobile}
             />
@@ -292,6 +329,13 @@ export default function Sidebar() {
             <div className={`sidebar-actions ${collapsed ? "flex-col items-center" : ""}`}>
               <ThemeToggle />
             </div>
+            {!collapsed && (
+              <div className="flex gap-3 px-3 pt-2 text-xs text-(--shore-line)">
+                <a href="/privacy" className="hover:text-(--sea-ink-soft)">Privacy</a>
+                <a href="/terms" className="hover:text-(--sea-ink-soft)">Terms</a>
+                <a href="/cookies" className="hover:text-(--sea-ink-soft)">Cookies</a>
+              </div>
+            )}
           </div>
         </>
       )}
