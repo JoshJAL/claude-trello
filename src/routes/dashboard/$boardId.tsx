@@ -8,6 +8,7 @@ import { PageSkeleton } from "#/components/PageSkeleton";
 import { useBoardData, useBoards } from "#/hooks/useBoardData";
 import { useClaudeSession } from "#/hooks/useClaudeSession";
 import { useParallelSession } from "#/hooks/useParallelSession";
+import type { TrelloCard } from "#/lib/types";
 
 export const Route = createFileRoute("/dashboard/$boardId")({
   beforeLoad: async () => {
