@@ -142,7 +142,7 @@ npx taskpilot-cli login
 npx taskpilot-cli run
 ```
 
-By default it connects to `https://ct.joshualevine.me`. To point it at your own instance:
+By default it connects to `https://account.task-pilot.dev`. To point it at your own instance:
 
 ```bash
 TASKPILOT_URL=https://taskpilot.yourdomain.com npx taskpilot-cli login

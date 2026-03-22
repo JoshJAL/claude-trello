@@ -395,7 +395,7 @@ npx taskpilot-cli login`}</CodeBlock>
               flags={[
                 {
                   flag: "-s, --server <url>",
-                  desc: "Server URL (default: https://ct.joshualevine.me)",
+                  desc: "Server URL (default: https://account.task-pilot.dev)",
                 },
               ]}
             />
@@ -405,7 +405,7 @@ npx taskpilot-cli login`}</CodeBlock>
               flags={[
                 {
                   flag: "-s, --server <url>",
-                  desc: "Server URL (default: https://ct.joshualevine.me)",
+                  desc: "Server URL (default: https://account.task-pilot.dev)",
                 },
               ]}
             />
@@ -600,7 +600,7 @@ npx taskpilot-cli run --board 60d5e2a3f1a2b40017c3d4e5`}</CodeBlock>
 
 # TaskPilot — Status
 #
-#   Server:  https://ct.joshualevine.me
+#   Server:  https://account.task-pilot.dev
 #   Auth:    Signed in as Your Name
 #   Trello:  Connected
 #   API Key: Configured
@@ -756,7 +756,7 @@ npx taskpilot-cli run \\
               <div className="border-t border-(--line) px-5 py-4 text-sm text-(--sea-ink-soft)">
                 The CLI connects to{" "}
                 <strong className="text-(--sea-ink)">
-                  ct.joshualevine.me
+                  account.task-pilot.dev
                 </strong>{" "}
                 by default. If the site is down, the CLI won't work. You can
                 also self-host and point at your own instance with{" "}

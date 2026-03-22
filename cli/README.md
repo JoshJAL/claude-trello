@@ -97,7 +97,7 @@ npx taskpilot-cli register --server https://your-self-hosted-instance.com
 
 | Flag | Description |
 |------|-------------|
-| `-s, --server <url>` | Server URL (default: `https://ct.joshualevine.me`) |
+| `-s, --server <url>` | Server URL (default: `https://account.task-pilot.dev`) |
 
 ### `taskpilot-cli login`
 
@@ -110,7 +110,7 @@ npx taskpilot-cli login --server https://your-app.vercel.app
 
 | Flag | Description |
 |------|-------------|
-| `-s, --server <url>` | Server URL (default: `https://ct.joshualevine.me`) |
+| `-s, --server <url>` | Server URL (default: `https://account.task-pilot.dev`) |
 
 ### `taskpilot-cli setup`
 
@@ -184,7 +184,7 @@ npx taskpilot-cli status
 
 # TaskPilot — Status
 #
-#   Server:  https://ct.joshualevine.me
+#   Server:  https://account.task-pilot.dev
 #   Auth:    Signed in as Your Name
 #   Trello:  Connected
 #   API Key: Configured

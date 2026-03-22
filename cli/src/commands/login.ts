@@ -7,7 +7,7 @@ import { saveConfig, getServerUrl } from "../lib/config.js";
 
 export const loginCommand = new Command("login")
   .description("Sign in to TaskPilot")
-  .option("-s, --server <url>", "Server URL (default: https://ct.joshualevine.me)")
+  .option("-s, --server <url>", "Server URL (default: https://account.task-pilot.dev)")
   .action(async (opts: { server?: string }) => {
     const serverUrl = opts.server || getServerUrl();
 

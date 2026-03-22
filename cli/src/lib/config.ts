@@ -67,7 +67,7 @@ export function getServerUrl(): string {
     config.serverUrl ||
     process.env.TASKPILOT_URL ||
     process.env.CLAUDE_TRELLO_URL ||
-    "https://ct.joshualevine.me"
+    "https://account.task-pilot.dev"
   );
 }
 
