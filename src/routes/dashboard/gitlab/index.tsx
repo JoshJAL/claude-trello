@@ -143,7 +143,7 @@ function GitLabDashboardPage() {
                   <select
                     value={visibilityFilter}
                     onChange={(e) => setVisibilityFilter(e.target.value)}
-                    className="rounded border border-[var(--shore-line)] bg-white/60 px-2 py-1 text-[var(--sea-ink)] dark:bg-white/5"
+                    className="rounded border border-[var(--shore-line)] bg-white px-2 py-1 text-[var(--sea-ink)] dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
                   >
                     <option value="All">All</option>
                     <option value="Public">Public</option>
