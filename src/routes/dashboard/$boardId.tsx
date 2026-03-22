@@ -90,7 +90,7 @@ function BoardPage() {
               : `Parallel session running (${parallel.agents.size} agents)`
           }
           source="trello"
-          onStart={({ cwd, userMessage, mode, concurrency, providerId, webMode, linkedRepo }) => {
+          onStart={({ cwd, userMessage, mode, concurrency, providerId, webMode, linkedRepo, linkedGitlabProjectId }) => {
             if (!data?.cards) return;
 
             const boardData = {
@@ -105,6 +105,7 @@ function BoardPage() {
               webMode,
               githubOwner: linkedRepo?.owner,
               githubRepo: linkedRepo?.repo,
+              gitlabProjectId: linkedGitlabProjectId,
             };
 
             if (mode === "parallel" && !webMode) {

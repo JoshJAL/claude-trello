@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useIntegrationStatus } from "#/hooks/useIntegrationStatus";
 import { useGitHubRepos } from "#/hooks/useGitHubRepos";
+import { useGitLabProjects } from "#/hooks/useGitLabProjects";
 import type { AiProviderId } from "#/lib/providers/types";
 
 const PROVIDER_LABELS: Record<AiProviderId, string> = {
@@ -22,6 +23,7 @@ interface SessionControlsProps {
     providerId: AiProviderId;
     webMode?: boolean;
     linkedRepo?: { owner: string; repo: string };
+    linkedGitlabProjectId?: number;
   }) => void;
   onStop: () => void;
   runningLabel?: string;
@@ -36,7 +38,7 @@ export function SessionControls({
   onStop,
   runningLabel,
 }: SessionControlsProps) {
-  const { configuredProviders, githubLinked } = useIntegrationStatus();
+  const { configuredProviders, githubLinked, gitlabLinked } = useIntegrationStatus();
 
   const isGitSource = source === "github" || source === "gitlab";
   const isDeployed = typeof window !== "undefined" &&
@@ -52,11 +54,17 @@ export function SessionControls({
   );
   const [linkedRepoKey, setLinkedRepoKey] = useState("");
 
-  // Fetch GitHub repos for Trello linking (only when Trello source + GitHub connected)
-  const showRepoLinker = source === "trello" && githubLinked;
-  const { data: repos } = useGitHubRepos();
-  const linkedRepo = linkedRepoKey
-    ? { owner: linkedRepoKey.split("/")[0], repo: linkedRepoKey.split("/")[1] }
+  // Fetch repos/projects for Trello linking
+  const showRepoLinker = source === "trello" && (githubLinked || gitlabLinked);
+  const { data: ghRepos } = useGitHubRepos();
+  const { data: glProjects } = useGitLabProjects();
+
+  // Parse the selected repo key: "github:owner/repo" or "gitlab:projectId"
+  const linkedRepo = linkedRepoKey.startsWith("github:")
+    ? { owner: linkedRepoKey.slice(7).split("/")[0], repo: linkedRepoKey.slice(7).split("/")[1] }
+    : undefined;
+  const linkedGitlabProjectId = linkedRepoKey.startsWith("gitlab:")
+    ? Number(linkedRepoKey.slice(7))
     : undefined;
 
   function handleStart() {
@@ -69,6 +77,7 @@ export function SessionControls({
       providerId,
       webMode,
       linkedRepo,
+      linkedGitlabProjectId,
     });
   }
 
@@ -76,19 +85,24 @@ export function SessionControls({
     <div className="sticky top-0 z-40 -mx-4 bg-[var(--sand)] px-4 py-3">
       <div className="island-shell flex flex-col gap-3 rounded-xl p-4">
         {/* Web mode banner */}
-        {webMode && source === "trello" && !linkedRepo && !isRunning && (
+        {webMode && source === "trello" && !linkedRepo && !linkedGitlabProjectId && !isRunning && (
           <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
             No repository linked — the AI can only suggest code changes.
-            {githubLinked
-              ? " Link a GitHub repo below for full file editing."
-              : " Connect GitHub in Settings to link a repo."}
+            {(githubLinked || gitlabLinked)
+              ? " Link a repo below for full file editing."
+              : " Connect GitHub or GitLab in Settings to link a repo."}
           </div>
         )}
 
         {webMode && source === "trello" && linkedRepo && !isRunning && (
           <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-800 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-300">
-            Linked to {linkedRepo.owner}/{linkedRepo.repo} — changes will be
-            committed via GitHub API to a new branch
+            Linked to {linkedRepo.owner}/{linkedRepo.repo} — changes via GitHub API
+          </div>
+        )}
+
+        {webMode && source === "trello" && linkedGitlabProjectId && !isRunning && (
+          <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-800 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-300">
+            Linked to GitLab project #{linkedGitlabProjectId} — changes via GitLab API
           </div>
         )}
 
@@ -99,7 +113,7 @@ export function SessionControls({
           </div>
         )}
 
-        {/* Link a GitHub repo to Trello (cloud mode) */}
+        {/* Link a repo to Trello (cloud mode) */}
         {showRepoLinker && webMode && !isRunning && (
           <div className="flex items-center gap-2">
             <label
@@ -115,11 +129,24 @@ export function SessionControls({
               className="flex-1 rounded-lg border border-[var(--shore-line)] bg-white px-2 py-1.5 text-xs text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)] dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
             >
               <option value="">None (advisory only)</option>
-              {repos?.map((r) => (
-                <option key={r.full_name} value={r.full_name}>
-                  {r.full_name}
-                </option>
-              ))}
+              {githubLinked && ghRepos && ghRepos.length > 0 && (
+                <optgroup label="GitHub">
+                  {ghRepos.map((r) => (
+                    <option key={`github:${r.full_name}`} value={`github:${r.full_name}`}>
+                      {r.full_name}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+              {gitlabLinked && glProjects && glProjects.length > 0 && (
+                <optgroup label="GitLab">
+                  {glProjects.map((p) => (
+                    <option key={`gitlab:${p.id}`} value={`gitlab:${p.id}`}>
+                      {p.path_with_namespace}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
             </select>
           </div>
         )}

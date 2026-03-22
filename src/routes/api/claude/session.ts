@@ -230,6 +230,24 @@ export const Route = createFileRoute("/api/claude/session")({
               sourceToken = githubAccount.accessToken;
             }
           }
+
+          // If a GitLab project is linked to this Trello board, also fetch GitLab token
+          if (gitlabProjectId && !githubOwner) {
+            const [gitlabAccount] = await db
+              .select({ accessToken: account.accessToken })
+              .from(account)
+              .where(
+                and(
+                  eq(account.userId, userId),
+                  eq(account.providerId, "gitlab"),
+                ),
+              )
+              .limit(1);
+
+            if (gitlabAccount?.accessToken) {
+              sourceToken = gitlabAccount.accessToken;
+            }
+          }
         }
 
         // Get and decrypt AI provider API key
@@ -634,6 +652,25 @@ function buildWebConfig(
     const trelloTools = createTrelloToolSet(opts.trelloToken, opts.boardId);
     return {
       systemPrompt: WEB_TRELLO_REPO_SYSTEM_PROMPT,
+      toolSet: createGuardedToolSet(mergeToolSets(webTools, trelloTools)),
+      buildUserPrompt: buildTrelloWebPrompt,
+    };
+  }
+
+  // Trello + linked GitLab project: full file editing via GitLab API + Trello task tools
+  if (opts.gitlabProjectId && sourceToken) {
+    const ctx: WebToolContext = {
+      source: "gitlab",
+      sourceToken,
+      gitlabProjectId: opts.gitlabProjectId,
+      fileShas: new Map(),
+      issueTitle: opts.issueTitle,
+      providerName: opts.providerName,
+    };
+    const webTools = createWebToolSet(ctx);
+    const trelloTools = createTrelloToolSet(opts.trelloToken, opts.boardId);
+    return {
+      systemPrompt: WEB_TRELLO_REPO_SYSTEM_PROMPT.replace("GitHub", "GitLab").replace("GitHub API", "GitLab API"),
       toolSet: createGuardedToolSet(mergeToolSets(webTools, trelloTools)),
       buildUserPrompt: buildTrelloWebPrompt,
     };
