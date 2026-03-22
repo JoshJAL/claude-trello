@@ -22,6 +22,7 @@ import {
   WEB_GITHUB_SYSTEM_PROMPT,
   WEB_GITLAB_SYSTEM_PROMPT,
   WEB_TRELLO_ADVISORY_PROMPT,
+  WEB_TRELLO_REPO_SYSTEM_PROMPT,
 } from "#/lib/providers/prompts";
 import { buildUserPrompt } from "#/lib/prompts";
 import type { BoardData } from "#/lib/types";
@@ -211,6 +212,24 @@ export const Route = createFileRoute("/api/claude/session")({
           }
           trelloToken = trelloAccount.accessToken;
           sourceToken = trelloAccount.accessToken;
+
+          // If a GitHub repo is linked to this Trello board, also fetch GitHub token
+          if (githubOwner && githubRepo) {
+            const [githubAccount] = await db
+              .select({ accessToken: account.accessToken })
+              .from(account)
+              .where(
+                and(
+                  eq(account.userId, userId),
+                  eq(account.providerId, "github"),
+                ),
+              )
+              .limit(1);
+
+            if (githubAccount?.accessToken) {
+              sourceToken = githubAccount.accessToken;
+            }
+          }
         }
 
         // Get and decrypt AI provider API key
@@ -600,7 +619,27 @@ function buildWebConfig(
     };
   }
 
-  // Trello web mode: advisory only (task tools but no file ops)
+  // Trello + linked GitHub repo: full file editing via GitHub API + Trello task tools
+  if (opts.githubOwner && opts.githubRepo && sourceToken) {
+    const ctx: WebToolContext = {
+      source: "github",
+      sourceToken,
+      githubOwner: opts.githubOwner,
+      githubRepo: opts.githubRepo,
+      fileShas: new Map(),
+      issueTitle: opts.issueTitle,
+      providerName: opts.providerName,
+    };
+    const webTools = createWebToolSet(ctx);
+    const trelloTools = createTrelloToolSet(opts.trelloToken, opts.boardId);
+    return {
+      systemPrompt: WEB_TRELLO_REPO_SYSTEM_PROMPT,
+      toolSet: createGuardedToolSet(mergeToolSets(webTools, trelloTools)),
+      buildUserPrompt: buildTrelloWebPrompt,
+    };
+  }
+
+  // Trello web mode without repo: advisory only (task tools but no file ops)
   const trelloTools = createTrelloToolSet(opts.trelloToken, opts.boardId);
   return {
     systemPrompt: WEB_TRELLO_ADVISORY_PROMPT,

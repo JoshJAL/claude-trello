@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useIntegrationStatus } from "#/hooks/useIntegrationStatus";
+import { useGitHubRepos } from "#/hooks/useGitHubRepos";
 import type { AiProviderId } from "#/lib/providers/types";
 
 const PROVIDER_LABELS: Record<AiProviderId, string> = {
@@ -20,6 +21,7 @@ interface SessionControlsProps {
     concurrency: number;
     providerId: AiProviderId;
     webMode?: boolean;
+    linkedRepo?: { owner: string; repo: string };
   }) => void;
   onStop: () => void;
   runningLabel?: string;
@@ -34,7 +36,7 @@ export function SessionControls({
   onStop,
   runningLabel,
 }: SessionControlsProps) {
-  const { configuredProviders } = useIntegrationStatus();
+  const { configuredProviders, githubLinked } = useIntegrationStatus();
 
   const isGitSource = source === "github" || source === "gitlab";
   const isDeployed = typeof window !== "undefined" &&
@@ -48,6 +50,14 @@ export function SessionControls({
   const [providerId, setProviderId] = useState<AiProviderId>(
     configuredProviders[0] ?? "claude",
   );
+  const [linkedRepoKey, setLinkedRepoKey] = useState("");
+
+  // Fetch GitHub repos for Trello linking (only when Trello source + GitHub connected)
+  const showRepoLinker = source === "trello" && githubLinked;
+  const { data: repos } = useGitHubRepos();
+  const linkedRepo = linkedRepoKey
+    ? { owner: linkedRepoKey.split("/")[0], repo: linkedRepoKey.split("/")[1] }
+    : undefined;
 
   function handleStart() {
     if (!webMode && !cwd.trim()) return;
@@ -58,6 +68,7 @@ export function SessionControls({
       concurrency,
       providerId,
       webMode,
+      linkedRepo,
     });
   }
 
@@ -65,10 +76,19 @@ export function SessionControls({
     <div className="sticky top-0 z-40 -mx-4 bg-[var(--sand)] px-4 py-3">
       <div className="island-shell flex flex-col gap-3 rounded-xl p-4">
         {/* Web mode banner */}
-        {webMode && source === "trello" && !isRunning && (
+        {webMode && source === "trello" && !linkedRepo && !isRunning && (
           <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
-            Web mode for Trello is advisory-only. Use the CLI for full codebase
-            access.
+            No repository linked — the AI can only suggest code changes.
+            {githubLinked
+              ? " Link a GitHub repo below for full file editing."
+              : " Connect GitHub in Settings to link a repo."}
+          </div>
+        )}
+
+        {webMode && source === "trello" && linkedRepo && !isRunning && (
+          <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-800 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-300">
+            Linked to {linkedRepo.owner}/{linkedRepo.repo} — changes will be
+            committed via GitHub API to a new branch
           </div>
         )}
 
@@ -76,6 +96,31 @@ export function SessionControls({
           <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-800 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-300">
             Cloud mode — changes will be committed via{" "}
             {source === "github" ? "GitHub" : "GitLab"} API to a new branch
+          </div>
+        )}
+
+        {/* Link a GitHub repo to Trello (cloud mode) */}
+        {showRepoLinker && webMode && !isRunning && (
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="linked-repo"
+              className="text-xs font-medium text-[var(--sea-ink-soft)]"
+            >
+              Repository:
+            </label>
+            <select
+              id="linked-repo"
+              value={linkedRepoKey}
+              onChange={(e) => setLinkedRepoKey(e.target.value)}
+              className="flex-1 rounded-lg border border-[var(--shore-line)] bg-white px-2 py-1.5 text-xs text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)] dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
+            >
+              <option value="">None (advisory only)</option>
+              {repos?.map((r) => (
+                <option key={r.full_name} value={r.full_name}>
+                  {r.full_name}
+                </option>
+              ))}
+            </select>
           </div>
         )}
 
