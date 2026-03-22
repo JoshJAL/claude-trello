@@ -14,7 +14,7 @@ interface CardItemProps {
   isSessionRunning?: boolean;
 }
 
-export function CardItem({ card, onCheckToggle, done }: CardItemProps) {
+export function CardItem({ card, onCheckToggle, done, onWorkOnThis, isSessionRunning }: CardItemProps) {
   const totalItems = card.checklists.reduce(
     (sum, cl) => sum + cl.checkItems.length,
     0,
