@@ -349,6 +349,16 @@ async function executeGitHubTool(
 
 // ── GitLab Tool Execution ──────────────────────────────────────────────────
 
+async function ensureGitLabRef(ctx: WebToolContext): Promise<string> {
+  if (ctx.workingBranch) return ctx.workingBranch;
+  if (ctx.defaultBranch) return ctx.defaultBranch;
+  if (ctx.gitlabProjectId) {
+    ctx.defaultBranch = await glGetDefaultBranch(ctx.sourceToken, ctx.gitlabProjectId);
+    return ctx.defaultBranch;
+  }
+  return "main";
+}
+
 async function executeGitLabTool(
   name: string,
   input: Record<string, unknown>,
@@ -360,7 +370,7 @@ async function executeGitLabTool(
   switch (name) {
     case "read_file": {
       try {
-        const ref = ctx.workingBranch ?? ctx.defaultBranch;
+        const ref = await ensureGitLabRef(ctx);
         const { content } = await getGitLabFile(
           token,
           projectId,
@@ -405,7 +415,7 @@ async function executeGitLabTool(
     }
     case "edit_file": {
       try {
-        const ref = ctx.workingBranch ?? ctx.defaultBranch;
+        const ref = await ensureGitLabRef(ctx);
         const { content } = await getGitLabFile(
           token,
           projectId,
@@ -444,7 +454,7 @@ async function executeGitLabTool(
     }
     case "list_files": {
       try {
-        const ref = ctx.workingBranch ?? ctx.defaultBranch;
+        const ref = await ensureGitLabRef(ctx);
         const recursive = (input.recursive as boolean) !== false;
         const entries = await getGitLabTree(
           token,
