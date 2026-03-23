@@ -42,6 +42,7 @@ import { Route as ApiWebhooksTrelloRouteImport } from './routes/api/webhooks/tre
 import { Route as ApiWebhooksGitlabRouteImport } from './routes/api/webhooks/gitlab'
 import { Route as ApiWebhooksGithubRouteImport } from './routes/api/webhooks/github'
 import { Route as ApiUpdatesSeenRouteImport } from './routes/api/updates/seen'
+import { Route as ApiTrelloMoveCardRouteImport } from './routes/api/trello/move-card'
 import { Route as ApiTrelloConnectRouteImport } from './routes/api/trello/connect'
 import { Route as ApiTrelloChecklistRouteImport } from './routes/api/trello/checklist'
 import { Route as ApiTrelloCardsRouteImport } from './routes/api/trello/cards'
@@ -52,6 +53,7 @@ import { Route as ApiSettingsStatusRouteImport } from './routes/api/settings/sta
 import { Route as ApiSettingsBudgetRouteImport } from './routes/api/settings/budget'
 import { Route as ApiSettingsAutomationRouteImport } from './routes/api/settings/automation'
 import { Route as ApiSettingsApikeyRouteImport } from './routes/api/settings/apikey'
+import { Route as ApiSessionsRecordRouteImport } from './routes/api/sessions/record'
 import { Route as ApiSessionsSessionIdRouteImport } from './routes/api/sessions/$sessionId'
 import { Route as ApiOnedriveFoldersRouteImport } from './routes/api/onedrive/folders'
 import { Route as ApiOnedriveFilesRouteImport } from './routes/api/onedrive/files'
@@ -253,6 +255,11 @@ const ApiUpdatesSeenRoute = ApiUpdatesSeenRouteImport.update({
   path: '/api/updates/seen',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTrelloMoveCardRoute = ApiTrelloMoveCardRouteImport.update({
+  id: '/api/trello/move-card',
+  path: '/api/trello/move-card',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTrelloConnectRoute = ApiTrelloConnectRouteImport.update({
   id: '/api/trello/connect',
   path: '/api/trello/connect',
@@ -301,6 +308,11 @@ const ApiSettingsAutomationRoute = ApiSettingsAutomationRouteImport.update({
 const ApiSettingsApikeyRoute = ApiSettingsApikeyRouteImport.update({
   id: '/api/settings/apikey',
   path: '/api/settings/apikey',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSessionsRecordRoute = ApiSessionsRecordRouteImport.update({
+  id: '/api/sessions/record',
+  path: '/api/sessions/record',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSessionsSessionIdRoute = ApiSessionsSessionIdRouteImport.update({
@@ -533,6 +545,7 @@ export interface FileRoutesByFullPath {
   '/api/onedrive/files': typeof ApiOnedriveFilesRoute
   '/api/onedrive/folders': typeof ApiOnedriveFoldersRoute
   '/api/sessions/$sessionId': typeof ApiSessionsSessionIdRouteWithChildren
+  '/api/sessions/record': typeof ApiSessionsRecordRoute
   '/api/settings/apikey': typeof ApiSettingsApikeyRoute
   '/api/settings/automation': typeof ApiSettingsAutomationRoute
   '/api/settings/budget': typeof ApiSettingsBudgetRoute
@@ -543,6 +556,7 @@ export interface FileRoutesByFullPath {
   '/api/trello/cards': typeof ApiTrelloCardsRoute
   '/api/trello/checklist': typeof ApiTrelloChecklistRoute
   '/api/trello/connect': typeof ApiTrelloConnectRoute
+  '/api/trello/move-card': typeof ApiTrelloMoveCardRoute
   '/api/updates/seen': typeof ApiUpdatesSeenRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
   '/api/webhooks/gitlab': typeof ApiWebhooksGitlabRoute
@@ -611,6 +625,7 @@ export interface FileRoutesByTo {
   '/api/onedrive/files': typeof ApiOnedriveFilesRoute
   '/api/onedrive/folders': typeof ApiOnedriveFoldersRoute
   '/api/sessions/$sessionId': typeof ApiSessionsSessionIdRouteWithChildren
+  '/api/sessions/record': typeof ApiSessionsRecordRoute
   '/api/settings/apikey': typeof ApiSettingsApikeyRoute
   '/api/settings/automation': typeof ApiSettingsAutomationRoute
   '/api/settings/budget': typeof ApiSettingsBudgetRoute
@@ -621,6 +636,7 @@ export interface FileRoutesByTo {
   '/api/trello/cards': typeof ApiTrelloCardsRoute
   '/api/trello/checklist': typeof ApiTrelloChecklistRoute
   '/api/trello/connect': typeof ApiTrelloConnectRoute
+  '/api/trello/move-card': typeof ApiTrelloMoveCardRoute
   '/api/updates/seen': typeof ApiUpdatesSeenRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
   '/api/webhooks/gitlab': typeof ApiWebhooksGitlabRoute
@@ -691,6 +707,7 @@ export interface FileRoutesById {
   '/api/onedrive/files': typeof ApiOnedriveFilesRoute
   '/api/onedrive/folders': typeof ApiOnedriveFoldersRoute
   '/api/sessions/$sessionId': typeof ApiSessionsSessionIdRouteWithChildren
+  '/api/sessions/record': typeof ApiSessionsRecordRoute
   '/api/settings/apikey': typeof ApiSettingsApikeyRoute
   '/api/settings/automation': typeof ApiSettingsAutomationRoute
   '/api/settings/budget': typeof ApiSettingsBudgetRoute
@@ -701,6 +718,7 @@ export interface FileRoutesById {
   '/api/trello/cards': typeof ApiTrelloCardsRoute
   '/api/trello/checklist': typeof ApiTrelloChecklistRoute
   '/api/trello/connect': typeof ApiTrelloConnectRoute
+  '/api/trello/move-card': typeof ApiTrelloMoveCardRoute
   '/api/updates/seen': typeof ApiUpdatesSeenRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
   '/api/webhooks/gitlab': typeof ApiWebhooksGitlabRoute
@@ -772,6 +790,7 @@ export interface FileRouteTypes {
     | '/api/onedrive/files'
     | '/api/onedrive/folders'
     | '/api/sessions/$sessionId'
+    | '/api/sessions/record'
     | '/api/settings/apikey'
     | '/api/settings/automation'
     | '/api/settings/budget'
@@ -782,6 +801,7 @@ export interface FileRouteTypes {
     | '/api/trello/cards'
     | '/api/trello/checklist'
     | '/api/trello/connect'
+    | '/api/trello/move-card'
     | '/api/updates/seen'
     | '/api/webhooks/github'
     | '/api/webhooks/gitlab'
@@ -850,6 +870,7 @@ export interface FileRouteTypes {
     | '/api/onedrive/files'
     | '/api/onedrive/folders'
     | '/api/sessions/$sessionId'
+    | '/api/sessions/record'
     | '/api/settings/apikey'
     | '/api/settings/automation'
     | '/api/settings/budget'
@@ -860,6 +881,7 @@ export interface FileRouteTypes {
     | '/api/trello/cards'
     | '/api/trello/checklist'
     | '/api/trello/connect'
+    | '/api/trello/move-card'
     | '/api/updates/seen'
     | '/api/webhooks/github'
     | '/api/webhooks/gitlab'
@@ -929,6 +951,7 @@ export interface FileRouteTypes {
     | '/api/onedrive/files'
     | '/api/onedrive/folders'
     | '/api/sessions/$sessionId'
+    | '/api/sessions/record'
     | '/api/settings/apikey'
     | '/api/settings/automation'
     | '/api/settings/budget'
@@ -939,6 +962,7 @@ export interface FileRouteTypes {
     | '/api/trello/cards'
     | '/api/trello/checklist'
     | '/api/trello/connect'
+    | '/api/trello/move-card'
     | '/api/updates/seen'
     | '/api/webhooks/github'
     | '/api/webhooks/gitlab'
@@ -1007,6 +1031,7 @@ export interface RootRouteChildren {
   ApiOnedriveFilesRoute: typeof ApiOnedriveFilesRoute
   ApiOnedriveFoldersRoute: typeof ApiOnedriveFoldersRoute
   ApiSessionsSessionIdRoute: typeof ApiSessionsSessionIdRouteWithChildren
+  ApiSessionsRecordRoute: typeof ApiSessionsRecordRoute
   ApiSettingsApikeyRoute: typeof ApiSettingsApikeyRoute
   ApiSettingsAutomationRoute: typeof ApiSettingsAutomationRoute
   ApiSettingsBudgetRoute: typeof ApiSettingsBudgetRoute
@@ -1017,6 +1042,7 @@ export interface RootRouteChildren {
   ApiTrelloCardsRoute: typeof ApiTrelloCardsRoute
   ApiTrelloChecklistRoute: typeof ApiTrelloChecklistRoute
   ApiTrelloConnectRoute: typeof ApiTrelloConnectRoute
+  ApiTrelloMoveCardRoute: typeof ApiTrelloMoveCardRoute
   ApiUpdatesSeenRoute: typeof ApiUpdatesSeenRoute
   ApiWebhooksGithubRoute: typeof ApiWebhooksGithubRoute
   ApiWebhooksGitlabRoute: typeof ApiWebhooksGitlabRoute
@@ -1262,6 +1288,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiUpdatesSeenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/trello/move-card': {
+      id: '/api/trello/move-card'
+      path: '/api/trello/move-card'
+      fullPath: '/api/trello/move-card'
+      preLoaderRoute: typeof ApiTrelloMoveCardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/trello/connect': {
       id: '/api/trello/connect'
       path: '/api/trello/connect'
@@ -1330,6 +1363,13 @@ declare module '@tanstack/react-router' {
       path: '/api/settings/apikey'
       fullPath: '/api/settings/apikey'
       preLoaderRoute: typeof ApiSettingsApikeyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sessions/record': {
+      id: '/api/sessions/record'
+      path: '/api/sessions/record'
+      fullPath: '/api/sessions/record'
+      preLoaderRoute: typeof ApiSessionsRecordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/sessions/$sessionId': {
@@ -1653,6 +1693,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiOnedriveFilesRoute: ApiOnedriveFilesRoute,
   ApiOnedriveFoldersRoute: ApiOnedriveFoldersRoute,
   ApiSessionsSessionIdRoute: ApiSessionsSessionIdRouteWithChildren,
+  ApiSessionsRecordRoute: ApiSessionsRecordRoute,
   ApiSettingsApikeyRoute: ApiSettingsApikeyRoute,
   ApiSettingsAutomationRoute: ApiSettingsAutomationRoute,
   ApiSettingsBudgetRoute: ApiSettingsBudgetRoute,
@@ -1663,6 +1704,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiTrelloCardsRoute: ApiTrelloCardsRoute,
   ApiTrelloChecklistRoute: ApiTrelloChecklistRoute,
   ApiTrelloConnectRoute: ApiTrelloConnectRoute,
+  ApiTrelloMoveCardRoute: ApiTrelloMoveCardRoute,
   ApiUpdatesSeenRoute: ApiUpdatesSeenRoute,
   ApiWebhooksGithubRoute: ApiWebhooksGithubRoute,
   ApiWebhooksGitlabRoute: ApiWebhooksGitlabRoute,
