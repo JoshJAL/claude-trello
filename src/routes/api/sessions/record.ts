@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { randomUUID } from "crypto";
 import { auth } from "#/lib/auth";
 import { db } from "#/lib/db";
 import { agentSessions, sessionEvents } from "#/lib/db/schema";
-import { nanoid } from "nanoid";
 
 export const Route = createFileRoute("/api/sessions/record")({
   server: {
@@ -67,7 +67,7 @@ export const Route = createFileRoute("/api/sessions/record")({
         }
 
         const now = new Date();
-        const sessionId = nanoid();
+        const sessionId = randomUUID();
 
         await db.insert(agentSessions).values({
           id: sessionId,
@@ -95,7 +95,7 @@ export const Route = createFileRoute("/api/sessions/record")({
         // Insert events in batches
         if (events && events.length > 0) {
           const eventRows = events.map((e, i) => ({
-            id: nanoid(),
+            id: randomUUID(),
             sessionId,
             type: e.type,
             agentIndex: null,
