@@ -509,11 +509,25 @@ export const runCommand = new Command("run")
           doneListId: doneListId ?? undefined,
         };
 
+        // Parse workspace flag
+        let workspaceProvider: "google" | "onedrive" | undefined;
+        let workspaceFolderId: string | undefined;
+        if (opts.workspace) {
+          const [wp, ...rest] = opts.workspace.split(":");
+          if (wp === "google" || wp === "onedrive") {
+            workspaceProvider = wp;
+            workspaceFolderId = rest.join(":") || "root";
+          } else {
+            console.log(chalk.red(`Invalid workspace "${opts.workspace}". Use: google:<folderId> or onedrive:<folderId>`));
+            process.exit(1);
+          }
+        }
+
         // Load credentials
         const credSpinner = ora("Loading credentials...").start();
         let credentials: Credentials;
         try {
-          credentials = await getCredentials();
+          credentials = await getCredentials(provider, { source, workspaceProvider });
           credSpinner.succeed("Credentials loaded");
         } catch (err) {
           credSpinner.fail(
@@ -534,7 +548,14 @@ export const runCommand = new Command("run")
           activeCardCount,
           userMessage: opts.message,
           branch: opts.branch,
-          sourceExtra: {},
+          workspace: opts.workspace,
+          sourceExtra: {
+            ...(workspaceProvider ? {
+              workspaceProvider,
+              workspaceFolderId,
+              workspaceToken: workspaceProvider === "google" ? credentials.googleToken : credentials.onedriveToken,
+            } : {}),
+          },
         });
       }
     },
@@ -554,12 +575,16 @@ interface SourceSessionOpts {
   activeCardCount: number;
   userMessage?: string;
   branch?: string;
+  workspace?: string;
   sourceExtra: {
     githubToken?: string;
     githubOwner?: string;
     githubRepo?: string;
     gitlabToken?: string;
     gitlabProjectId?: number;
+    workspaceProvider?: "google" | "onedrive";
+    workspaceFolderId?: string;
+    workspaceToken?: string;
   };
 }
 
@@ -584,6 +609,9 @@ async function runSourceSession(opts: SourceSessionOpts): Promise<void> {
   console.log(`  ${chalk.dim(`AI provider: ${providerLabel}`)}`);
   if (opts.branch) {
     console.log(`  ${chalk.dim(`Branch: ${opts.branch}`)}`);
+  }
+  if (opts.workspace) {
+    console.log(`  ${chalk.dim(`Workspace: ${opts.workspace}`)}`);
   }
 
   if (isParallel) {

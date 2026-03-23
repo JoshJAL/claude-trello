@@ -189,9 +189,14 @@ export async function getBoardData(boardId: string): Promise<CardsResponse> {
   );
 }
 
-export async function getCredentials(providerId?: string): Promise<Credentials> {
+export async function getCredentials(
+  providerId?: string,
+  opts?: { source?: string; workspaceProvider?: string },
+): Promise<Credentials> {
   const params = new URLSearchParams();
   if (providerId) params.set("providerId", providerId);
+  if (opts?.source) params.set("source", opts.source);
+  if (opts?.workspaceProvider) params.set("workspaceProvider", opts.workspaceProvider);
   const qs = params.toString();
   return apiFetch<Credentials>(`/api/cli/credentials${qs ? `?${qs}` : ""}`);
 }

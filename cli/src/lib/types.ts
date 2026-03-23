@@ -46,6 +46,8 @@ export interface Credentials {
   anthropicApiKey: string;
   githubToken?: string;
   gitlabToken?: string;
+  googleToken?: string;
+  onedriveToken?: string;
 }
 
 export type AiProviderId = "claude" | "openai" | "groq";

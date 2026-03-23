@@ -133,6 +133,51 @@ export const Route = createFileRoute("/api/cli/credentials")({
           }
         }
 
+        // Optionally fetch Google Drive token
+        let googleToken: string | undefined;
+        const workspaceProvider = url.searchParams.get("workspaceProvider");
+        if (workspaceProvider === "google") {
+          const [googleAccount] = await db
+            .select({ accessToken: account.accessToken })
+            .from(account)
+            .where(
+              and(
+                eq(account.userId, userId),
+                eq(account.providerId, "google"),
+              ),
+            )
+            .limit(1);
+          googleToken = googleAccount?.accessToken ?? undefined;
+          if (!googleToken) {
+            return Response.json(
+              { error: "Google Drive not connected" },
+              { status: 400 },
+            );
+          }
+        }
+
+        // Optionally fetch OneDrive token
+        let onedriveToken: string | undefined;
+        if (workspaceProvider === "onedrive") {
+          const [onedriveAccount] = await db
+            .select({ accessToken: account.accessToken })
+            .from(account)
+            .where(
+              and(
+                eq(account.userId, userId),
+                eq(account.providerId, "onedrive"),
+              ),
+            )
+            .limit(1);
+          onedriveToken = onedriveAccount?.accessToken ?? undefined;
+          if (!onedriveToken) {
+            return Response.json(
+              { error: "OneDrive not connected" },
+              { status: 400 },
+            );
+          }
+        }
+
         return Response.json({
           trelloApiKey: process.env.TRELLO_API_KEY!,
           trelloToken: trelloAccount?.accessToken ?? "",
@@ -140,6 +185,8 @@ export const Route = createFileRoute("/api/cli/credentials")({
           providerId,
           ...(githubToken ? { githubToken } : {}),
           ...(gitlabToken ? { gitlabToken } : {}),
+          ...(googleToken ? { googleToken } : {}),
+          ...(onedriveToken ? { onedriveToken } : {}),
         });
       },
     },

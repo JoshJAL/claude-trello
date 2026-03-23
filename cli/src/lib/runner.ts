@@ -272,6 +272,314 @@ function buildGitLabMcpServer(
   };
 }
 
+// ── Storage MCP server (Google Drive / OneDrive) ─────────────────────────────
+
+const GOOGLE_DRIVE_API = "https://www.googleapis.com/drive/v3";
+const GOOGLE_SHEETS_API = "https://sheets.googleapis.com/v4";
+const GOOGLE_DOCS_API = "https://docs.googleapis.com/v1";
+const GRAPH_API = "https://graph.microsoft.com/v1.0";
+
+const STORAGE_SYSTEM_PROMPT = `You are operating on files in a cloud storage folder. You have access to tools for reading, writing, editing, and searching files.
+For spreadsheets (Google Sheets or Excel), use read_spreadsheet, update_cells, and append_rows.
+For Google Docs, use read_document, update_document, and create_document.
+For text files, use read_file, write_file, and edit_file.
+You also have Trello task management tools. Work through each card and checklist item in order.
+For each checklist item you complete, call the check_trello_item tool.
+Do not mark items complete unless the work has actually been done and verified.`;
+
+function buildStorageMcpServer(
+  provider: "google" | "onedrive",
+  token: string,
+  folderId: string,
+): { server: SdkMcpServer; toolNames: string[] } {
+  // File ID cache for name → id resolution
+  const fileIds = new Map<string, string>();
+
+  function cleanName(path: string): string {
+    return path.replace(/\s*\[id:\s*[^\]]+\]/, "").replace(/\s*\([^)]+\)\s*$/, "").trim();
+  }
+
+  function extractId(path: string): string | null {
+    const m = path.match(/\[id:\s*([^\]]+)\]/);
+    return m ? m[1].trim() : null;
+  }
+
+  async function resolveFileId(path: string): Promise<string> {
+    const explicit = extractId(path);
+    if (explicit) return explicit;
+    const cleaned = cleanName(path);
+    if (fileIds.has(cleaned)) return fileIds.get(cleaned)!;
+    if (/^[a-zA-Z0-9_-]{20,}$/.test(cleaned)) return cleaned;
+
+    if (provider === "google") {
+      const q = `'${folderId}' in parents and trashed = false`;
+      const res = await fetch(
+        `${GOOGLE_DRIVE_API}/files?q=${encodeURIComponent(q)}&fields=files(id,name)&pageSize=200`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      const data = (await res.json()) as { files: Array<{ id: string; name: string }> };
+      for (const f of data.files) fileIds.set(f.name, f.id);
+      if (fileIds.has(cleaned)) return fileIds.get(cleaned)!;
+    } else {
+      const path2 = folderId === "root" ? "/me/drive/root/children" : `/me/drive/items/${folderId}/children`;
+      const res = await fetch(`${GRAPH_API}${path2}?$top=200`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = (await res.json()) as { value: Array<{ id: string; name: string }> };
+      for (const f of data.value) fileIds.set(f.name, f.id);
+      if (fileIds.has(cleaned)) return fileIds.get(cleaned)!;
+    }
+    throw new Error(`File not found: ${cleaned}`);
+  }
+
+  const listFilesTool = tool(
+    "list_files",
+    "List all files in the workspace folder.",
+    {},
+    async () => {
+      if (provider === "google") {
+        const q = `'${folderId}' in parents and trashed = false`;
+        const res = await fetch(
+          `${GOOGLE_DRIVE_API}/files?q=${encodeURIComponent(q)}&fields=files(id,name,mimeType)&pageSize=200`,
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+        const data = (await res.json()) as { files: Array<{ id: string; name: string; mimeType: string }> };
+        for (const f of data.files) fileIds.set(f.name, f.id);
+        const text = data.files.map((f) => `${f.name}  [id: ${f.id}]  (${f.mimeType})`).join("\n") || "No files found";
+        return { content: [{ type: "text" as const, text }] };
+      }
+      const path = folderId === "root" ? "/me/drive/root/children" : `/me/drive/items/${folderId}/children`;
+      const res = await fetch(`${GRAPH_API}${path}?$top=200`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = (await res.json()) as { value: Array<{ id: string; name: string; file?: { mimeType: string } }> };
+      for (const f of data.value) fileIds.set(f.name, f.id);
+      const text = data.value.map((f) => `${f.name}  [id: ${f.id}]  (${f.file?.mimeType ?? "folder"})`).join("\n") || "No files found";
+      return { content: [{ type: "text" as const, text }] };
+    },
+  );
+
+  const readFileTool = tool(
+    "read_file",
+    "Read the contents of a file. Use the file name or ID from list_files.",
+    { path: z.string().describe("File name or file ID") },
+    async ({ path: filePath }) => {
+      const fileId = await resolveFileId(filePath);
+      if (provider === "google") {
+        const meta = await fetch(`${GOOGLE_DRIVE_API}/files/${fileId}?fields=name,mimeType`, { headers: { Authorization: `Bearer ${token}` } });
+        const { mimeType } = (await meta.json()) as { mimeType: string };
+        let content: string;
+        if (mimeType === "application/vnd.google-apps.document") {
+          const r = await fetch(`${GOOGLE_DRIVE_API}/files/${fileId}/export?mimeType=text/markdown`, { headers: { Authorization: `Bearer ${token}` } });
+          content = await r.text();
+        } else if (mimeType === "application/vnd.google-apps.spreadsheet") {
+          const r = await fetch(`${GOOGLE_DRIVE_API}/files/${fileId}/export?mimeType=text/csv`, { headers: { Authorization: `Bearer ${token}` } });
+          content = await r.text();
+        } else {
+          const r = await fetch(`${GOOGLE_DRIVE_API}/files/${fileId}?alt=media`, { headers: { Authorization: `Bearer ${token}` } });
+          content = await r.text();
+        }
+        const numbered = content.split("\n").map((l, i) => `${String(i + 1).padStart(5)} ${l}`).join("\n");
+        return { content: [{ type: "text" as const, text: numbered }] };
+      }
+      const res = await fetch(`${GRAPH_API}/me/drive/items/${fileId}/content`, { headers: { Authorization: `Bearer ${token}` } });
+      const content = await res.text();
+      const numbered = content.split("\n").map((l, i) => `${String(i + 1).padStart(5)} ${l}`).join("\n");
+      return { content: [{ type: "text" as const, text: numbered }] };
+    },
+  );
+
+  const writeFileTool = tool(
+    "write_file",
+    "Create or overwrite a file in the workspace folder.",
+    {
+      path: z.string().describe("File name"),
+      content: z.string().describe("The full file content"),
+    },
+    async ({ path: filePath, content }) => {
+      const cleaned = cleanName(filePath);
+      if (provider === "google") {
+        // Check if exists
+        let existingId: string | undefined;
+        try { existingId = await resolveFileId(cleaned); } catch { /* new file */ }
+        if (existingId) {
+          await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingId}?uploadType=media`, {
+            method: "PATCH", headers: { Authorization: `Bearer ${token}`, "Content-Type": "text/plain" }, body: content,
+          });
+          return { content: [{ type: "text" as const, text: `File updated: ${cleaned}` }] };
+        }
+        const boundary = "taskpilot";
+        const metadata = JSON.stringify({ name: cleaned, parents: [folderId] });
+        const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${metadata}\r\n--${boundary}\r\nContent-Type: text/plain\r\n\r\n${content}\r\n--${boundary}--`;
+        const res = await fetch(`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id`, {
+          method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": `multipart/related; boundary=${boundary}` }, body,
+        });
+        const { id } = (await res.json()) as { id: string };
+        fileIds.set(cleaned, id);
+        return { content: [{ type: "text" as const, text: `File created: ${cleaned}` }] };
+      }
+      // OneDrive
+      const uploadPath = folderId === "root"
+        ? `/me/drive/root:/${encodeURIComponent(cleaned)}:/content`
+        : `/me/drive/items/${folderId}:/${encodeURIComponent(cleaned)}:/content`;
+      const res = await fetch(`${GRAPH_API}${uploadPath}`, {
+        method: "PUT", headers: { Authorization: `Bearer ${token}`, "Content-Type": "text/plain" }, body: content,
+      });
+      const { id } = (await res.json()) as { id: string };
+      fileIds.set(cleaned, id);
+      return { content: [{ type: "text" as const, text: `File written: ${cleaned}` }] };
+    },
+  );
+
+  const editFileTool = tool(
+    "edit_file",
+    "Replace exact text in a file. The old_text must match exactly.",
+    {
+      path: z.string().describe("File name or ID"),
+      old_text: z.string().describe("Exact text to find"),
+      new_text: z.string().describe("Replacement text"),
+    },
+    async ({ path: filePath, old_text, new_text }) => {
+      const fileId = await resolveFileId(filePath);
+      // Read current content
+      let currentContent: string;
+      if (provider === "google") {
+        const meta = await fetch(`${GOOGLE_DRIVE_API}/files/${fileId}?fields=mimeType`, { headers: { Authorization: `Bearer ${token}` } });
+        const { mimeType } = (await meta.json()) as { mimeType: string };
+        if (mimeType === "application/vnd.google-apps.document") {
+          const r = await fetch(`${GOOGLE_DRIVE_API}/files/${fileId}/export?mimeType=text/plain`, { headers: { Authorization: `Bearer ${token}` } });
+          currentContent = await r.text();
+        } else {
+          const r = await fetch(`${GOOGLE_DRIVE_API}/files/${fileId}?alt=media`, { headers: { Authorization: `Bearer ${token}` } });
+          currentContent = await r.text();
+        }
+      } else {
+        const r = await fetch(`${GRAPH_API}/me/drive/items/${fileId}/content`, { headers: { Authorization: `Bearer ${token}` } });
+        currentContent = await r.text();
+      }
+      if (!currentContent.includes(old_text)) {
+        return { content: [{ type: "text" as const, text: `old_text not found in file. Make sure it matches exactly.` }] };
+      }
+      const updated = currentContent.replace(old_text, new_text);
+      if (provider === "google") {
+        await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+          method: "PATCH", headers: { Authorization: `Bearer ${token}`, "Content-Type": "text/plain" }, body: updated,
+        });
+      } else {
+        await fetch(`${GRAPH_API}/me/drive/items/${fileId}/content`, {
+          method: "PUT", headers: { Authorization: `Bearer ${token}`, "Content-Type": "text/plain" }, body: updated,
+        });
+      }
+      return { content: [{ type: "text" as const, text: `File edited successfully` }] };
+    },
+  );
+
+  const readSpreadsheetTool = tool(
+    "read_spreadsheet",
+    "Read spreadsheet data (Google Sheets or Excel).",
+    { path: z.string().describe("Spreadsheet file name or ID") },
+    async ({ path: filePath }) => {
+      const fileId = await resolveFileId(filePath);
+      if (provider === "google") {
+        const res = await fetch(`${GOOGLE_SHEETS_API}/spreadsheets/${fileId}?fields=properties.title,sheets.properties`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = (await res.json()) as { properties: { title: string }; sheets: Array<{ properties: { title: string } }> };
+        const sheets = await Promise.all(data.sheets.map(async (s) => {
+          const vr = await fetch(`${GOOGLE_SHEETS_API}/spreadsheets/${fileId}/values/${encodeURIComponent(s.properties.title)}`, { headers: { Authorization: `Bearer ${token}` } });
+          const vd = (await vr.json()) as { values?: string[][] };
+          return `## ${s.properties.title}\n${(vd.values ?? []).map((r) => r.join("\t")).join("\n")}`;
+        }));
+        return { content: [{ type: "text" as const, text: sheets.join("\n\n") || "Empty spreadsheet" }] };
+      }
+      // OneDrive Excel
+      const ws = await fetch(`${GRAPH_API}/me/drive/items/${fileId}/workbook/worksheets`, { headers: { Authorization: `Bearer ${token}` } });
+      const wsData = (await ws.json()) as { value: Array<{ name: string }> };
+      const sheets = await Promise.all(wsData.value.map(async (s) => {
+        try {
+          const r = await fetch(`${GRAPH_API}/me/drive/items/${fileId}/workbook/worksheets('${encodeURIComponent(s.name)}')/usedRange`, { headers: { Authorization: `Bearer ${token}` } });
+          const rd = (await r.json()) as { values: string[][] };
+          return `## ${s.name}\n${(rd.values ?? []).map((row) => row.join("\t")).join("\n")}`;
+        } catch { return `## ${s.name}\n(empty)`; }
+      }));
+      return { content: [{ type: "text" as const, text: sheets.join("\n\n") || "Empty workbook" }] };
+    },
+  );
+
+  const updateCellsTool = tool(
+    "update_cells",
+    "Update specific cells in a spreadsheet.",
+    {
+      path: z.string().describe("Spreadsheet file name or ID"),
+      worksheet: z.string().describe("Worksheet name"),
+      range: z.string().describe("Cell range (e.g. A1:C3)"),
+      values: z.array(z.array(z.string())).describe("2D array of values"),
+    },
+    async ({ path: filePath, worksheet, range, values }) => {
+      const fileId = await resolveFileId(filePath);
+      if (provider === "google") {
+        const fullRange = `${worksheet}!${range}`;
+        await fetch(`${GOOGLE_SHEETS_API}/spreadsheets/${fileId}/values/${encodeURIComponent(fullRange)}?valueInputOption=USER_ENTERED`, {
+          method: "PUT", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify({ values }),
+        });
+      } else {
+        await fetch(`${GRAPH_API}/me/drive/items/${fileId}/workbook/worksheets('${encodeURIComponent(worksheet)}')/range(address='${range}')`, {
+          method: "PATCH", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify({ values }),
+        });
+      }
+      return { content: [{ type: "text" as const, text: `Updated ${worksheet}!${range}` }] };
+    },
+  );
+
+  const readDocumentTool = tool(
+    "read_document",
+    "Read a Google Doc as Markdown text.",
+    { path: z.string().describe("Document name or ID") },
+    async ({ path: filePath }) => {
+      if (provider !== "google") {
+        return { content: [{ type: "text" as const, text: "read_document is only available with Google Drive. Use read_file for OneDrive documents." }] };
+      }
+      const fileId = await resolveFileId(filePath);
+      const res = await fetch(`${GOOGLE_DRIVE_API}/files/${fileId}/export?mimeType=text/markdown`, { headers: { Authorization: `Bearer ${token}` } });
+      const content = await res.text();
+      return { content: [{ type: "text" as const, text: content }] };
+    },
+  );
+
+  const updateDocumentTool = tool(
+    "update_document",
+    "Replace the content of a Google Doc.",
+    {
+      path: z.string().describe("Document name or ID"),
+      content: z.string().describe("New document content"),
+    },
+    async ({ path: filePath, content }) => {
+      if (provider !== "google") {
+        return { content: [{ type: "text" as const, text: "update_document is only available with Google Drive." }] };
+      }
+      const fileId = await resolveFileId(filePath);
+      const doc = await fetch(`${GOOGLE_DOCS_API}/documents/${fileId}`, { headers: { Authorization: `Bearer ${token}` } });
+      const docData = (await doc.json()) as { body: { content: Array<{ endIndex: number }> } };
+      const endIndex = docData.body.content[docData.body.content.length - 1]?.endIndex ?? 1;
+      const requests: Array<Record<string, unknown>> = [];
+      if (endIndex > 2) {
+        requests.push({ deleteContentRange: { range: { startIndex: 1, endIndex: endIndex - 1 } } });
+      }
+      requests.push({ insertText: { location: { index: 1 }, text: content } });
+      await fetch(`${GOOGLE_DOCS_API}/documents/${fileId}:batchUpdate`, {
+        method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify({ requests }),
+      });
+      return { content: [{ type: "text" as const, text: `Document updated` }] };
+    },
+  );
+
+  const allTools = [listFilesTool, readFileTool, writeFileTool, editFileTool, readSpreadsheetTool, updateCellsTool, readDocumentTool, updateDocumentTool];
+
+  const server = createSdkMcpServer({
+    name: "storage-tools",
+    tools: allTools,
+  });
+
+  return {
+    server,
+    toolNames: allTools.map((t) => `mcp__storage-tools__${t.name}`),
+  };
+}
+
 export interface RunnerOptions {
   credentials: Credentials;
   boardData: BoardData;
@@ -284,6 +592,9 @@ export interface RunnerOptions {
   githubRepo?: string;
   gitlabToken?: string;
   gitlabProjectId?: number;
+  workspaceProvider?: "google" | "onedrive";
+  workspaceFolderId?: string;
+  workspaceToken?: string;
 }
 
 export type { Query };
@@ -399,6 +710,37 @@ export function launchSession(options: RunnerOptions): Query {
     name: "trello-tools",
     tools: [checkTrelloItem, moveCardToDone],
   });
+
+  // ── Trello + cloud storage workspace ─────────────────────────────────
+  if (options.workspaceProvider && options.workspaceFolderId && options.workspaceToken) {
+    const { server: storageServer, toolNames: storageToolNames } = buildStorageMcpServer(
+      options.workspaceProvider, options.workspaceToken, options.workspaceFolderId,
+    );
+    return query({
+      prompt: buildUserPrompt(activeBoardData, userMessage),
+      options: {
+        abortController,
+        cwd,
+        env: {
+          ANTHROPIC_API_KEY: credentials.anthropicApiKey,
+          CLAUDE_AGENT_SDK_CLIENT_APP: "taskpilot-cli/0.1.0",
+        },
+        systemPrompt: STORAGE_SYSTEM_PROMPT,
+        permissionMode: "acceptEdits",
+        allowedTools: [
+          "mcp__trello-tools__check_trello_item",
+          "mcp__trello-tools__move_card_to_done",
+          ...storageToolNames,
+        ],
+        maxTurns: 50,
+        mcpServers: {
+          "trello-tools": trelloServer,
+          "storage-tools": storageServer,
+        },
+        persistSession: false,
+      },
+    });
+  }
 
   return query({
     prompt: buildUserPrompt(activeBoardData, userMessage),
