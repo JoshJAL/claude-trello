@@ -11,6 +11,7 @@
 | **Backend + Web App** (this repo) | `/home/joshjal/Projects/personal/claude-trello` | TanStack Start full-stack app, API routes, AI session logic |
 | **Frontend (landing/marketing)** | `/home/joshjal/Projects/personal/claude-trello-frontend` | Separate frontend project |
 | **CLI** | `/home/joshjal/Projects/personal/claude-trello/cli` | npm package `@joshjal/taskpilot` — published to npm |
+| **Desktop App** | `/home/joshjal/Projects/personal/taskpilot-desktop` | Electron app for Windows/Mac/Linux |
 
 ---
 
