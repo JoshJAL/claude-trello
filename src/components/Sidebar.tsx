@@ -21,6 +21,7 @@ import {
   BarChart3,
   Map,
   MessageSquarePlus,
+  Monitor,
 } from "lucide-react";
 
 const STORAGE_KEY = "sidebar-collapsed";
@@ -225,6 +226,24 @@ export default function Sidebar() {
               collapsed={collapsed}
               onClick={closeMobile}
             />
+          </div>
+
+          {/* Desktop app download */}
+          <div className="sidebar-section">
+            {!collapsed && (
+              <span className="sidebar-section-label">Desktop</span>
+            )}
+            <a
+              href="https://github.com/JoshJAL/taskpilot-desktop/releases/latest"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="sidebar-link"
+              title={collapsed ? "Download Desktop App" : undefined}
+              onClick={closeMobile}
+            >
+              <Monitor size={18} className="shrink-0" />
+              {!collapsed && <span>Download App</span>}
+            </a>
           </div>
 
           {/* Spacer */}
