@@ -20,7 +20,7 @@ export const Route = createFileRoute("/api/onedrive/authorize")({
           );
         }
 
-        const tenant = process.env.ONEDRIVE_TENANT_ID || "common";
+        const tenant = process.env.ONEDRIVE_TENANT_ID || "consumers";
         const baseUrl =
           process.env.BASE_URL || new URL(request.url).origin;
         const redirectUri = `${baseUrl}/api/onedrive/callback`;

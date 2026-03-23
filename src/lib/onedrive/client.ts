@@ -17,6 +17,16 @@ async function graphFetch<T>(
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
+
+    // Detect common licensing / provisioning errors and surface a helpful message
+    if (text.includes("SPO license") || text.includes("does not have a SPO")) {
+      throw new Error(
+        "Your Microsoft account does not have OneDrive storage provisioned. " +
+        "This usually means your organization hasn't assigned a Microsoft 365 license that includes OneDrive/SharePoint. " +
+        "Try connecting with a personal Microsoft account, or ask your IT admin to provision OneDrive for your account.",
+      );
+    }
+
     throw new Error(
       `Microsoft Graph error: ${res.status} ${res.statusText}${text ? ` — ${text}` : ""}`,
     );
@@ -254,7 +264,7 @@ export async function appendRows(
 
 export async function exchangeCodeForToken(code: string): Promise<OneDriveTokenSet> {
   const baseUrl = process.env.BASE_URL || "http://localhost:3000";
-  const tenant = process.env.ONEDRIVE_TENANT_ID || "common";
+  const tenant = process.env.ONEDRIVE_TENANT_ID || "consumers";
 
   const res = await fetch(
     `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/token`,
@@ -293,7 +303,7 @@ export async function exchangeCodeForToken(code: string): Promise<OneDriveTokenS
 }
 
 export async function refreshOneDriveToken(refreshToken: string): Promise<OneDriveTokenSet> {
-  const tenant = process.env.ONEDRIVE_TENANT_ID || "common";
+  const tenant = process.env.ONEDRIVE_TENANT_ID || "consumers";
 
   const res = await fetch(
     `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/token`,
