@@ -279,12 +279,29 @@ const GOOGLE_SHEETS_API = "https://sheets.googleapis.com/v4";
 const GOOGLE_DOCS_API = "https://docs.googleapis.com/v1";
 const GRAPH_API = "https://graph.microsoft.com/v1.0";
 
-const STORAGE_SYSTEM_PROMPT = `You are operating on files in a cloud storage folder. You have access to tools for reading, writing, editing, and searching files.
-For spreadsheets (Google Sheets or Excel), use read_spreadsheet, update_cells, and append_rows.
-For Google Docs, use read_document, update_document, and create_document.
-For text files, use read_file, write_file, and edit_file.
-You also have Trello task management tools. Work through each card and checklist item in order.
-For each checklist item you complete, call the check_trello_item tool.
+const STORAGE_SYSTEM_PROMPT = `You are operating on files in a CLOUD STORAGE folder (Google Drive or OneDrive) via API.
+
+CRITICAL: You MUST use the MCP storage tools to interact with files. Do NOT use local filesystem commands, bash, or any local file tools.
+The cloud storage is accessed via API — the files are NOT on the local filesystem.
+
+Available storage tools (use these, not local file operations):
+- list_files: List all files in the workspace folder
+- read_file: Read a file's content (use file name or ID from list_files)
+- write_file: Create or overwrite a file
+- edit_file: Find and replace text in a file
+- search_files: Search for files
+- read_spreadsheet: Read spreadsheet data (Google Sheets or Excel)
+- update_cells: Update specific cells in a spreadsheet
+- read_document: Read a Google Doc as Markdown
+- update_document: Replace content of a Google Doc
+- create_document: Create a new Google Doc
+
+Available task tools:
+- check_trello_item: Mark a Trello checklist item as complete
+- move_card_to_done: Move a Trello card to the Done list
+
+Work through each card and checklist item in order.
+For each checklist item you complete, call check_trello_item.
 Do not mark items complete unless the work has actually been done and verified.`;
 
 function buildStorageMcpServer(
@@ -292,6 +309,16 @@ function buildStorageMcpServer(
   token: string,
   folderId: string,
 ): { server: SdkMcpServer; toolNames: string[] } {
+  // OneDrive path-based folder helper
+  function isOdPath(id: string): boolean {
+    return id.startsWith("/") || id.includes("/");
+  }
+  function odFolderPrefix(id: string): string {
+    if (id === "root") return "/me/drive/root";
+    if (isOdPath(id)) return `/me/drive/root:/${id.replace(/^\//, "")}:`;
+    return `/me/drive/items/${id}`;
+  }
+
   // File ID cache for name → id resolution
   const fileIds = new Map<string, string>();
 
@@ -321,7 +348,7 @@ function buildStorageMcpServer(
       for (const f of data.files) fileIds.set(f.name, f.id);
       if (fileIds.has(cleaned)) return fileIds.get(cleaned)!;
     } else {
-      const path2 = folderId === "root" ? "/me/drive/root/children" : `/me/drive/items/${folderId}/children`;
+      const path2 = `${odFolderPrefix(folderId)}/children`;
       const res = await fetch(`${GRAPH_API}${path2}?$top=200`, { headers: { Authorization: `Bearer ${token}` } });
       const data = (await res.json()) as { value: Array<{ id: string; name: string }> };
       for (const f of data.value) fileIds.set(f.name, f.id);
@@ -346,7 +373,7 @@ function buildStorageMcpServer(
         const text = data.files.map((f) => `${f.name}  [id: ${f.id}]  (${f.mimeType})`).join("\n") || "No files found";
         return { content: [{ type: "text" as const, text }] };
       }
-      const path = folderId === "root" ? "/me/drive/root/children" : `/me/drive/items/${folderId}/children`;
+      const path = `${odFolderPrefix(folderId)}/children`;
       const res = await fetch(`${GRAPH_API}${path}?$top=200`, { headers: { Authorization: `Bearer ${token}` } });
       const data = (await res.json()) as { value: Array<{ id: string; name: string; file?: { mimeType: string } }> };
       for (const f of data.value) fileIds.set(f.name, f.id);
@@ -415,9 +442,14 @@ function buildStorageMcpServer(
         return { content: [{ type: "text" as const, text: `File created: ${cleaned}` }] };
       }
       // OneDrive
-      const uploadPath = folderId === "root"
-        ? `/me/drive/root:/${encodeURIComponent(cleaned)}:/content`
-        : `/me/drive/items/${folderId}:/${encodeURIComponent(cleaned)}:/content`;
+      let uploadPath: string;
+      if (folderId === "root") {
+        uploadPath = `/me/drive/root:/${encodeURIComponent(cleaned)}:/content`;
+      } else if (isOdPath(folderId)) {
+        uploadPath = `/me/drive/root:/${folderId.replace(/^\//, "")}/${encodeURIComponent(cleaned)}:/content`;
+      } else {
+        uploadPath = `/me/drive/items/${folderId}:/${encodeURIComponent(cleaned)}:/content`;
+      }
       const res = await fetch(`${GRAPH_API}${uploadPath}`, {
         method: "PUT", headers: { Authorization: `Bearer ${token}`, "Content-Type": "text/plain" }, body: content,
       });
@@ -726,7 +758,14 @@ export function launchSession(options: RunnerOptions): Query {
           CLAUDE_AGENT_SDK_CLIENT_APP: "taskpilot-cli/0.1.0",
         },
         systemPrompt: STORAGE_SYSTEM_PROMPT,
-        permissionMode: "acceptEdits",
+        permissionMode: "bypassPermissions",
+        tools: [], // Disable ALL built-in tools — only MCP tools available
+        disallowedTools: [
+          "Bash", "Read", "Write", "Edit", "Glob", "Grep",
+          "ToolSearch", "WebSearch", "WebFetch",
+          "Agent", "NotebookEdit",
+          "TodoRead", "TodoWrite",
+        ],
         allowedTools: [
           "mcp__trello-tools__check_trello_item",
           "mcp__trello-tools__move_card_to_done",

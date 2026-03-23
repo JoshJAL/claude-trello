@@ -29,7 +29,7 @@ export const Route = createFileRoute("/api/onedrive/authorize")({
           `client_id=${encodeURIComponent(clientId)}` +
           `&redirect_uri=${encodeURIComponent(redirectUri)}` +
           `&response_type=code` +
-          `&scope=${encodeURIComponent("Files.ReadWrite.All User.Read offline_access")}` +
+          `&scope=${encodeURIComponent("Files.ReadWrite User.Read offline_access")}` +
           `&prompt=consent`;
 
         return Response.json({ url: authorizeUrl });

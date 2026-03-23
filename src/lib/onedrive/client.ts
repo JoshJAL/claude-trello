@@ -25,17 +25,28 @@ async function graphFetch<T>(
   return res.json() as Promise<T>;
 }
 
+// ── Helpers ──────────────────────────────────────────────────────────────
+
+/** Detect if a folderId is a path (contains /) vs an item ID */
+function isPath(folderId: string): boolean {
+  return folderId.startsWith("/") || folderId.includes("/");
+}
+
+/** Build the Graph API path prefix for a folder by ID or path */
+function folderPrefix(folderId: string): string {
+  if (folderId === "root") return "/me/drive/root";
+  if (isPath(folderId)) return `/me/drive/root:/${folderId.replace(/^\//, "")}:`;
+  return `/me/drive/items/${folderId}`;
+}
+
 // ── File Operations ──────────────────────────────────────────────────────
 
 export async function listFiles(
   token: string,
   folderId: string,
 ): Promise<DriveItem[]> {
-  const path = folderId === "root"
-    ? "/me/drive/root/children"
-    : `/me/drive/items/${folderId}/children`;
   const data = await graphFetch<{ value: DriveItem[] }>(
-    `${path}?$top=200&$orderby=name`,
+    `${folderPrefix(folderId)}/children?$top=200`,
     token,
   );
   return data.value;
@@ -67,11 +78,16 @@ export async function createFile(
   name: string,
   content: string,
 ): Promise<{ id: string }> {
-  const path = folderId === "root"
-    ? `/me/drive/root:/${encodeURIComponent(name)}:/content`
-    : `/me/drive/items/${folderId}:/${encodeURIComponent(name)}:/content`;
+  let uploadPath: string;
+  if (folderId === "root") {
+    uploadPath = `/me/drive/root:/${encodeURIComponent(name)}:/content`;
+  } else if (isPath(folderId)) {
+    uploadPath = `/me/drive/root:/${folderId.replace(/^\//, "")}/${encodeURIComponent(name)}:/content`;
+  } else {
+    uploadPath = `/me/drive/items/${folderId}:/${encodeURIComponent(name)}:/content`;
+  }
 
-  const res = await fetch(`${GRAPH_API}${path}`, {
+  const res = await fetch(`${GRAPH_API}${uploadPath}`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -143,14 +159,12 @@ export async function getFolders(
   token: string,
   parentId: string = "root",
 ): Promise<DriveItem[]> {
-  const path = parentId === "root"
-    ? "/me/drive/root/children"
-    : `/me/drive/items/${parentId}/children`;
   const data = await graphFetch<{ value: DriveItem[] }>(
-    `${path}?$filter=folder ne null&$top=200&$orderby=name`,
+    `${folderPrefix(parentId)}/children?$top=200`,
     token,
   );
-  return data.value;
+  // Filter to folders client-side ($filter not supported on personal OneDrive)
+  return data.value.filter((item) => !!item.folder);
 }
 
 // ── Excel Workbooks ──────────────────────────────────────────────────────
@@ -253,7 +267,7 @@ export async function exchangeCodeForToken(code: string): Promise<OneDriveTokenS
         code,
         grant_type: "authorization_code",
         redirect_uri: `${baseUrl}/api/onedrive/callback`,
-        scope: "Files.ReadWrite.All User.Read offline_access",
+        scope: "Files.ReadWrite User.Read offline_access",
       }).toString(),
     },
   );
@@ -291,7 +305,7 @@ export async function refreshOneDriveToken(refreshToken: string): Promise<OneDri
         client_secret: process.env.ONEDRIVE_CLIENT_SECRET!,
         refresh_token: refreshToken,
         grant_type: "refresh_token",
-        scope: "Files.ReadWrite.All User.Read offline_access",
+        scope: "Files.ReadWrite User.Read offline_access",
       }).toString(),
     },
   );

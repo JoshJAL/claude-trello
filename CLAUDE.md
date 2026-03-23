@@ -1948,6 +1948,243 @@ The `useIntegrationStatus` hook and `/api/settings/status` endpoint are extended
 
 ---
 
+## Phase 22 — Desktop Application (Electron)
+
+A native desktop app that combines the best of the web app and CLI: the visual dashboard UI with full local filesystem access and cloud storage workspace support. Built with Electron for Windows, Mac, and Linux.
+
+### Why Electron
+
+- **Node.js main process**: Full access to `fs`, `child_process`, `cwd` — the agent can work on local files directly, just like the CLI
+- **Cloud storage tools**: The main process can run the generic agent loop (same as web mode) with full tool control, so Google Drive / OneDrive workspaces work properly — unlike the CLI where the Claude Agent SDK always injects built-in tools
+- **React renderer**: Reuse the existing web app components (SessionControls, SessionLog, BoardPanel, WorkspaceTypePicker, etc.) directly
+- **Cross-platform**: Single codebase → Windows (.exe), Mac (.dmg), Linux (.AppImage/.deb)
+- **Auto-updates**: Electron Builder supports auto-update via GitHub Releases
+- **No server dependency**: Can authenticate against `account.task-pilot.dev` OR run fully offline with local credentials
+
+### Project Structure
+
+New repo: `taskpilot-desktop` (separate from the web app and CLI)
+
+```
+taskpilot-desktop/
+├── package.json
+├── electron-builder.yml           ← Build config for all platforms
+├── forge.config.ts                ← Electron Forge config (alternative to builder)
+├── tsconfig.json
+├── src/
+│   ├── main/                      ← Electron main process (Node.js)
+│   │   ├── index.ts               ← App entry, window creation, menu
+│   │   ├── ipc.ts                 ← IPC handlers (renderer ↔ main process)
+│   │   ├── auth.ts                ← Auth against task-pilot.dev API (session cookie storage)
+│   │   ├── session-runner.ts      ← Agent session launcher (both local + cloud modes)
+│   │   ├── providers/
+│   │   │   ├── claude.ts          ← Claude Agent SDK wrapper (local mode)
+│   │   │   ├── generic-agent.ts   ← Generic agent loop (cloud mode — same as web app)
+│   │   │   ├── storage-tools.ts   ← Cloud storage tool set (reused from web app)
+│   │   │   └── source-tools.ts    ← Task source tools (Trello/GitHub/GitLab)
+│   │   ├── google/                ← Google Drive/Docs/Sheets API client (reused)
+│   │   ├── onedrive/              ← OneDrive/Excel API client (reused)
+│   │   └── store.ts               ← electron-store for local settings, session cookie
+│   ├── renderer/                  ← Electron renderer process (React)
+│   │   ├── index.html
+│   │   ├── main.tsx               ← React entry
+│   │   ├── App.tsx                ← Router + layout (reuses web app components)
+│   │   ├── components/            ← Shared components (copied/imported from web app)
+│   │   ├── hooks/                 ← Hooks adapted for IPC instead of fetch()
+│   │   └── styles/
+│   └── preload/
+│       └── index.ts               ← Preload script — exposes IPC bridge to renderer
+├── resources/
+│   ├── icon.png                   ← App icon (1024x1024)
+│   ├── icon.icns                  ← Mac icon
+│   └── icon.ico                   ← Windows icon
+└── dist/                          ← Build output
+```
+
+### Architecture
+
+```
+┌──────────────────────────────────────────────────────┐
+│                  Renderer (React)                     │
+│                                                       │
+│  ┌─────────┐  ┌──────────┐  ┌───────────────────┐   │
+│  │Dashboard │  │ Session  │  │ WorkspaceSelector  │   │
+│  │ Boards   │  │  Log     │  │ (local/cloud)      │   │
+│  └────┬─────┘  └────┬─────┘  └────────┬──────────┘   │
+│       │              │                  │              │
+│       └──────────────┴──────────────────┘              │
+│                      │ IPC                             │
+├──────────────────────┼─────────────────────────────────┤
+│                      │                                 │
+│              ┌───────┴───────┐                         │
+│              │  Preload      │                         │
+│              │  (IPC bridge) │                         │
+│              └───────┬───────┘                         │
+│                      │                                 │
+│              Main Process (Node.js)                    │
+│                                                       │
+│  ┌──────────────┐  ┌──────────────┐  ┌────────────┐  │
+│  │ Auth          │  │ Session      │  │ Cloud      │  │
+│  │ (API calls    │  │ Runner       │  │ Storage    │  │
+│  │  to server)   │  │              │  │ Tools      │  │
+│  └──────────────┘  │  ┌────────┐  │  └────────────┘  │
+│                     │  │Local:  │  │                   │
+│                     │  │Agent   │  │                   │
+│                     │  │SDK     │  │                   │
+│                     │  ├────────┤  │                   │
+│                     │  │Cloud:  │  │                   │
+│                     │  │Generic │  │                   │
+│                     │  │Agent   │  │                   │
+│                     │  │Loop    │  │                   │
+│                     │  └────────┘  │                   │
+│                     └──────────────┘                   │
+│                                                       │
+│  ┌──────────────┐  ┌──────────────┐                   │
+│  │ Local FS     │  │ electron-    │                   │
+│  │ access       │  │ store        │                   │
+│  │ (cwd, fs)    │  │ (settings)   │                   │
+│  └──────────────┘  └──────────────┘                   │
+└──────────────────────────────────────────────────────┘
+```
+
+### Session Modes
+
+The desktop app supports ALL session modes — it's the union of CLI and web app capabilities:
+
+| Mode | Workspace | Agent Execution | Tool Set |
+|------|-----------|----------------|----------|
+| **Local** | Local directory (cwd) | Claude Agent SDK (same as CLI) | Built-in Claude tools + MCP task source tools |
+| **Cloud (GitHub/GitLab)** | GitHub repo or GitLab project | Generic agent loop (same as web app) | Web coding tools + task source tools |
+| **Cloud (Storage)** | Google Drive or OneDrive folder | Generic agent loop (same as web app) | Storage tools + task source tools |
+
+The key difference from the CLI: in **cloud mode**, the desktop app runs the generic agent loop in the main process (not the Claude Agent SDK subprocess), so it has full control over which tools are available — no built-in tools leak through.
+
+### IPC Protocol
+
+Communication between renderer and main process uses Electron's `ipcMain` / `ipcRenderer` via a preload bridge:
+
+```typescript
+// preload/index.ts
+contextBridge.exposeInMainWorld("taskpilot", {
+  // Auth
+  login: (email: string, password: string) => ipcRenderer.invoke("auth:login", email, password),
+  logout: () => ipcRenderer.invoke("auth:logout"),
+  getSession: () => ipcRenderer.invoke("auth:session"),
+
+  // Data
+  getBoards: () => ipcRenderer.invoke("data:boards"),
+  getBoardData: (boardId: string) => ipcRenderer.invoke("data:boardData", boardId),
+  getGitHubRepos: () => ipcRenderer.invoke("data:githubRepos"),
+  getGitLabProjects: () => ipcRenderer.invoke("data:gitlabProjects"),
+  getIntegrationStatus: () => ipcRenderer.invoke("data:status"),
+
+  // Sessions
+  startSession: (config: SessionConfig) => ipcRenderer.invoke("session:start", config),
+  stopSession: () => ipcRenderer.invoke("session:stop"),
+  onSessionEvent: (callback: (event: SessionEvent) => void) =>
+    ipcRenderer.on("session:event", (_e, event) => callback(event)),
+
+  // Workspace
+  selectDirectory: () => ipcRenderer.invoke("workspace:selectDirectory"), // native folder picker
+  getGoogleFolders: (parentId: string) => ipcRenderer.invoke("workspace:googleFolders", parentId),
+  getOneDriveFolders: (parentId: string) => ipcRenderer.invoke("workspace:onedriveFolders", parentId),
+
+  // Settings
+  getSettings: () => ipcRenderer.invoke("settings:get"),
+  updateSettings: (settings: Partial<Settings>) => ipcRenderer.invoke("settings:update", settings),
+});
+```
+
+### Local Mode — Directory Picker
+
+The desktop app adds a native directory picker (not a text input like the CLI):
+
+```typescript
+// main/ipc.ts
+ipcMain.handle("workspace:selectDirectory", async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ["openDirectory"],
+    title: "Select project directory",
+  });
+  return result.filePaths[0] ?? null;
+});
+```
+
+The renderer shows a "Browse..." button that opens the native OS folder picker. Selected path is displayed and used as `cwd` for the Claude Agent SDK session.
+
+### Authentication
+
+The desktop app authenticates against the deployed TaskPilot server (`account.task-pilot.dev`) — same as the CLI. It stores the session cookie locally using `electron-store` (encrypted at rest on disk).
+
+Users can also connect to a self-hosted instance by changing the server URL in settings.
+
+All data fetching (boards, repos, credentials) goes through the server API — the desktop app is a client, not a standalone server.
+
+### Code Sharing Strategy
+
+Many modules can be shared between the web app and desktop app:
+
+| Module | Source | How to share |
+|--------|--------|-------------|
+| Google Drive client | `src/lib/google/client.ts` | Copy to `src/main/google/` (Node.js compatible) |
+| OneDrive client | `src/lib/onedrive/client.ts` | Copy to `src/main/onedrive/` |
+| Storage tools | `src/lib/providers/storage-tools.ts` | Copy to `src/main/providers/` |
+| Types | `src/lib/types.ts` | Shared via package or copy |
+| React components | `src/components/` | Copy to `src/renderer/components/` |
+| Hooks | `src/hooks/` | Adapt: replace `fetch()` with IPC calls |
+
+Long-term, these could be extracted into a shared `@taskpilot/core` package. For the initial build, copying is simpler.
+
+### Build & Distribution
+
+```bash
+# Development
+npm run dev              # Starts Electron with hot reload (electron-vite or similar)
+
+# Build for current platform
+npm run build            # Produces installer for current OS
+
+# Build for all platforms
+npm run build:win        # Windows .exe (NSIS installer)
+npm run build:mac        # Mac .dmg
+npm run build:linux      # Linux .AppImage + .deb
+
+# Auto-update
+# Publish to GitHub Releases → electron-updater checks for new versions on launch
+```
+
+### Key Dependencies
+
+| Package | Purpose |
+|---------|---------|
+| `electron` | Desktop shell |
+| `electron-builder` or `@electron-forge/cli` | Build & packaging |
+| `electron-store` | Encrypted local settings/cookie storage |
+| `electron-updater` | Auto-update from GitHub Releases |
+| `@anthropic-ai/claude-agent-sdk` | Local Claude sessions |
+| `@anthropic-ai/sdk` | Generic agent loop (OpenAI/Groq too) |
+| `react` + `react-dom` | Renderer UI |
+| `@tanstack/react-query` | Data fetching in renderer |
+| `tailwindcss` | Styling (same as web app) |
+| `lucide-react` | Icons (same as web app) |
+
+### Sub-phases
+
+- **22a: Project scaffold** — Electron + Vite + React + TypeScript setup, window creation, menu bar, app icons
+- **22b: Auth & data layer** — Login flow, session cookie storage, IPC handlers for boards/repos/status
+- **22c: Local mode** — Directory picker, Claude Agent SDK session runner in main process, SSE-like event streaming via IPC
+- **22d: UI port** — Copy and adapt React components from web app (SessionControls, SessionLog, BoardPanel, WorkspaceTypePicker, Sidebar)
+- **22e: Cloud mode (repos)** — Generic agent loop in main process for GitHub/GitLab web mode, branch selection
+- **22f: Cloud mode (storage)** — Storage tool set in main process for Google Drive/OneDrive workspaces, Google Docs support
+- **22g: Settings** — electron-store based settings, server URL config, theme sync
+- **22h: Multi-provider** — OpenAI and Groq support via generic agent loop in main process
+- **22i: Session history** — Fetch and display session history from server API
+- **22j: Build & packaging** — electron-builder config for Windows/Mac/Linux, installers, code signing
+- **22k: Auto-update** — GitHub Releases + electron-updater for automatic updates
+- **22l: Documentation** — Desktop app docs in web docs page, download links on frontend
+
+---
+
 ## Useful References
 
 - [TanStack Start Docs](https://tanstack.com/start/latest)
@@ -1972,3 +2209,8 @@ The `useIntegrationStatus` hook and `/api/settings/status` endpoint are extended
 - [Microsoft Graph API — OneDrive](https://learn.microsoft.com/en-us/graph/api/resources/onedrive)
 - [Microsoft Graph API — Excel Workbooks](https://learn.microsoft.com/en-us/graph/api/resources/excel)
 - [Microsoft Identity Platform — OAuth 2.0](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow)
+- [Electron Docs](https://www.electronjs.org/docs/latest/)
+- [Electron Forge](https://www.electronforge.io/)
+- [Electron Builder](https://www.electron.build/)
+- [electron-store](https://github.com/sindresorhus/electron-store)
+- [electron-updater](https://www.electron.build/auto-update)

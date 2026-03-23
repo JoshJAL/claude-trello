@@ -52,7 +52,7 @@ export const runCommand = new Command("run")
     "3",
   )
   .option("--branch <name>", "Git branch to work on (local: checks out the branch; cloud: commits to it)")
-  .option("--workspace <target>", "Cloud storage workspace (e.g. google:<folderId> or onedrive:<folderId>)")
+  .option("--workspace <target>", "Cloud storage workspace — use the web app for this feature")
   .option("--pr", "Create a PR/MR after session completes")
   .option("--no-pr", "Skip PR/MR creation even if automation is enabled")
   .action(
@@ -105,6 +105,16 @@ export const runCommand = new Command("run")
           : provider === "openai"
             ? "ChatGPT (OpenAI)"
             : "Groq";
+
+      if (opts.workspace) {
+        console.log(
+          chalk.yellow(
+            "Cloud storage workspaces (Google Drive, OneDrive) are currently available in the web app only.\n" +
+            "Open https://account.task-pilot.dev to use this feature.",
+          ),
+        );
+        process.exit(0);
+      }
 
       const isParallel = opts.parallel ?? false;
       const concurrency = Math.min(
