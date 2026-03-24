@@ -77,6 +77,11 @@ function IssueItem({
           )}
         </div>
       </div>
+      {issue.description && (
+        <p className="mt-2 whitespace-pre-wrap text-xs text-(--sea-ink-soft)">
+          {issue.description}
+        </p>
+      )}
       {totalTasks > 0 && (
         <div className="mt-3 space-y-1">
           {issue.tasks.map((task) => (
