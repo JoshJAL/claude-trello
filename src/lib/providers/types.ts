@@ -42,22 +42,23 @@ export const PROVIDER_MODELS: Record<AiProviderId, Array<{ id: string; label: st
     { id: "claude-haiku-4-5-20251001", label: "Haiku 4.5" },
   ],
   openai: [
-    { id: "gpt-4o", label: "GPT-4o" },
-    { id: "gpt-4o-mini", label: "GPT-4o Mini" },
-    { id: "gpt-4.1", label: "GPT-4.1" },
-    { id: "gpt-4.1-mini", label: "GPT-4.1 Mini" },
-    { id: "o3-mini", label: "o3 Mini" },
+    { id: "gpt-5.4-2026-03-05", label: "GPT-5.4" },
+    { id: "gpt-5.4-mini-2026-03-17", label: "GPT-5.4 Mini" },
+    { id: "gpt-5.4-nano-2026-03-17", label: "GPT-5.4 Nano" },
   ],
   groq: [
     { id: "llama-3.3-70b-versatile", label: "Llama 3.3 70B" },
     { id: "llama-3.1-8b-instant", label: "Llama 3.1 8B" },
-    { id: "gemma2-9b-it", label: "Gemma 2 9B" },
+    { id: "meta-llama/llama-4-scout-17b-16e-instruct", label: "Llama 4 Scout" },
+    { id: "qwen/qwen-3-32b", label: "Qwen 3 32B" },
+    { id: "openai/gpt-oss-120b", label: "GPT-OSS 120B" },
+    { id: "moonshotai/kimi-k2-instruct-0905", label: "Kimi K2" },
   ],
 };
 
 export const DEFAULT_MODEL: Record<AiProviderId, string> = {
   claude: "claude-sonnet-4-6-20250827",
-  openai: "gpt-4o",
+  openai: "gpt-5.4-2026-03-05",
   groq: "llama-3.3-70b-versatile",
 };
 

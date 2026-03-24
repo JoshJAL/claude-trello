@@ -89,7 +89,7 @@ function createOpenAIChatFn(client: OpenAI, modelId?: string) {
 
     const response = await client.chat.completions.create(
       {
-        model: modelId ?? "gpt-4o",
+        model: modelId ?? "gpt-5.4-2026-03-05",
         messages: openaiMessages,
         tools: openaiTools,
         temperature: 0,
