@@ -44,6 +44,7 @@ export interface ClaudeSessionParams {
   githubOwner?: string;
   githubRepo?: string;
   gitlabProjectId?: number;
+  modelId?: string;
 }
 
 export interface CardAgentParams {
@@ -60,6 +61,7 @@ export interface CardAgentParams {
   githubOwner?: string;
   githubRepo?: string;
   gitlabProjectId?: number;
+  modelId?: string;
 }
 
 function buildSourceConfig(params: {
@@ -253,6 +255,7 @@ export function launchClaudeSession(params: ClaudeSessionParams): Query {
     source,
     githubOwner,
     githubRepo,
+    modelId,
   } = params;
 
   // Filter out cards already in the done list (Trello-specific)
@@ -290,6 +293,7 @@ export function launchClaudeSession(params: ClaudeSessionParams): Query {
       maxTurns: 50,
       mcpServers,
       persistSession: false,
+      model: modelId,
     },
   });
 }
@@ -308,6 +312,7 @@ export function launchCardAgent(params: CardAgentParams): Query {
     source,
     githubOwner,
     githubRepo,
+    modelId,
   } = params;
 
   const { systemPrompt, mcpServers, allowedTools } = buildParallelSourceConfig(params);
@@ -339,6 +344,7 @@ export function launchCardAgent(params: CardAgentParams): Query {
       maxTurns: 30,
       mcpServers,
       persistSession: false,
+      model: modelId,
     },
   });
 }

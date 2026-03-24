@@ -62,6 +62,7 @@ export function useParallelSession(boardId: string) {
       userMessage?: string,
       options?: {
         providerId?: AiProviderId;
+        modelId?: string;
         source?: "trello" | "github" | "gitlab";
         githubOwner?: string;
         githubRepo?: string;
@@ -88,6 +89,7 @@ export function useParallelSession(boardId: string) {
             mode: "parallel",
             maxConcurrency,
             providerId: options?.providerId,
+            modelId: options?.modelId,
             source: options?.source,
             githubOwner: options?.githubOwner,
             githubRepo: options?.githubRepo,

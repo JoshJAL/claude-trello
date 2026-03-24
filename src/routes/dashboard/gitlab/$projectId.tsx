@@ -201,7 +201,7 @@ function GitLabProjectPage() {
               ? "Session running"
               : `Parallel session running (${parallel.agents.size} agents)`
           }
-          onStart={({ cwd, userMessage, mode, concurrency, providerId, webMode, selectedBranch }) => {
+          onStart={({ cwd, userMessage, mode, concurrency, providerId, modelId, webMode, selectedBranch }) => {
             // Only include issues that have at least one incomplete task
             const issuesWithWork = activeIssues.filter(
               (issue) => issue.tasks.some((t) => !t.checked),
@@ -231,6 +231,7 @@ function GitLabProjectPage() {
 
             const opts = {
               providerId,
+              modelId,
               source: "gitlab" as const,
               gitlabProjectId: numericProjectId,
               webMode,

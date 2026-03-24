@@ -203,7 +203,7 @@ function GitHubRepoPage() {
               ? "Session running"
               : `Parallel session running (${parallel.agents.size} agents)`
           }
-          onStart={({ cwd, userMessage, mode, concurrency, providerId, webMode, selectedBranch }) => {
+          onStart={({ cwd, userMessage, mode, concurrency, providerId, modelId, webMode, selectedBranch }) => {
             // Only include issues that have at least one incomplete task
             const issuesWithWork = activeIssues.filter(
               (issue) => issue.tasks.some((t) => !t.checked),
@@ -233,6 +233,7 @@ function GitHubRepoPage() {
 
             const opts = {
               providerId,
+              modelId,
               source: "github" as const,
               githubOwner: owner,
               githubRepo: repo,

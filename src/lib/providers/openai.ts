@@ -24,7 +24,7 @@ export class OpenAIAdapter implements ProviderAdapter {
       ...config,
       maxTurns: 50,
       abortController: params.abortController,
-      chatCompletion: createOpenAIChatFn(client),
+      chatCompletion: createOpenAIChatFn(client, params.modelId),
     });
   }
 
@@ -36,12 +36,12 @@ export class OpenAIAdapter implements ProviderAdapter {
       ...config,
       maxTurns: 30,
       abortController: params.abortController,
-      chatCompletion: createOpenAIChatFn(client),
+      chatCompletion: createOpenAIChatFn(client, params.modelId),
     });
   }
 }
 
-function createOpenAIChatFn(client: OpenAI) {
+function createOpenAIChatFn(client: OpenAI, modelId?: string) {
   return async (
     messages: ChatMessage[],
     tools: ToolDefinition[],
@@ -89,7 +89,7 @@ function createOpenAIChatFn(client: OpenAI) {
 
     const response = await client.chat.completions.create(
       {
-        model: "gpt-4o",
+        model: modelId ?? "gpt-4o",
         messages: openaiMessages,
         tools: openaiTools,
         temperature: 0,

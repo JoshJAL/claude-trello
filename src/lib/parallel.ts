@@ -28,6 +28,7 @@ export interface ParallelSessionParams {
   userMessage?: string;
   abortController?: AbortController;
   providerId?: AiProviderId;
+  modelId?: string;
   source?: "trello" | "github" | "gitlab";
   sourceToken?: string;
   githubOwner?: string;
@@ -136,6 +137,7 @@ export async function* launchParallelSession(
         cwd: worktreePath,
         userMessage,
         abortController,
+        modelId: params.modelId,
       };
 
       // Use provider adapter for all providers — lazy-import Claude SDK

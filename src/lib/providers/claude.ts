@@ -63,6 +63,7 @@ export class ClaudeAdapter implements ProviderAdapter {
       githubOwner: params.sourceContext?.githubOwner,
       githubRepo: params.sourceContext?.githubRepo,
       gitlabProjectId: params.sourceContext?.gitlabProjectId,
+      modelId: params.modelId,
     });
 
     return wrapClaudeQuery(
@@ -87,6 +88,7 @@ export class ClaudeAdapter implements ProviderAdapter {
       githubOwner: params.sourceContext?.githubOwner,
       githubRepo: params.sourceContext?.githubRepo,
       gitlabProjectId: params.sourceContext?.gitlabProjectId,
+      modelId: params.modelId,
     });
 
     return wrapClaudeQuery(

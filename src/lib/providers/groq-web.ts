@@ -38,7 +38,7 @@ export class GroqWebAdapter implements ProviderAdapter {
       trelloToken: params.trelloToken,
       boardId: params.boardData.board.id,
       abortController: params.abortController,
-      chatCompletion: createGroqChatFn(client),
+      chatCompletion: createGroqChatFn(client, params.modelId),
       toolSet: this.toolSet,
     });
   }
@@ -60,13 +60,13 @@ export class GroqWebAdapter implements ProviderAdapter {
       trelloToken: params.trelloToken,
       boardId: params.boardId,
       abortController: params.abortController,
-      chatCompletion: createGroqChatFn(client),
+      chatCompletion: createGroqChatFn(client, params.modelId),
       toolSet: this.toolSet,
     });
   }
 }
 
-function createGroqChatFn(client: Groq) {
+function createGroqChatFn(client: Groq, modelId?: string) {
   return async (
     messages: ChatMessage[],
     tools: ToolDefinition[],
@@ -115,7 +115,7 @@ function createGroqChatFn(client: Groq) {
 
     const response = await client.chat.completions.create(
       {
-        model: "llama-3.3-70b-versatile",
+        model: modelId ?? "llama-3.3-70b-versatile",
         messages: groqMessages,
         tools: groqTools,
         temperature: 0,

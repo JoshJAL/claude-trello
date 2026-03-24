@@ -42,6 +42,7 @@ export function useClaudeSession(boardId: string) {
       userMessage?: string,
       options?: {
         providerId?: AiProviderId;
+        modelId?: string;
         source?: "trello" | "github" | "gitlab";
         githubOwner?: string;
         githubRepo?: string;
@@ -68,6 +69,7 @@ export function useClaudeSession(boardId: string) {
             cwd: options?.webMode ? undefined : cwd,
             userMessage,
             providerId: options?.providerId,
+            modelId: options?.modelId,
             source: options?.source,
             githubOwner: options?.githubOwner,
             githubRepo: options?.githubRepo,

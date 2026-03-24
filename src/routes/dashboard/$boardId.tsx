@@ -99,7 +99,7 @@ function BoardPage() {
               : `Parallel session running (${parallel.agents.size} agents)`
           }
           source="trello"
-          onStart={({ cwd, userMessage, mode, concurrency, providerId, webMode, linkedRepo, linkedGitlabProjectId, selectedBranch, linkedWorkspace }) => {
+          onStart={({ cwd, userMessage, mode, concurrency, providerId, modelId, webMode, linkedRepo, linkedGitlabProjectId, selectedBranch, linkedWorkspace }) => {
             if (!data?.cards) return;
 
             const boardData = {
@@ -110,6 +110,7 @@ function BoardPage() {
 
             const opts = {
               providerId,
+              modelId,
               source: "trello" as const,
               webMode,
               githubOwner: linkedRepo?.owner,

@@ -117,6 +117,9 @@ export const Route = createFileRoute("/api/claude/session")({
         // GitLab-specific params
         const gitlabProjectId = body.gitlabProjectId as number | undefined;
 
+        // Model selection
+        const modelId = body.modelId as string | undefined;
+
         // PR automation override from CLI: true = force PR, false = skip PR, undefined = use config
         const prOverride = body.pr as boolean | undefined;
 
@@ -407,6 +410,7 @@ export const Route = createFileRoute("/api/claude/session")({
             cwd: "",
             userMessage,
             abortController,
+            modelId,
           });
 
           activeSessions.set(userId, { abortController, mode: "sequential" });
@@ -489,6 +493,7 @@ export const Route = createFileRoute("/api/claude/session")({
                   userMessage,
                   abortController,
                   providerId,
+                  modelId,
                   ...sourceParams,
                 });
 
@@ -570,6 +575,7 @@ export const Route = createFileRoute("/api/claude/session")({
             githubRepo,
             gitlabProjectId,
           },
+          modelId,
         });
 
         activeSessions.set(userId, {

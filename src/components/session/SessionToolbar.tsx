@@ -1,4 +1,4 @@
-import { PROVIDER_SHORT_LABELS } from "#/lib/providers/types";
+import { PROVIDER_SHORT_LABELS, PROVIDER_MODELS } from "#/lib/providers/types";
 import type { AiProviderId } from "#/lib/providers/types";
 
 interface SessionToolbarProps {
@@ -13,6 +13,8 @@ interface SessionToolbarProps {
   concurrency: number;
   onConcurrencyChange: (n: number) => void;
   activeCardCount?: number;
+  modelId: string;
+  onModelChange: (id: string) => void;
 }
 
 function ToggleGroup({
@@ -60,6 +62,8 @@ export function SessionToolbar({
   concurrency,
   onConcurrencyChange,
   activeCardCount,
+  modelId,
+  onModelChange,
 }: SessionToolbarProps) {
   return (
     <div className="flex flex-wrap items-center gap-4">
@@ -79,6 +83,21 @@ export function SessionToolbar({
           </select>
         </div>
       )}
+
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-(--sea-ink-soft)">Model:</span>
+        <select
+          value={modelId}
+          onChange={(e) => onModelChange(e.target.value)}
+          className="rounded-lg border border-(--shore-line) bg-white px-2 py-1 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
+        >
+          {PROVIDER_MODELS[providerId].map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.label}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {!isDeployed && (
         <ToggleGroup

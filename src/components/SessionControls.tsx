@@ -4,6 +4,7 @@ import { useGitHubRepos } from "#/hooks/useGitHubRepos";
 import { useGitLabProjects } from "#/hooks/useGitLabProjects";
 import { useBranches } from "#/hooks/useBranches";
 import type { AiProviderId } from "#/lib/providers/types";
+import { DEFAULT_MODEL } from "#/lib/providers/types";
 import { WebModeBanner } from "./session/WebModeBanner";
 import { BranchSelector } from "./session/BranchSelector";
 import { WorkspaceTypePicker } from "./session/WorkspaceTypePicker";
@@ -26,6 +27,7 @@ interface SessionControlsProps {
     mode: "sequential" | "parallel";
     concurrency: number;
     providerId: AiProviderId;
+    modelId?: string;
     webMode?: boolean;
     linkedRepo?: { owner: string; repo: string };
     linkedGitlabProjectId?: number;
@@ -45,6 +47,7 @@ interface ControlsState {
   mode: "sequential" | "parallel";
   concurrency: number;
   providerId: AiProviderId;
+  modelId: string;
   linkedRepoKey: string;
   selectedBranch: string;
   workspaceKey: string;
@@ -57,6 +60,7 @@ type ControlsAction =
   | { type: "SET_MODE"; value: "sequential" | "parallel" }
   | { type: "SET_CONCURRENCY"; value: number }
   | { type: "SET_PROVIDER"; value: AiProviderId }
+  | { type: "SET_MODEL"; value: string }
   | { type: "SET_LINKED_REPO"; value: string }
   | { type: "SET_BRANCH"; value: string }
   | { type: "SET_WORKSPACE"; value: string };
@@ -74,7 +78,9 @@ function controlsReducer(state: ControlsState, action: ControlsAction): Controls
     case "SET_CONCURRENCY":
       return { ...state, concurrency: action.value };
     case "SET_PROVIDER":
-      return { ...state, providerId: action.value };
+      return { ...state, providerId: action.value, modelId: DEFAULT_MODEL[action.value] };
+    case "SET_MODEL":
+      return { ...state, modelId: action.value };
     case "SET_LINKED_REPO":
       return { ...state, linkedRepoKey: action.value, selectedBranch: "" };
     case "SET_BRANCH":
@@ -112,6 +118,7 @@ export function SessionControls({
     mode: "sequential" as const,
     concurrency: 3,
     providerId: configuredProviders[0] ?? "claude",
+    modelId: DEFAULT_MODEL[configuredProviders[0] ?? "claude"],
     linkedRepoKey: "",
     selectedBranch: "",
     workspaceKey: "",
@@ -166,6 +173,7 @@ export function SessionControls({
       mode: state.webMode ? "sequential" : state.mode,
       concurrency: state.concurrency,
       providerId: state.providerId,
+      modelId: state.modelId,
       webMode: state.webMode,
       linkedRepo,
       linkedGitlabProjectId,
@@ -275,6 +283,8 @@ export function SessionControls({
             concurrency={state.concurrency}
             onConcurrencyChange={(v) => dispatch({ type: "SET_CONCURRENCY", value: v })}
             activeCardCount={activeCardCount}
+            modelId={state.modelId}
+            onModelChange={(v) => dispatch({ type: "SET_MODEL", value: v })}
           />
         )}
 

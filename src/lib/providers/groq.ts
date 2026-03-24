@@ -24,7 +24,7 @@ export class GroqAdapter implements ProviderAdapter {
       ...config,
       maxTurns: 50,
       abortController: params.abortController,
-      chatCompletion: createGroqChatFn(client),
+      chatCompletion: createGroqChatFn(client, params.modelId),
     });
   }
 
@@ -36,12 +36,12 @@ export class GroqAdapter implements ProviderAdapter {
       ...config,
       maxTurns: 30,
       abortController: params.abortController,
-      chatCompletion: createGroqChatFn(client),
+      chatCompletion: createGroqChatFn(client, params.modelId),
     });
   }
 }
 
-function createGroqChatFn(client: Groq) {
+function createGroqChatFn(client: Groq, modelId?: string) {
   return async (
     messages: ChatMessage[],
     tools: ToolDefinition[],
@@ -90,7 +90,7 @@ function createGroqChatFn(client: Groq) {
 
     const response = await client.chat.completions.create(
       {
-        model: "llama-3.3-70b-versatile",
+        model: modelId ?? "llama-3.3-70b-versatile",
         messages: groqMessages,
         tools: groqTools,
         temperature: 0,

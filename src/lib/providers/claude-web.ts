@@ -153,7 +153,7 @@ export class ClaudeWebAdapter implements ProviderAdapter {
       trelloToken: params.trelloToken,
       boardId: params.boardData.board.id,
       abortController: params.abortController,
-      chatCompletion: createAnthropicChatFn(client),
+      chatCompletion: createAnthropicChatFn(client, params.modelId),
       toolSet: this.toolSet,
     });
   }
@@ -175,7 +175,7 @@ export class ClaudeWebAdapter implements ProviderAdapter {
       trelloToken: params.trelloToken,
       boardId: params.boardId,
       abortController: params.abortController,
-      chatCompletion: createAnthropicChatFn(client),
+      chatCompletion: createAnthropicChatFn(client, params.modelId),
       toolSet: this.toolSet,
     });
   }

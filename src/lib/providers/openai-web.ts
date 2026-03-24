@@ -38,7 +38,7 @@ export class OpenAIWebAdapter implements ProviderAdapter {
       trelloToken: params.trelloToken,
       boardId: params.boardData.board.id,
       abortController: params.abortController,
-      chatCompletion: createOpenAIChatFn(client),
+      chatCompletion: createOpenAIChatFn(client, params.modelId),
       toolSet: this.toolSet,
     });
   }
@@ -60,13 +60,13 @@ export class OpenAIWebAdapter implements ProviderAdapter {
       trelloToken: params.trelloToken,
       boardId: params.boardId,
       abortController: params.abortController,
-      chatCompletion: createOpenAIChatFn(client),
+      chatCompletion: createOpenAIChatFn(client, params.modelId),
       toolSet: this.toolSet,
     });
   }
 }
 
-function createOpenAIChatFn(client: OpenAI) {
+function createOpenAIChatFn(client: OpenAI, modelId?: string) {
   return async (
     messages: ChatMessage[],
     tools: ToolDefinition[],
@@ -114,7 +114,7 @@ function createOpenAIChatFn(client: OpenAI) {
 
     const response = await client.chat.completions.create(
       {
-        model: "gpt-4o",
+        model: modelId ?? "gpt-4o",
         messages: openaiMessages,
         tools: openaiTools,
         temperature: 0,
