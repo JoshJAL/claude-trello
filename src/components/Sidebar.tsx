@@ -22,6 +22,7 @@ import {
   Map,
   MessageSquarePlus,
   Monitor,
+  Cpu,
 } from "lucide-react";
 
 const STORAGE_KEY = "sidebar-collapsed";
@@ -226,6 +227,13 @@ export default function Sidebar() {
               collapsed={collapsed}
               onClick={closeMobile}
             />
+            <SidebarLink
+              to="/ai-models"
+              icon={Cpu}
+              label="AI Docs"
+              collapsed={collapsed}
+              onClick={closeMobile}
+            />
           </div>
 
           {/* Desktop app download */}
@@ -338,6 +346,13 @@ export default function Sidebar() {
               to="/docs/cli"
               icon={FileText}
               label="CLI Docs"
+              collapsed={collapsed}
+              onClick={closeMobile}
+            />
+            <SidebarLink
+              to="/ai-models"
+              icon={Cpu}
+              label="AI Docs"
               collapsed={collapsed}
               onClick={closeMobile}
             />
