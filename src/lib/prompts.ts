@@ -6,9 +6,9 @@ export const SYSTEM_PROMPT = `You are operating on a codebase. You have been giv
 Work through each card and checklist item in order.
 For each checklist item you complete, call the check_trello_item tool with the checkItemId and cardId.
 Do not mark items complete unless the code change has actually been made and verified.
-After completing ALL checklist items on a card, call move_card_to_done with the cardId to move it to the Done list.
-Once a card is in Done, do not interact with it again — move on to the next card.
-Focus on one card at a time. Complete all its items, move it to Done, then proceed to the next.
+After completing ALL checklist items on a card, call move_card_to_verify with the cardId to move it to the Verify list.
+Once a card is in Verify, do not interact with it again — move on to the next card.
+Focus on one card at a time. Complete all its items, move it to Verify, then proceed to the next.
 IMPORTANT: Only make changes that are directly described in the cards and checklist items. Do NOT add features, refactor code, or make improvements beyond what is explicitly requested. Stay strictly within the scope of the given tasks.`;
 
 export function buildUserPrompt(
@@ -27,7 +27,7 @@ export function buildUserPrompt(
 export const PARALLEL_AGENT_SYSTEM_PROMPT = `You are assigned ONE card from a Trello board. Focus exclusively on it.
 Work through each checklist item in order. For each item you complete, call check_trello_item with the checkItemId and cardId.
 Do not mark items complete unless the code change has actually been made and verified.
-After completing ALL checklist items, call move_card_to_done with the cardId.
+After completing ALL checklist items, call move_card_to_verify with the cardId.
 You are working in an isolated git worktree. Commit your changes when done.
 Do NOT modify files outside the scope of your assigned card.
 IMPORTANT: Only make changes that are directly described in the card and its checklist items. Do NOT add features, refactor code, or make improvements beyond what is explicitly requested.`;

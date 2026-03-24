@@ -94,26 +94,51 @@ export async function moveCard(
   });
 }
 
-export async function findOrCreateDoneList(
+export async function findOrCreateVerifyList(
   token: string,
   boardId: string,
 ): Promise<string> {
   const lists = await getLists(token, boardId);
-  // Look for an existing "Done" list (case-insensitive)
+  // Look for an existing "Verify" list (case-insensitive)
+  const verifyList = lists.find(
+    (l) => l.name.toLowerCase() === "verify",
+  );
+  if (verifyList) return verifyList.id;
+
+  // Look for "Done" list to position "Verify" before it
   const doneList = lists.find(
     (l) => l.name.toLowerCase() === "done",
   );
-  if (doneList) return doneList.id;
+  
+  // Create Verify list, positioning it before Done if it exists
+  const createParams: { name: string; pos?: string } = { name: "Verify" };
+  if (doneList) {
+    createParams.pos = "top";
+    // First create the list, then we'll position it correctly
+  }
 
-  // Create one at the end
   const created = await trelloFetch<{ id: string }>(
     `/boards/${boardId}/lists`,
     token,
     {
       method: "POST",
-      body: JSON.stringify({ name: "Done" }),
+      body: JSON.stringify(createParams),
     },
   );
+
+  // If we found a Done list, move Verify to be just before it
+  if (doneList) {
+    const updatedLists = await getLists(token, boardId);
+    const doneIndex = updatedLists.findIndex(l => l.id === doneList.id);
+    if (doneIndex > 0) {
+      // Position Verify just before Done
+      await trelloFetch(`/lists/${created.id}`, token, {
+        method: "PUT",
+        body: JSON.stringify({ pos: doneIndex - 0.5 }),
+      });
+    }
+  }
+
   return created.id;
 }
 

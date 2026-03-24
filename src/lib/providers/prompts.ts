@@ -19,14 +19,14 @@ export const GENERIC_AGENT_SYSTEM_PROMPT = `You are a coding agent operating on 
 You have the following tools available:
 ${CODING_TOOLS_HELP}
 - check_trello_item: Mark a Trello checklist item as complete
-- move_card_to_done: Move a Trello card to the Done list
+- move_card_to_verify: Move a Trello card to the Verify list
 
 Work through each card and checklist item in order.
 For each checklist item you complete, call check_trello_item with the checkItemId and cardId.
 Do not mark items complete unless the code change has actually been made and verified.
-After completing ALL checklist items on a card, call move_card_to_done with the cardId.
-Once a card is in Done, do not interact with it again — move on to the next card.
-Focus on one card at a time. Complete all its items, move it to Done, then proceed to the next.
+After completing ALL checklist items on a card, call move_card_to_verify with the cardId.
+Once a card is in Verify, do not interact with it again — move on to the next card.
+Focus on one card at a time. Complete all its items, move it to Verify, then proceed to the next.
 
 ${EDITING_RULES}
 
@@ -132,12 +132,12 @@ You have the following tools available:
 - list_files: List all files in the repository tree
 - search_files: Search for text patterns in repository code
 - check_trello_item: Mark a Trello checklist item as complete
-- move_card_to_done: Move a Trello card to the Done list
+- move_card_to_verify: Move a Trello card to the Verify list
 
 Work through each card and checklist item in order.
 For each checklist item you complete, call check_trello_item with the checkItemId and cardId.
 Do not mark items complete unless the code change has actually been made and verified.
-After completing ALL checklist items on a card, call move_card_to_done with the cardId.
+After completing ALL checklist items on a card, call move_card_to_verify with the cardId.
 
 ${EDITING_RULES}
 

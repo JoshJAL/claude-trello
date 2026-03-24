@@ -5,7 +5,7 @@ import type { ToolSet } from "./source-tools.js";
 import {
   updateCheckItem,
   moveCard,
-  findOrCreateDoneList,
+  findOrCreateVerifyList,
 } from "#/lib/trello";
 
 export interface GenericAgentConfig {
@@ -83,15 +83,15 @@ export function createGenericAgentSession(
           },
         },
         {
-          name: "move_card_to_done",
+          name: "move_card_to_verify",
           description:
-            "Move a Trello card to the Done list after all its checklist items are completed.",
+            "Move a Trello card to the Verify list after all its checklist items are completed.",
           parameters: {
             type: "object",
             properties: {
               cardId: {
                 type: "string",
-                description: "The Trello card ID to move to Done",
+                description: "The Trello card ID to move to Verify",
               },
             },
             required: ["cardId"],
@@ -136,14 +136,14 @@ export function createGenericAgentSession(
       }
     }
 
-    if (name === "move_card_to_done") {
+    if (name === "move_card_to_verify") {
       try {
-        const doneListId = await findOrCreateDoneList(
+        const verifyListId = await findOrCreateVerifyList(
           config.trelloToken,
           config.boardId,
         );
-        await moveCard(config.trelloToken, input.cardId as string, doneListId);
-        return `Moved card ${input.cardId} to Done list`;
+        await moveCard(config.trelloToken, input.cardId as string, verifyListId);
+        return `Moved card ${input.cardId} to Verify list`;
       } catch (err) {
         return `Error: ${err instanceof Error ? err.message : "Failed to move card"}`;
       }

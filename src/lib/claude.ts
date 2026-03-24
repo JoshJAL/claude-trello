@@ -24,7 +24,7 @@ import {
 import {
   updateCheckItem,
   moveCard,
-  findOrCreateDoneList,
+  findOrCreateVerifyList,
 } from "#/lib/trello";
 import { createGitHubMcpTools } from "#/lib/github/tools";
 import { createGitLabMcpTools } from "#/lib/gitlab/tools";
@@ -116,23 +116,23 @@ function buildSourceConfig(params: {
     },
   );
 
-  const moveCardToDone = tool(
-    "move_card_to_done",
-    "Move a Trello card to the Done list after all its checklist items are completed. Call this after you have checked off every item on the card.",
+  const moveCardToVerify = tool(
+    "move_card_to_verify",
+    "Move a Trello card to the Verify list after all its checklist items are completed. Call this after you have checked off every item on the card.",
     {
-      cardId: z.string().describe("The Trello card ID to move to Done"),
+      cardId: z.string().describe("The Trello card ID to move to Verify"),
     },
     async ({ cardId }) => {
-      const doneListId = await findOrCreateDoneList(
+      const verifyListId = await findOrCreateVerifyList(
         trelloToken,
         boardData.board.id,
       );
-      await moveCard(trelloToken, cardId, doneListId);
+      await moveCard(trelloToken, cardId, verifyListId);
       return {
         content: [
           {
             type: "text" as const,
-            text: `Moved card ${cardId} to Done list`,
+            text: `Moved card ${cardId} to Verify list`,
           },
         ],
       };
@@ -141,7 +141,7 @@ function buildSourceConfig(params: {
 
   const trelloServer = createSdkMcpServer({
     name: "trello-tools",
-    tools: [checkTrelloItem, moveCardToDone],
+    tools: [checkTrelloItem, moveCardToVerify],
   });
 
   return {
@@ -149,7 +149,7 @@ function buildSourceConfig(params: {
     mcpServers: { "trello-tools": trelloServer },
     allowedTools: [
       "mcp__trello-tools__check_trello_item",
-      "mcp__trello-tools__move_card_to_done",
+      "mcp__trello-tools__move_card_to_verify",
     ],
   };
 }
@@ -208,20 +208,20 @@ function buildParallelSourceConfig(params: {
     },
   );
 
-  const moveCardToDone = tool(
-    "move_card_to_done",
-    "Move a Trello card to the Done list after all its checklist items are completed.",
+  const moveCardToVerify = tool(
+    "move_card_to_verify",
+    "Move a Trello card to the Verify list after all its checklist items are completed.",
     {
-      cardId: z.string().describe("The Trello card ID to move to Done"),
+      cardId: z.string().describe("The Trello card ID to move to Verify"),
     },
     async ({ cardId }) => {
-      const doneListId = await findOrCreateDoneList(trelloToken, boardId);
-      await moveCard(trelloToken, cardId, doneListId);
+      const verifyListId = await findOrCreateVerifyList(trelloToken, boardId);
+      await moveCard(trelloToken, cardId, verifyListId);
       return {
         content: [
           {
             type: "text" as const,
-            text: `Moved card ${cardId} to Done list`,
+            text: `Moved card ${cardId} to Verify list`,
           },
         ],
       };
@@ -230,7 +230,7 @@ function buildParallelSourceConfig(params: {
 
   const trelloServer = createSdkMcpServer({
     name: "trello-tools",
-    tools: [checkTrelloItem, moveCardToDone],
+    tools: [checkTrelloItem, moveCardToVerify],
   });
 
   return {
@@ -238,7 +238,7 @@ function buildParallelSourceConfig(params: {
     mcpServers: { "trello-tools": trelloServer },
     allowedTools: [
       "mcp__trello-tools__check_trello_item",
-      "mcp__trello-tools__move_card_to_done",
+      "mcp__trello-tools__move_card_to_verify",
     ],
   };
 }

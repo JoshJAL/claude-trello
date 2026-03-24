@@ -7,7 +7,7 @@ import type { ToolDefinition } from "./tools.js";
 import {
   updateCheckItem,
   moveCard,
-  findOrCreateDoneList,
+  findOrCreateVerifyList,
 } from "#/lib/trello";
 import {
   getIssue as getGitHubIssue,
@@ -37,7 +37,7 @@ const CODING_TOOL_NAMES = new Set([
 
 // Tools that should be gated behind actual work being done
 const TASK_CHECK_TOOLS = new Set([
-  "check_trello_item", "move_card_to_done",
+  "check_trello_item", "move_card_to_verify",
   "check_github_task", "close_github_issue",
   "check_gitlab_task", "close_gitlab_issue",
 ]);
@@ -93,15 +93,15 @@ export function createTrelloToolSet(
       },
     },
     {
-      name: "move_card_to_done",
+      name: "move_card_to_verify",
       description:
-        "Move a Trello card to the Done list after all its checklist items are completed.",
+        "Move a Trello card to the Verify list after all its checklist items are completed.",
       parameters: {
         type: "object",
         properties: {
           cardId: {
             type: "string",
-            description: "The Trello card ID to move to Done",
+            description: "The Trello card ID to move to Verify",
           },
         },
         required: ["cardId"],
@@ -122,10 +122,10 @@ export function createTrelloToolSet(
       );
       return `Marked checklist item ${input.checkItemId} as complete on card ${input.cardId}`;
     }
-    if (name === "move_card_to_done") {
-      const doneListId = await findOrCreateDoneList(trelloToken, boardId);
-      await moveCard(trelloToken, input.cardId as string, doneListId);
-      return `Moved card ${input.cardId} to Done list`;
+    if (name === "move_card_to_verify") {
+      const verifyListId = await findOrCreateVerifyList(trelloToken, boardId);
+      await moveCard(trelloToken, input.cardId as string, verifyListId);
+      return `Moved card ${input.cardId} to Verify list`;
     }
     return `Unknown Trello tool: ${name}`;
   }
