@@ -179,60 +179,52 @@ function mergeToolSets(a: ToolSet, b: ToolSet): ToolSet {
  * Filters out completed tasks.
  */
 function buildGitHubUserPromptFromBoardData(boardData: BoardData, userMessage?: string): string {
-  const issues: GitHubIssueWithTasks[] = boardData.cards
-    .reduce<GitHubIssueWithTasks[]>((acc, card) => {
-      const tasks = (card.checklists?.[0]?.checkItems ?? [])
-        .filter((item) => item.state !== "complete")
-        .map((item) => ({
-          index: Number(item.id.replace("task-", "")),
-          text: item.name,
-          checked: false,
-        }));
+  const issues: GitHubIssueWithTasks[] = boardData.cards.map((card) => {
+    const tasks = (card.checklists?.[0]?.checkItems ?? [])
+      .filter((item) => item.state !== "complete")
+      .map((item) => ({
+        index: Number(item.id.replace("task-", "")),
+        text: item.name,
+        checked: false,
+      }));
 
-      if (tasks.length > 0) {
-        acc.push({
-          number: Number(card.id),
-          title: card.name,
-          body: card.desc ?? "",
-          state: "open" as const,
-          html_url: "",
-          labels: [],
-          assignees: [],
-          tasks,
-        });
-      }
-      return acc;
-    }, []);
+    return {
+      number: Number(card.id),
+      title: card.name,
+      body: card.desc ?? "",
+      state: "open" as const,
+      html_url: "",
+      labels: [],
+      assignees: [],
+      tasks,
+    };
+  });
 
   return buildGitHubUserPrompt(boardData.board.name, issues, userMessage);
 }
 
 function buildGitLabUserPromptFromBoardData(boardData: BoardData, userMessage?: string): string {
-  const issues: GitLabIssueWithTasks[] = boardData.cards
-    .reduce<GitLabIssueWithTasks[]>((acc, card) => {
-      const tasks = (card.checklists?.[0]?.checkItems ?? [])
-        .filter((item) => item.state !== "complete")
-        .map((item) => ({
-          index: Number(item.id.replace("task-", "")),
-          text: item.name,
-          checked: false,
-        }));
+  const issues: GitLabIssueWithTasks[] = boardData.cards.map((card) => {
+    const tasks = (card.checklists?.[0]?.checkItems ?? [])
+      .filter((item) => item.state !== "complete")
+      .map((item) => ({
+        index: Number(item.id.replace("task-", "")),
+        text: item.name,
+        checked: false,
+      }));
 
-      if (tasks.length > 0) {
-        acc.push({
-          iid: Number(card.id),
-          id: Number(card.id),
-          title: card.name,
-          description: card.desc ?? "",
-          state: "opened" as const,
-          web_url: "",
-          labels: [],
-          assignees: [],
-          tasks,
-        });
-      }
-      return acc;
-    }, []);
+    return {
+      iid: Number(card.id),
+      id: Number(card.id),
+      title: card.name,
+      description: card.desc ?? "",
+      state: "opened" as const,
+      web_url: "",
+      labels: [],
+      assignees: [],
+      tasks,
+    };
+  });
 
   return buildGitLabUserPrompt(boardData.board.name, issues, userMessage);
 }

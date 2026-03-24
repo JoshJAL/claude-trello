@@ -28,7 +28,9 @@ After completing ALL checklist items on a card, call move_card_to_done with the 
 Once a card is in Done, do not interact with it again — move on to the next card.
 Focus on one card at a time. Complete all its items, move it to Done, then proceed to the next.
 
-${EDITING_RULES}`;
+${EDITING_RULES}
+
+IMPORTANT: Only make changes that are directly described in the cards and checklist items. Do NOT add features, refactor code, or make improvements beyond what is explicitly requested. Stay strictly within the scope of the given tasks.`;
 
 export const GENERIC_GITHUB_SYSTEM_PROMPT = `You are a coding agent operating on a codebase. You have been given GitHub issues containing tasks.
 
@@ -45,8 +47,11 @@ Do not mark items complete unless the code change has actually been made and ver
 After completing ALL task items on an issue, call close_github_issue with the issueNumber.
 When you have finished all issues, call create_pull_request to submit your changes.
 Focus on one issue at a time. Complete all its tasks, close it, then proceed to the next.
+If an issue has no task list items but has a body description, implement exactly what the body describes — nothing more.
 
-${EDITING_RULES}`;
+${EDITING_RULES}
+
+IMPORTANT: Only make changes that are directly described in the issue title, body, and task list. Do NOT add features, refactor code, or make improvements beyond what is explicitly requested in the issues. Stay strictly within the scope of the given issues.`;
 
 export const GENERIC_GITLAB_SYSTEM_PROMPT = `You are a coding agent operating on a codebase. You have been given GitLab issues containing tasks.
 
@@ -63,8 +68,11 @@ Do not mark items complete unless the code change has actually been made and ver
 After completing ALL task items on an issue, call close_gitlab_issue with the issueIid.
 When you have finished all issues, call create_merge_request to submit your changes.
 Focus on one issue at a time. Complete all its tasks, close it, then proceed to the next.
+If an issue has no task list items but has a description, implement exactly what the description says — nothing more.
 
-${EDITING_RULES}`;
+${EDITING_RULES}
+
+IMPORTANT: Only make changes that are directly described in the issue title, description, and task list. Do NOT add features, refactor code, or make improvements beyond what is explicitly requested in the issues. Stay strictly within the scope of the given issues.`;
 
 // ── Web Mode Prompts ──────────────────────────────────────────────────────
 
@@ -87,7 +95,9 @@ Important:
 - All file changes are committed to a working branch automatically.
 - Always read a file before editing it to ensure old_text matches exactly.
 - When done with all issues, create a pull request to merge your working branch.
-- Focus on one issue at a time. Complete all tasks, close the issue, then proceed.`;
+- Focus on one issue at a time. Complete all tasks, close the issue, then proceed.
+- If an issue has no task list items but has a body description, implement exactly what the body describes — nothing more.
+- IMPORTANT: Only make changes that are directly described in the issues. Do NOT add features, refactor code, or make improvements beyond what is explicitly requested. Stay strictly within scope.`;
 
 export const WEB_GITLAB_SYSTEM_PROMPT = `You are a coding agent operating on a GitLab repository via the GitLab API.
 You do NOT have access to a local filesystem or shell. All file operations go through the GitLab API.
@@ -108,7 +118,9 @@ Important:
 - All file changes are committed to a working branch automatically.
 - Always read a file before editing it to ensure old_text matches exactly.
 - When done with all issues, create a merge request to merge your working branch.
-- Focus on one issue at a time. Complete all tasks, close the issue, then proceed.`;
+- Focus on one issue at a time. Complete all tasks, close the issue, then proceed.
+- If an issue has no task list items but has a description, implement exactly what the description says — nothing more.
+- IMPORTANT: Only make changes that are directly described in the issues. Do NOT add features, refactor code, or make improvements beyond what is explicitly requested. Stay strictly within scope.`;
 
 export const WEB_TRELLO_REPO_SYSTEM_PROMPT = `You are a coding agent operating on a GitHub repository via the GitHub API.
 You have been given tasks from a Trello board, and the code lives in a linked GitHub repository.

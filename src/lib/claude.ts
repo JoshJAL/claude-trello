@@ -14,6 +14,12 @@ import {
   GITLAB_PARALLEL_SYSTEM_PROMPT,
   buildUserPrompt,
   buildParallelCardPrompt,
+  buildGitHubUserPrompt,
+  buildGitHubIssuePrompt,
+  buildGitLabUserPrompt,
+  buildGitLabIssuePrompt,
+  type GitHubIssueWithTasks,
+  type GitLabIssueWithTasks,
 } from "#/lib/prompts";
 import {
   updateCheckItem,
@@ -244,6 +250,9 @@ export function launchClaudeSession(params: ClaudeSessionParams): Query {
     cwd,
     userMessage,
     abortController,
+    source,
+    githubOwner,
+    githubRepo,
   } = params;
 
   // Filter out cards already in the done list (Trello-specific)
@@ -256,8 +265,18 @@ export function launchClaudeSession(params: ClaudeSessionParams): Query {
 
   const { systemPrompt, mcpServers, allowedTools } = buildSourceConfig(params);
 
+  // Build the correct user prompt based on source
+  let userPrompt: string;
+  if (source === "github" && githubOwner && githubRepo) {
+    userPrompt = buildGitHubUserPromptFromCards(activeBoardData, userMessage);
+  } else if (source === "gitlab") {
+    userPrompt = buildGitLabUserPromptFromCards(activeBoardData, userMessage);
+  } else {
+    userPrompt = buildUserPrompt(activeBoardData, userMessage);
+  }
+
   return query({
-    prompt: buildUserPrompt(activeBoardData, userMessage),
+    prompt: userPrompt,
     options: {
       abortController,
       cwd,
@@ -286,12 +305,27 @@ export function launchCardAgent(params: CardAgentParams): Query {
     cwd,
     userMessage,
     abortController,
+    source,
+    githubOwner,
+    githubRepo,
   } = params;
 
   const { systemPrompt, mcpServers, allowedTools } = buildParallelSourceConfig(params);
 
+  // Build the correct card/issue prompt based on source
+  let cardPrompt: string;
+  if (source === "github" && githubOwner && githubRepo) {
+    const issue = cardToGitHubIssue(card);
+    cardPrompt = buildGitHubIssuePrompt(`${githubOwner}/${githubRepo}`, issue, userMessage);
+  } else if (source === "gitlab") {
+    const issue = cardToGitLabIssue(card);
+    cardPrompt = buildGitLabIssuePrompt(boardName, issue, userMessage);
+  } else {
+    cardPrompt = buildParallelCardPrompt(card, boardName, userMessage);
+  }
+
   return query({
-    prompt: buildParallelCardPrompt(card, boardName, userMessage),
+    prompt: cardPrompt,
     options: {
       abortController,
       cwd,
@@ -307,4 +341,100 @@ export function launchCardAgent(params: CardAgentParams): Query {
       persistSession: false,
     },
   });
+}
+
+// ── Helpers: Convert BoardData cards to source-specific issue format ────────
+
+function buildGitHubUserPromptFromCards(boardData: BoardData, userMessage?: string): string {
+  const issues: GitHubIssueWithTasks[] = boardData.cards.map((card) => {
+    const tasks = (card.checklists?.[0]?.checkItems ?? [])
+      .filter((item) => item.state !== "complete")
+      .map((item) => ({
+        index: Number(item.id.replace("task-", "")),
+        text: item.name,
+        checked: false,
+      }));
+
+    return {
+      number: Number(card.id),
+      title: card.name,
+      body: card.desc ?? "",
+      state: "open" as const,
+      html_url: "",
+      labels: [],
+      assignees: [],
+      tasks,
+    };
+  });
+
+  return buildGitHubUserPrompt(boardData.board.name, issues, userMessage);
+}
+
+function buildGitLabUserPromptFromCards(boardData: BoardData, userMessage?: string): string {
+  const issues: GitLabIssueWithTasks[] = boardData.cards.map((card) => {
+    const tasks = (card.checklists?.[0]?.checkItems ?? [])
+      .filter((item) => item.state !== "complete")
+      .map((item) => ({
+        index: Number(item.id.replace("task-", "")),
+        text: item.name,
+        checked: false,
+      }));
+
+    return {
+      iid: Number(card.id),
+      id: Number(card.id),
+      title: card.name,
+      description: card.desc ?? "",
+      state: "opened" as const,
+      web_url: "",
+      labels: [],
+      assignees: [],
+      tasks,
+    };
+  });
+
+  return buildGitLabUserPrompt(boardData.board.name, issues, userMessage);
+}
+
+function cardToGitHubIssue(card: TrelloCard): GitHubIssueWithTasks {
+  const tasks = (card.checklists?.[0]?.checkItems ?? [])
+    .filter((item) => item.state !== "complete")
+    .map((item) => ({
+      index: Number(item.id.replace("task-", "")),
+      text: item.name,
+      checked: false,
+    }));
+
+  return {
+    number: Number(card.id),
+    title: card.name,
+    body: card.desc ?? "",
+    state: "open",
+    html_url: "",
+    labels: [],
+    assignees: [],
+    tasks,
+  };
+}
+
+function cardToGitLabIssue(card: TrelloCard): GitLabIssueWithTasks {
+  const tasks = (card.checklists?.[0]?.checkItems ?? [])
+    .filter((item) => item.state !== "complete")
+    .map((item) => ({
+      index: Number(item.id.replace("task-", "")),
+      text: item.name,
+      checked: false,
+    }));
+
+  return {
+    iid: Number(card.id),
+    id: Number(card.id),
+    title: card.name,
+    description: card.desc ?? "",
+    state: "opened",
+    web_url: "",
+    labels: [],
+    assignees: [],
+    tasks,
+  };
 }

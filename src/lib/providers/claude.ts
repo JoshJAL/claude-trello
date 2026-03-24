@@ -58,6 +58,11 @@ export class ClaudeAdapter implements ProviderAdapter {
       cwd: params.cwd,
       userMessage: params.userMessage,
       abortController: params.abortController,
+      source: params.sourceContext?.source,
+      sourceToken: params.sourceContext?.sourceToken,
+      githubOwner: params.sourceContext?.githubOwner,
+      githubRepo: params.sourceContext?.githubRepo,
+      gitlabProjectId: params.sourceContext?.gitlabProjectId,
     });
 
     return wrapClaudeQuery(
@@ -77,6 +82,11 @@ export class ClaudeAdapter implements ProviderAdapter {
       cwd: params.cwd,
       userMessage: params.userMessage,
       abortController: params.abortController,
+      source: params.sourceContext?.source,
+      sourceToken: params.sourceContext?.sourceToken,
+      githubOwner: params.sourceContext?.githubOwner,
+      githubRepo: params.sourceContext?.githubRepo,
+      gitlabProjectId: params.sourceContext?.gitlabProjectId,
     });
 
     return wrapClaudeQuery(

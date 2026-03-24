@@ -867,17 +867,13 @@ function buildGitHubWebPrompt(boardData: BoardData, userMessage?: string): strin
           text: item.name,
         }));
 
-      // Skip issues with no remaining tasks
-      if (incompleteTasks.length === 0) return null;
-
       return {
         number: Number(card.id),
         title: card.name,
         body: card.desc,
         tasks: incompleteTasks,
       };
-    })
-    .filter(Boolean);
+    });
 
   const data = { repo: boardData.board.name, issues };
 
@@ -899,16 +895,13 @@ function buildGitLabWebPrompt(boardData: BoardData, userMessage?: string): strin
           text: item.name,
         }));
 
-      if (incompleteTasks.length === 0) return null;
-
       return {
         iid: Number(card.id),
         title: card.name,
         description: card.desc,
         tasks: incompleteTasks,
       };
-    })
-    .filter(Boolean);
+    });
 
   const data = { project: boardData.board.name, issues };
 

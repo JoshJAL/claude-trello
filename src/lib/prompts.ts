@@ -8,7 +8,8 @@ For each checklist item you complete, call the check_trello_item tool with the c
 Do not mark items complete unless the code change has actually been made and verified.
 After completing ALL checklist items on a card, call move_card_to_done with the cardId to move it to the Done list.
 Once a card is in Done, do not interact with it again — move on to the next card.
-Focus on one card at a time. Complete all its items, move it to Done, then proceed to the next.`;
+Focus on one card at a time. Complete all its items, move it to Done, then proceed to the next.
+IMPORTANT: Only make changes that are directly described in the cards and checklist items. Do NOT add features, refactor code, or make improvements beyond what is explicitly requested. Stay strictly within the scope of the given tasks.`;
 
 export function buildUserPrompt(
   boardData: BoardData,
@@ -28,7 +29,8 @@ Work through each checklist item in order. For each item you complete, call chec
 Do not mark items complete unless the code change has actually been made and verified.
 After completing ALL checklist items, call move_card_to_done with the cardId.
 You are working in an isolated git worktree. Commit your changes when done.
-Do NOT modify files outside the scope of your assigned card.`;
+Do NOT modify files outside the scope of your assigned card.
+IMPORTANT: Only make changes that are directly described in the card and its checklist items. Do NOT add features, refactor code, or make improvements beyond what is explicitly requested.`;
 
 export function buildParallelCardPrompt(
   card: TrelloCard,
@@ -60,14 +62,18 @@ For each task item you complete, call check_github_task with the issueNumber and
 Do not mark items complete unless the code change has actually been made and verified.
 After completing ALL task items on an issue, call close_github_issue with the issueNumber.
 When you have finished all issues, call create_pull_request to submit your changes.
-Focus on one issue at a time. Complete all its tasks, close it, then proceed to the next.`;
+Focus on one issue at a time. Complete all its tasks, close it, then proceed to the next.
+If an issue has no task list items but has a body description, implement exactly what the body describes — nothing more.
+IMPORTANT: Only make changes that are directly described in the issue title, body, and task list. Do NOT add features, refactor code, or make improvements beyond what is explicitly requested in the issues. Stay strictly within the scope of the given issues.`;
 
 export const GITHUB_PARALLEL_SYSTEM_PROMPT = `You are assigned ONE GitHub issue. Focus exclusively on it.
 Work through each task list item in order. For each item you complete, call check_github_task with the issueNumber and taskIndex.
 Do not mark items complete unless the code change has actually been made and verified.
 After completing ALL task items, call close_github_issue with the issueNumber.
 You are working in an isolated git worktree. Commit your changes when done.
-Do NOT modify files outside the scope of your assigned issue.`;
+Do NOT modify files outside the scope of your assigned issue.
+If the issue has no task list items but has a body description, implement exactly what the body describes — nothing more.
+IMPORTANT: Only make changes that are directly described in the issue. Do NOT add features, refactor code, or make improvements beyond what is explicitly requested.`;
 
 export interface GitHubIssueWithTasks extends GitHubIssue {
   tasks: Array<{ index: number; text: string; checked: boolean }>;
@@ -125,14 +131,18 @@ For each task item you complete, call check_gitlab_task with the issueIid and ta
 Do not mark items complete unless the code change has actually been made and verified.
 After completing ALL task items on an issue, call close_gitlab_issue with the issueIid.
 When you have finished all issues, call create_merge_request to submit your changes.
-Focus on one issue at a time. Complete all its tasks, close it, then proceed to the next.`;
+Focus on one issue at a time. Complete all its tasks, close it, then proceed to the next.
+If an issue has no task list items but has a description, implement exactly what the description says — nothing more.
+IMPORTANT: Only make changes that are directly described in the issue title, description, and task list. Do NOT add features, refactor code, or make improvements beyond what is explicitly requested in the issues. Stay strictly within the scope of the given issues.`;
 
 export const GITLAB_PARALLEL_SYSTEM_PROMPT = `You are assigned ONE GitLab issue. Focus exclusively on it.
 Work through each task list item in order. For each item you complete, call check_gitlab_task with the issueIid and taskIndex.
 Do not mark items complete unless the code change has actually been made and verified.
 After completing ALL task items, call close_gitlab_issue with the issueIid.
 You are working in an isolated git worktree. Commit your changes when done.
-Do NOT modify files outside the scope of your assigned issue.`;
+Do NOT modify files outside the scope of your assigned issue.
+If the issue has no task list items but has a description, implement exactly what the description says — nothing more.
+IMPORTANT: Only make changes that are directly described in the issue. Do NOT add features, refactor code, or make improvements beyond what is explicitly requested.`;
 
 export interface GitLabIssueWithTasks extends GitLabIssue {
   tasks: Array<{ index: number; text: string; checked: boolean }>;
