@@ -69,6 +69,49 @@ There is **no shared server-side Anthropic API key**. Every user supplies their 
 
 ---
 
+## AI Providers & Models
+
+TaskPilot supports three AI providers. Users select a provider and model from the session toolbar before starting a session. Switching providers resets to that provider's default model. Model definitions are maintained in `src/lib/providers/types.ts` (`PROVIDER_MODELS`, `DEFAULT_MODEL`).
+
+### Claude (Anthropic) — Default Provider
+
+| Model | API ID | Context | Input / Output | Best For |
+|-------|--------|---------|----------------|----------|
+| **Haiku 4.5** | `claude-haiku-4-5-20251001` | 200K | $1 / $5 per 1M | High-volume simple tasks — classification, extraction, formatting. 12x cheaper than Sonnet. |
+| **Opus 4.6** | `claude-opus-4-6-20250827` | 1M | $15 / $75 per 1M | Deep scientific reasoning, complex multi-file refactors, agent teams, GPQA-level analysis. |
+| **Sonnet 4.6** (default) | `claude-sonnet-4-6-20250827` | 200K | $3 / $15 per 1M | General coding, most tasks — best balance of quality and cost. 79.6% SWE-bench. Use for 80%+ of work. |
+
+### OpenAI
+
+| Model | API ID | Context | Input / Output | Best For |
+|-------|--------|---------|----------------|----------|
+| **GPT-5.4** | `gpt-5.4-2026-03-05` | 1M | $2.50 / $15 per 1M | Most demanding reasoning and professional tasks. |
+| **GPT-5.4 Mini** | `gpt-5.4-mini-2026-03-17` | 400K | $0.75 / $4.50 per 1M | General coding, computer use, high-volume workloads — 2x faster than full GPT-5.4, approaches its performance. |
+| **GPT-5.4 Nano** | `gpt-5.4-nano-2026-03-17` | 400K | $0.20 / $1.25 per 1M | Classification, data extraction, ranking, lightweight sub-agents. Cheapest OpenAI option. |
+
+### Groq (Ultra-Fast Inference)
+
+All Groq models run on Groq's LPU hardware for extremely fast inference. Groq is the best choice when speed matters more than frontier intelligence.
+
+| Model | API ID | Context | Cost (per 1M) | Best For |
+|-------|--------|---------|---------------|----------|
+| **GPT-OSS 120B** | `openai/gpt-oss-120b` | 131K | ~$1.20 | Highest quality on Groq — OpenAI's open-weight model with built-in search and code execution. |
+| **Kimi K2** | `moonshotai/kimi-k2-instruct-0905` | 262K | ~$1.50 | Agentic tasks, tool use, coding benchmarks. Largest context on Groq. |
+| **Llama 3.1 8B** | `llama-3.1-8b-instant` | 128K | ~$0.06 | Ultra-cheap simple tasks. Fastest and cheapest option. |
+| **Llama 3.3 70B** (default) | `llama-3.3-70b-versatile` | 128K | ~$0.60 | General-purpose, proven reliability. Best default for Groq. |
+| **Llama 4 Scout** | `meta-llama/llama-4-scout-17b-16e-instruct` | 10M | Low | Massive context window (10M tokens), blazing-fast speed (2600 tok/s). |
+| **Qwen 3 32B** | `qwen/qwen-3-32b` | 128K | ~$0.30 | Reasoning and dialogue with thinking/non-thinking modes. |
+
+### Choosing a Model
+
+- **Default to Claude Sonnet 4.6** for most coding tasks — it offers the best quality-to-cost ratio.
+- **Use Opus 4.6** when you need the deepest reasoning, are working across many interrelated files, or need a 1M token context window.
+- **Use Haiku 4.5** for high-volume batch tasks where cost is the primary concern.
+- **Use GPT-5.4 Mini** as the OpenAI default — it's fast and nearly matches full GPT-5.4 quality.
+- **Use Groq** when inference speed is critical — all models benefit from LPU acceleration.
+
+---
+
 ## Repository Structure
 
 ```
