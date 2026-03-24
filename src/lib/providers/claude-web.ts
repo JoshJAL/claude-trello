@@ -25,7 +25,7 @@ import type { UserPromptFn } from "./index.js";
  */
 export function createAnthropicChatFn(
   client: Anthropic,
-  model: string = "claude-sonnet-4-20250514",
+  model: string = "claude-sonnet-4-6-20250827",
 ) {
   return async (
     messages: ChatMessage[],

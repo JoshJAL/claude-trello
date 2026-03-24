@@ -37,9 +37,9 @@ export const PROVIDER_SHORT_LABELS: Record<AiProviderId, string> = {
 
 export const PROVIDER_MODELS: Record<AiProviderId, Array<{ id: string; label: string }>> = {
   claude: [
-    { id: "claude-opus-4-20250514", label: "Opus 4" },
-    { id: "claude-sonnet-4-20250514", label: "Sonnet 4" },
-    { id: "claude-haiku-3-5-20241022", label: "Haiku 3.5" },
+    { id: "claude-opus-4-6-20250827", label: "Opus 4.6" },
+    { id: "claude-sonnet-4-6-20250827", label: "Sonnet 4.6" },
+    { id: "claude-haiku-4-5-20251001", label: "Haiku 4.5" },
   ],
   openai: [
     { id: "gpt-4o", label: "GPT-4o" },
@@ -56,7 +56,7 @@ export const PROVIDER_MODELS: Record<AiProviderId, Array<{ id: string; label: st
 };
 
 export const DEFAULT_MODEL: Record<AiProviderId, string> = {
-  claude: "claude-sonnet-4-20250514",
+  claude: "claude-sonnet-4-6-20250827",
   openai: "gpt-4o",
   groq: "llama-3.3-70b-versatile",
 };
