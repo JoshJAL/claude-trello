@@ -5,7 +5,6 @@ import { useGitLabProjects } from "#/hooks/useGitLabProjects";
 import { useBranches } from "#/hooks/useBranches";
 import type { AiProviderId } from "#/lib/providers/types";
 import { WebModeBanner } from "./session/WebModeBanner";
-import { RepoLinker } from "./session/RepoLinker";
 import { BranchSelector } from "./session/BranchSelector";
 import { WorkspaceTypePicker } from "./session/WorkspaceTypePicker";
 import { SessionToolbar } from "./session/SessionToolbar";

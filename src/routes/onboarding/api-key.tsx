@@ -45,7 +45,7 @@ function OnboardingApiKeyPage() {
               <ApiKeyForm
                 providerId={provider.id}
                 hasKey={false}
-                onSaved={() => navigate({ to: "/dashboard" })}
+                onSaved={() => navigate({ to: "/dashboard", search: { q: "" } })}
               />
             </div>
           ))}

@@ -171,6 +171,7 @@ function GitHubRepoPage() {
         <div className="mb-4">
           <Link
             to="/dashboard/github"
+            search={{ q: "" }}
             className="text-sm text-(--lagoon) hover:underline"
           >
             &larr; All repos

@@ -55,7 +55,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             return;
           }
         }
-        navigate({ to: "/dashboard" });
+        navigate({ to: "/dashboard", search: { q: "" } });
       }
     } catch (err) {
       const message =

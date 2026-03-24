@@ -170,6 +170,7 @@ function GitLabProjectPage() {
         <div className="mb-4">
           <Link
             to="/dashboard/gitlab"
+            search={{ q: "" }}
             className="text-sm text-(--lagoon) hover:underline"
           >
             &larr; All projects

@@ -82,6 +82,7 @@ function BoardPage() {
         <div className="flex items-center justify-between">
           <Link
             to="/dashboard"
+            search={{ q: "" }}
             className="text-sm text-(--lagoon) hover:underline"
           >
             &larr; All boards
