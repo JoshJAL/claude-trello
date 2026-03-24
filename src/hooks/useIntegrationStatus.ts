@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import type { IntegrationStatus } from "#/lib/types";
 import type { AiProviderId } from "#/lib/providers/types";
+import { PROVIDER_ORDER } from "#/lib/providers/types";
 
 async function fetchIntegrationStatus(): Promise<IntegrationStatus> {
   const res = await fetch("/api/settings/status");
@@ -15,7 +16,9 @@ export function useIntegrationStatus() {
   });
 
   const configuredProviders: AiProviderId[] =
-    data?.configuredProviders ?? [];
+    (data?.configuredProviders ?? []).sort(
+      (a, b) => PROVIDER_ORDER.indexOf(a) - PROVIDER_ORDER.indexOf(b),
+    );
 
   const trelloLinked = data?.trelloLinked ?? false;
   const githubLinked = data?.githubLinked ?? false;

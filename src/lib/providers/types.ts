@@ -35,11 +35,14 @@ export const PROVIDER_SHORT_LABELS: Record<AiProviderId, string> = {
   groq: "Groq",
 };
 
+/** Preferred provider display order (alphabetical by label). */
+export const PROVIDER_ORDER: AiProviderId[] = ["claude", "openai", "groq"];
+
 export const PROVIDER_MODELS: Record<AiProviderId, Array<{ id: string; label: string }>> = {
   claude: [
+    { id: "claude-haiku-4-5-20251001", label: "Haiku 4.5" },
     { id: "claude-opus-4-6-20250827", label: "Opus 4.6" },
     { id: "claude-sonnet-4-6-20250827", label: "Sonnet 4.6" },
-    { id: "claude-haiku-4-5-20251001", label: "Haiku 4.5" },
   ],
   openai: [
     { id: "gpt-5.4-2026-03-05", label: "GPT-5.4" },
@@ -47,12 +50,12 @@ export const PROVIDER_MODELS: Record<AiProviderId, Array<{ id: string; label: st
     { id: "gpt-5.4-nano-2026-03-17", label: "GPT-5.4 Nano" },
   ],
   groq: [
-    { id: "llama-3.3-70b-versatile", label: "Llama 3.3 70B" },
-    { id: "llama-3.1-8b-instant", label: "Llama 3.1 8B" },
-    { id: "meta-llama/llama-4-scout-17b-16e-instruct", label: "Llama 4 Scout" },
-    { id: "qwen/qwen-3-32b", label: "Qwen 3 32B" },
     { id: "openai/gpt-oss-120b", label: "GPT-OSS 120B" },
     { id: "moonshotai/kimi-k2-instruct-0905", label: "Kimi K2" },
+    { id: "llama-3.1-8b-instant", label: "Llama 3.1 8B" },
+    { id: "llama-3.3-70b-versatile", label: "Llama 3.3 70B" },
+    { id: "meta-llama/llama-4-scout-17b-16e-instruct", label: "Llama 4 Scout" },
+    { id: "qwen/qwen-3-32b", label: "Qwen 3 32B" },
   ],
 };
 
