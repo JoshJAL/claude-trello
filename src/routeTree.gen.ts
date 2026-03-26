@@ -19,6 +19,7 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FeatureRequestRouteImport } from './routes/feature-request'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as AiModelsRouteImport } from './routes/ai-models'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UpdatesIndexRouteImport } from './routes/updates/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
@@ -137,6 +138,11 @@ const CookiesRoute = CookiesRouteImport.update({
 const AnalyticsRoute = AnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiModelsRoute = AiModelsRouteImport.update({
+  id: '/ai-models',
+  path: '/ai-models',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -491,6 +497,7 @@ const ApiSessionsSessionIdEventsRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ai-models': typeof AiModelsRoute
   '/analytics': typeof AnalyticsRoute
   '/cookies': typeof CookiesRoute
   '/feature-request': typeof FeatureRequestRoute
@@ -572,6 +579,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ai-models': typeof AiModelsRoute
   '/analytics': typeof AnalyticsRoute
   '/cookies': typeof CookiesRoute
   '/feature-request': typeof FeatureRequestRoute
@@ -653,6 +661,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ai-models': typeof AiModelsRoute
   '/analytics': typeof AnalyticsRoute
   '/cookies': typeof CookiesRoute
   '/feature-request': typeof FeatureRequestRoute
@@ -736,6 +745,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ai-models'
     | '/analytics'
     | '/cookies'
     | '/feature-request'
@@ -817,6 +827,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/ai-models'
     | '/analytics'
     | '/cookies'
     | '/feature-request'
@@ -897,6 +908,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/ai-models'
     | '/analytics'
     | '/cookies'
     | '/feature-request'
@@ -979,6 +991,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AiModelsRoute: typeof AiModelsRoute
   AnalyticsRoute: typeof AnalyticsRoute
   CookiesRoute: typeof CookiesRoute
   FeatureRequestRoute: typeof FeatureRequestRoute
@@ -1125,6 +1138,13 @@ declare module '@tanstack/react-router' {
       path: '/analytics'
       fullPath: '/analytics'
       preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-models': {
+      id: '/ai-models'
+      path: '/ai-models'
+      fullPath: '/ai-models'
+      preLoaderRoute: typeof AiModelsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -1641,6 +1661,7 @@ const ApiSessionsSessionIdRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AiModelsRoute: AiModelsRoute,
   AnalyticsRoute: AnalyticsRoute,
   CookiesRoute: CookiesRoute,
   FeatureRequestRoute: FeatureRequestRoute,
