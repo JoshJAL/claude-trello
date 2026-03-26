@@ -23,6 +23,7 @@ import {
   MessageSquarePlus,
   Monitor,
   Cpu,
+  Wrench,
 } from "lucide-react";
 
 const STORAGE_KEY = "sidebar-collapsed";
@@ -234,6 +235,13 @@ export default function Sidebar() {
               collapsed={collapsed}
               onClick={closeMobile}
             />
+            <SidebarLink
+              to="/other-tools"
+              icon={Wrench}
+              label="Other Tools"
+              collapsed={collapsed}
+              onClick={closeMobile}
+            />
           </div>
 
           {/* Desktop app download */}
@@ -353,6 +361,13 @@ export default function Sidebar() {
               to="/ai-models"
               icon={Cpu}
               label="AI Docs"
+              collapsed={collapsed}
+              onClick={closeMobile}
+            />
+            <SidebarLink
+              to="/other-tools"
+              icon={Wrench}
+              label="Other Tools"
               collapsed={collapsed}
               onClick={closeMobile}
             />
