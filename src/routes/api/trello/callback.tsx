@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/api/trello/callback")({
   component: TrelloCallbackPage,
@@ -7,45 +8,44 @@ export const Route = createFileRoute("/api/trello/callback")({
 
 function TrelloCallbackPage() {
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
+
+  const connectMutation = useMutation({
+    mutationFn: async (token: string) => {
+      const res = await fetch("/api/trello/connect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+      if (!res.ok) throw new Error("Failed to save Trello token");
+      const statusRes = await fetch("/api/settings/status");
+      if (statusRes.ok) {
+        const status = await statusRes.json();
+        if (status.hasApiKey) return "settings" as const;
+      }
+      return "onboarding" as const;
+    },
+    onSuccess: (redirect) => {
+      navigate({ to: redirect === "settings" ? "/settings" : "/onboarding/api-key" });
+    },
+  });
 
   useEffect(() => {
     const hash = window.location.hash;
     const token = hash.replace(/^#token=/, "");
 
-    if (!token || token === hash) {
-      setError("No token received from Trello");
-      return;
-    }
+    if (!token || token === hash) return;
 
-    fetch("/api/trello/connect", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Failed to save Trello token");
-        // Check where to redirect — settings reconnect vs onboarding
-        const statusRes = await fetch("/api/settings/status");
-        if (statusRes.ok) {
-          const status = await statusRes.json();
-          if (status.hasApiKey) {
-            navigate({ to: "/settings" });
-            return;
-          }
-        }
-        navigate({ to: "/onboarding/api-key" });
-      })
-      .catch(() => {
-        setError("Failed to connect Trello account");
-      });
-  }, [navigate]);
+    connectMutation.mutate(token);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  if (error) {
+  if (connectMutation.isError) {
     return (
       <main className="page-wrap flex min-h-[80vh] items-center justify-center px-4">
         <div className="island-shell w-full max-w-md rounded-2xl p-8 text-center">
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <p className="text-sm text-red-600 dark:text-red-400">
+            {connectMutation.error.message}
+          </p>
           <a
             href="/onboarding/trello"
             className="mt-4 inline-block text-sm text-(--lagoon) hover:underline"

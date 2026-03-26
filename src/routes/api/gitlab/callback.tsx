@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/api/gitlab/callback")({
   component: GitLabCallbackPage,
@@ -7,52 +8,67 @@ export const Route = createFileRoute("/api/gitlab/callback")({
 
 function GitLabCallbackPage() {
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
+
+  const connectMutation = useMutation({
+    mutationFn: async (code: string) => {
+      const res = await fetch("/api/gitlab/connect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(
+          (body as { error?: string }).error ?? "Failed to connect GitLab",
+        );
+      }
+      const statusRes = await fetch("/api/settings/status");
+      if (statusRes.ok) {
+        const status = await statusRes.json();
+        if (status.hasApiKey) return "settings" as const;
+      }
+      return "onboarding" as const;
+    },
+    onSuccess: (redirect) => {
+      navigate({ to: redirect === "settings" ? "/settings" : "/onboarding/api-key" });
+    },
+  });
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code");
 
-    if (!code) {
-      setError("No authorization code received from GitLab");
-      return;
-    }
+    if (!code) return;
 
-    fetch("/api/gitlab/connect", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error(
-            (body as { error?: string }).error ?? "Failed to connect GitLab",
-          );
-        }
-        // Check where to redirect
-        const statusRes = await fetch("/api/settings/status");
-        if (statusRes.ok) {
-          const status = await statusRes.json();
-          if (status.hasApiKey) {
-            navigate({ to: "/settings" });
-            return;
-          }
-        }
-        navigate({ to: "/onboarding/api-key" });
-      })
-      .catch((err) => {
-        setError(
-          err instanceof Error ? err.message : "Failed to connect GitLab",
-        );
-      });
-  }, [navigate]);
+    connectMutation.mutate(code);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  if (error) {
+  if (connectMutation.isError) {
     return (
       <main className="page-wrap flex min-h-[80vh] items-center justify-center px-4">
         <div className="island-shell w-full max-w-md rounded-2xl p-8 text-center">
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <p className="text-sm text-red-600 dark:text-red-400">
+            {connectMutation.error.message}
+          </p>
+          <a
+            href="/settings"
+            className="mt-4 inline-block text-sm text-(--lagoon) hover:underline"
+          >
+            Back to settings
+          </a>
+        </div>
+      </main>
+    );
+  }
+
+  if (!new URLSearchParams(window.location.search).get("code")) {
+    return (
+      <main className="page-wrap flex min-h-[80vh] items-center justify-center px-4">
+        <div className="island-shell w-full max-w-md rounded-2xl p-8 text-center">
+          <p className="text-sm text-red-600 dark:text-red-400">
+            No authorization code received from GitLab
+          </p>
           <a
             href="/settings"
             className="mt-4 inline-block text-sm text-(--lagoon) hover:underline"

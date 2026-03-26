@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useReducer } from "react";
 import { signIn, signUp } from "#/lib/auth-client";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -6,20 +6,49 @@ interface AuthFormProps {
   mode: "sign-in" | "register";
 }
 
+interface FormState {
+  name: string;
+  email: string;
+  password: string;
+  error: string | null;
+  loading: boolean;
+}
+
+type FormAction =
+  | { type: "SET_FIELD"; field: "name" | "email" | "password"; value: string }
+  | { type: "SET_ERROR"; error: string | null }
+  | { type: "SET_LOADING"; loading: boolean };
+
+function formReducer(state: FormState, action: FormAction): FormState {
+  switch (action.type) {
+    case "SET_FIELD":
+      return { ...state, [action.field]: action.value };
+    case "SET_ERROR":
+      return { ...state, error: action.error };
+    case "SET_LOADING":
+      return { ...state, loading: action.loading };
+  }
+}
+
+const initialState: FormState = {
+  name: "",
+  email: "",
+  password: "",
+  error: null,
+  loading: false,
+};
+
 export function AuthForm({ mode }: AuthFormProps) {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [state, dispatch] = useReducer(formReducer, initialState);
+  const { name, email, password, error, loading } = state;
 
   const isRegister = mode === "register";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
-    setLoading(true);
+    dispatch({ type: "SET_ERROR", error: null });
+    dispatch({ type: "SET_LOADING", loading: true });
 
     try {
       if (isRegister) {
@@ -29,7 +58,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           password,
         });
         if (signUpError) {
-          setError(signUpError.message ?? "Registration failed");
+          dispatch({ type: "SET_ERROR", error: signUpError.message ?? "Registration failed" });
           return;
         }
         navigate({ to: "/onboarding/trello" });
@@ -39,7 +68,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           password,
         });
         if (signInError) {
-          setError(signInError.message ?? "Sign in failed");
+          dispatch({ type: "SET_ERROR", error: signInError.message ?? "Sign in failed" });
           return;
         }
         // Check integration status to route correctly
@@ -60,9 +89,9 @@ export function AuthForm({ mode }: AuthFormProps) {
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "An unexpected error occurred";
-      setError(message);
+      dispatch({ type: "SET_ERROR", error: message });
     } finally {
-      setLoading(false);
+      dispatch({ type: "SET_LOADING", loading: false });
     }
   }
 
@@ -81,7 +110,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             type="text"
             required
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => dispatch({ type: "SET_FIELD", field: "name", value: e.target.value })}
             className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
             placeholder="Your name"
           />
@@ -100,7 +129,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           type="email"
           required
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => dispatch({ type: "SET_FIELD", field: "email", value: e.target.value })}
           className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
           placeholder="you@example.com"
         />
@@ -119,7 +148,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           required
           minLength={8}
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => dispatch({ type: "SET_FIELD", field: "password", value: e.target.value })}
           className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
           placeholder="Min. 8 characters"
         />

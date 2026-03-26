@@ -256,9 +256,9 @@ function HistoryPage() {
           {/* Loading */}
           {isLoading && (
             <div className="space-y-2">
-              {[1, 2, 3].map((i) => (
+              {[1, 2, 3].map((n) => (
                 <div
-                  key={i}
+                  key={`skeleton-${n}`}
                   className="h-14 animate-pulse rounded-xl bg-(--foam)"
                 />
               ))}

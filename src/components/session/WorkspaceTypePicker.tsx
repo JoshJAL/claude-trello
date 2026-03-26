@@ -95,9 +95,9 @@ export function WorkspaceTypePicker({
 
     return (
       <div className="flex items-center gap-2">
-        <label className="shrink-0 text-xs font-medium text-(--sea-ink-soft)">
+        <span className="shrink-0 text-xs font-medium text-(--sea-ink-soft)">
           Workspace:
-        </label>
+        </span>
         <div className="flex flex-1 items-center gap-2 rounded-lg border border-(--shore-line) bg-white px-2 py-1.5 dark:bg-[#1e1e1e]">
           <TypeIcon size={14} className="shrink-0 text-(--sea-ink-soft)" />
           <span className="text-xs text-(--sea-ink-soft)">{typeLabel}:</span>
@@ -121,9 +121,9 @@ export function WorkspaceTypePicker({
       {/* Step 1: Type picker */}
       {!activeType && (
         <div className="flex items-center gap-2">
-          <label className="shrink-0 text-xs font-medium text-(--sea-ink-soft)">
+          <span className="shrink-0 text-xs font-medium text-(--sea-ink-soft)">
             Workspace:
-          </label>
+          </span>
           <div className="relative flex-1">
             <button
               onClick={() => setTypePickerOpen(!typePickerOpen)}
@@ -256,7 +256,6 @@ function RepoSearch({
         onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
         onFocus={() => setOpen(true)}
         placeholder={placeholder}
-        autoFocus
         className="w-full rounded-lg border border-(--shore-line) bg-white py-1.5 pl-8 pr-3 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
       />
       {open && (
