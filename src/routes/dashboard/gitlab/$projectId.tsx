@@ -40,7 +40,7 @@ function IssueItem({
   const hasIncompleteTask = issue.tasks.some((t) => !t.checked);
 
   return (
-    <div className="island-shell rounded-xl p-4">
+    <div className="island-shell rounded-md p-4">
       <div className="flex items-start justify-between gap-2">
         <div>
           <h3 className="text-sm font-semibold text-(--sea-ink)">
@@ -51,7 +51,7 @@ function IssueItem({
               {issue.labels.map((label) => (
                 <span
                   key={label}
-                  className="rounded-full bg-(--foam) px-2 py-0.5 text-xs text-(--sea-ink-soft)"
+                  className="rounded-sm bg-(--foam) px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-(--sea-ink-soft)"
                 >
                   {label}
                 </span>
@@ -252,7 +252,7 @@ function GitLabProjectPage() {
         />
 
         {(sequential.error || parallel.error) && (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">
+          <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">
             {sequential.error || parallel.error}
           </div>
         )}
@@ -286,7 +286,7 @@ function GitLabProjectPage() {
             {["skeleton-1", "skeleton-2", "skeleton-3"].map((id) => (
               <div
                 key={id}
-                className="h-20 animate-pulse rounded-xl bg-(--foam)"
+                className="h-20 animate-pulse rounded-md bg-(--foam)"
               />
             ))}
           </div>
@@ -299,7 +299,7 @@ function GitLabProjectPage() {
         )}
 
         {activeIssues.length === 0 && !isLoading && (
-          <div className="island-shell rounded-2xl p-8 text-center">
+          <div className="island-shell rounded-md p-8 text-center">
             <p className="text-sm text-(--sea-ink-soft)">
               No open issues found in this project.
             </p>

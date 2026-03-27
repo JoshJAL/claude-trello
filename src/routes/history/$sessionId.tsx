@@ -36,25 +36,25 @@ function StatusBadge({ status }: { status: SessionStatus }) {
   switch (status) {
     case "completed":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+        <span className="inline-flex items-center gap-1 rounded-sm px-2.5 py-1 text-xs font-semibold uppercase tracking-wide bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
           <CheckCircle2 size={14} /> Completed
         </span>
       );
     case "failed":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-1 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400">
+        <span className="inline-flex items-center gap-1 rounded-sm px-2.5 py-1 text-xs font-semibold uppercase tracking-wide bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
           <XCircle size={14} /> Failed
         </span>
       );
     case "cancelled":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+        <span className="inline-flex items-center gap-1 rounded-sm px-2.5 py-1 text-xs font-semibold uppercase tracking-wide bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
           <Ban size={14} /> Cancelled
         </span>
       );
     case "running":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+        <span className="inline-flex items-center gap-1 rounded-sm px-2.5 py-1 text-xs font-semibold uppercase tracking-wide bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
           <Loader2 size={14} className="animate-spin" /> Running
         </span>
       );
@@ -188,7 +188,7 @@ function SessionDetailPage() {
     return (
       <main className="page-wrap px-4 py-8">
         <div className="mx-auto max-w-4xl">
-          <div className="island-shell rounded-2xl p-8">
+          <div className="island-shell rounded-md p-8">
             <p className="text-sm text-(--sea-ink-soft)">Session not found.</p>
             <Link to="/history" className="mt-2 inline-block text-sm text-(--lagoon)">
               Back to History
@@ -203,11 +203,11 @@ function SessionDetailPage() {
     <main className="page-wrap px-4 py-8">
       <div className="mx-auto max-w-4xl space-y-6">
         {/* Header */}
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <div className="mb-4 flex items-center gap-2">
             <Link
               to="/history"
-              className="rounded-lg p-1.5 text-(--sea-ink-soft) transition hover:bg-(--foam)"
+              className="rounded-md p-1.5 text-(--sea-ink-soft) transition hover:bg-(--foam)"
               title="Back to History"
             >
               <ArrowLeft size={18} />
@@ -223,13 +223,13 @@ function SessionDetailPage() {
 
           {/* Metadata grid */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="rounded-lg bg-(--foam) p-3">
+            <div className="rounded-md bg-(--foam) p-3">
               <p className="text-xs text-(--sea-ink-soft)">Provider</p>
               <p className="text-sm font-medium text-(--sea-ink)">
                 {agentSession.providerId}
               </p>
             </div>
-            <div className="rounded-lg bg-(--foam) p-3">
+            <div className="rounded-md bg-(--foam) p-3">
               <p className="text-xs text-(--sea-ink-soft)">Mode</p>
               <p className="text-sm font-medium text-(--sea-ink)">
                 {agentSession.mode}
@@ -238,32 +238,32 @@ function SessionDetailPage() {
                   : ""}
               </p>
             </div>
-            <div className="rounded-lg bg-(--foam) p-3">
+            <div className="rounded-md bg-(--foam) p-3">
               <p className="text-xs text-(--sea-ink-soft)">Tasks</p>
               <p className="text-sm font-medium text-(--sea-ink)">
                 {agentSession.tasksCompleted}/{agentSession.tasksTotal}
               </p>
             </div>
-            <div className="rounded-lg bg-(--foam) p-3">
+            <div className="rounded-md bg-(--foam) p-3">
               <p className="text-xs text-(--sea-ink-soft)">Duration</p>
               <p className="flex items-center gap-1 text-sm font-medium text-(--sea-ink)">
                 <Clock size={14} />
                 {formatDuration(agentSession.durationMs)}
               </p>
             </div>
-            <div className="rounded-lg bg-(--foam) p-3">
+            <div className="rounded-md bg-(--foam) p-3">
               <p className="text-xs text-(--sea-ink-soft)">Cost</p>
               <p className="text-sm font-medium text-(--sea-ink)">
                 {formatCost(agentSession.totalCostCents)}
               </p>
             </div>
-            <div className="rounded-lg bg-(--foam) p-3">
+            <div className="rounded-md bg-(--foam) p-3">
               <p className="text-xs text-(--sea-ink-soft)">Tokens</p>
               <p className="text-sm font-medium text-(--sea-ink)">
                 {agentSession.inputTokens.toLocaleString()} in / {agentSession.outputTokens.toLocaleString()} out
               </p>
             </div>
-            <div className="rounded-lg bg-(--foam) p-3 sm:col-span-2">
+            <div className="rounded-md bg-(--foam) p-3 sm:col-span-2">
               <p className="text-xs text-(--sea-ink-soft)">Started</p>
               <p className="text-sm font-medium text-(--sea-ink)">
                 {new Date(agentSession.startedAt).toLocaleString()}
@@ -273,7 +273,7 @@ function SessionDetailPage() {
 
           {/* Error message */}
           {agentSession.errorMessage && (
-            <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-950/30">
+            <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-950/30">
               <p className="text-sm text-red-700 dark:text-red-400">
                 {agentSession.errorMessage}
               </p>
@@ -282,7 +282,7 @@ function SessionDetailPage() {
 
           {/* Initial message */}
           {agentSession.initialMessage && (
-            <div className="mt-4 rounded-lg bg-(--foam) p-3">
+            <div className="mt-4 rounded-md bg-(--foam) p-3">
               <p className="mb-1 text-xs text-(--sea-ink-soft)">Initial Message</p>
               <p className="text-sm text-(--sea-ink)">
                 {agentSession.initialMessage}
@@ -296,7 +296,7 @@ function SessionDetailPage() {
               <button
                 onClick={handleDelete}
                 disabled={deleteMutation.isPending}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-1.5 text-sm text-red-600 transition hover:bg-red-50 disabled:opacity-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/30"
+                className="inline-flex items-center gap-1.5 rounded-md border border-red-200 px-3 py-1.5 text-sm text-red-600 transition hover:bg-red-50 disabled:opacity-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/30"
               >
                 <Trash2 size={14} />
                 Delete
@@ -306,7 +306,7 @@ function SessionDetailPage() {
         </div>
 
         {/* Event Log */}
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <h2 className="mb-3 text-sm font-semibold text-(--sea-ink)">
             Event Log ({eventsTotal} events)
           </h2>
@@ -327,7 +327,7 @@ function SessionDetailPage() {
           )}
 
           {events.length > 0 && (
-            <div className="max-h-[calc(100vh-20rem)] space-y-1 overflow-y-auto rounded-lg bg-(--foam) p-3 font-mono text-xs">
+            <div className="max-h-[calc(100vh-20rem)] space-y-1 overflow-y-auto rounded-md bg-(--foam) p-3 font-mono text-xs">
               {events.map((event) => (
                 <div
                   key={event.id}
@@ -355,7 +355,7 @@ function SessionDetailPage() {
               <button
                 onClick={() => setEventsPage((p) => Math.max(0, p - 1))}
                 disabled={eventsPage === 0}
-                className="rounded-lg border border-(--shore-line) px-3 py-1 text-xs text-(--sea-ink) disabled:opacity-40"
+                className="rounded-md border border-(--shore-line) px-3 py-1 text-xs text-(--sea-ink) disabled:opacity-40"
               >
                 Newer
               </button>
@@ -365,7 +365,7 @@ function SessionDetailPage() {
               <button
                 onClick={() => setEventsPage((p) => Math.min(eventsTotalPages - 1, p + 1))}
                 disabled={eventsPage >= eventsTotalPages - 1}
-                className="rounded-lg border border-(--shore-line) px-3 py-1 text-xs text-(--sea-ink) disabled:opacity-40"
+                className="rounded-md border border-(--shore-line) px-3 py-1 text-xs text-(--sea-ink) disabled:opacity-40"
               >
                 Older
               </button>

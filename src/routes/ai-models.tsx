@@ -25,7 +25,7 @@ function AiModelsPage() {
             Claude models excel at coding, analysis, and following complex instructions.
             Default to Sonnet 4.6 for 80%+ of tasks — it offers the best quality-to-cost ratio.
           </p>
-          <div className="island-shell overflow-x-auto rounded-2xl">
+          <div className="island-shell overflow-x-auto rounded-md">
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-(--shore-line) text-xs font-semibold text-(--sea-ink-soft)">
@@ -68,7 +68,7 @@ function AiModelsPage() {
             OpenAI&apos;s GPT-5.4 family delivers strong reasoning and coding performance.
             GPT-5.4 Mini is the recommended default — it approaches full GPT-5.4 quality at a fraction of the cost.
           </p>
-          <div className="island-shell overflow-x-auto rounded-2xl">
+          <div className="island-shell overflow-x-auto rounded-md">
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-(--shore-line) text-xs font-semibold text-(--sea-ink-soft)">
@@ -111,7 +111,7 @@ function AiModelsPage() {
             All Groq models run on Groq&apos;s custom LPU hardware for extremely fast inference.
             Choose Groq when speed matters more than frontier intelligence.
           </p>
-          <div className="island-shell overflow-x-auto rounded-2xl">
+          <div className="island-shell overflow-x-auto rounded-md">
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-(--shore-line) text-xs font-semibold text-(--sea-ink-soft)">
@@ -168,7 +168,7 @@ function AiModelsPage() {
         {/* Choosing a Model */}
         <section className="space-y-3">
           <h2 className="text-lg font-bold text-(--sea-ink)">Choosing a Model</h2>
-          <div className="island-shell space-y-2 rounded-2xl p-5">
+          <div className="island-shell space-y-2 rounded-md p-5">
             <Tip label="Most tasks">Use <strong>Claude Sonnet 4.6</strong> — best quality-to-cost ratio for coding.</Tip>
             <Tip label="Deep reasoning">Use <strong>Opus 4.6</strong> for multi-file refactors, scientific analysis, or 1M context.</Tip>
             <Tip label="Budget-conscious">Use <strong>Haiku 4.5</strong> or <strong>GPT-5.4 Nano</strong> for high-volume simple work.</Tip>

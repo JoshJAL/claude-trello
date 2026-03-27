@@ -88,7 +88,7 @@ function GitHubDashboardPage() {
     <main className="page-wrap px-4 py-8">
       <UpdateBanner />
       <div className="mx-auto max-w-4xl">
-        <div className="island-shell rounded-2xl p-8">
+        <div className="island-shell rounded-md p-8">
           <h1 className="mb-2 text-2xl font-bold text-(--sea-ink)">
             GitHub Repos
           </h1>
@@ -98,7 +98,7 @@ function GitHubDashboardPage() {
           </p>
 
           {!githubLinked && (
-            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/30">
+            <div className="rounded-md border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/30">
               <p className="text-sm text-amber-800 dark:text-amber-300">
                 You haven&apos;t connected GitHub yet.{" "}
                 <Link
@@ -117,7 +117,7 @@ function GitHubDashboardPage() {
               {["skeleton-1", "skeleton-2", "skeleton-3"].map((id) => (
                 <div
                   key={id}
-                  className="h-14 animate-pulse rounded-xl bg-(--foam)"
+                  className="h-14 animate-pulse rounded-md bg-(--foam)"
                 />
               ))}
             </div>
@@ -157,7 +157,7 @@ function GitHubDashboardPage() {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   placeholder="Search repos…"
-                  className="w-full rounded-xl border border-(--shore-line) bg-white/60 px-4 py-2 text-sm text-(--sea-ink) placeholder-(--sea-ink-soft) outline-none focus:border-(--lagoon) dark:bg-white/5"
+                  className="w-full rounded-md border border-(--shore-line) bg-white/60 px-4 py-2 text-sm text-(--sea-ink) placeholder-(--sea-ink-soft) outline-none focus:border-(--lagoon) dark:bg-white/5"
                 />
                 {isPending && (
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-(--sea-ink-soft)">
@@ -174,7 +174,7 @@ function GitHubDashboardPage() {
                   {["pending-1", "pending-2", "pending-3"].map((id) => (
                     <div
                       key={id}
-                      className="h-14 animate-pulse rounded-xl bg-(--foam)"
+                      className="h-14 animate-pulse rounded-md bg-(--foam)"
                     />
                   ))}
                 </div>
@@ -196,7 +196,7 @@ function GitHubDashboardPage() {
                           },
                         })
                       }
-                      className="flex flex-col items-start rounded-xl border border-(--shore-line) bg-white/60 p-4 text-left transition hover:-translate-y-0.5 hover:border-(--lagoon) hover:shadow-md dark:bg-white/5"
+                      className="flex flex-col items-start rounded-md border border-(--shore-line) bg-white/60 p-4 text-left transition hover:-translate-y-0.5 hover:border-(--lagoon) hover:shadow-md dark:bg-white/5"
                     >
                       <span className="text-sm font-semibold text-(--sea-ink)">
                         {repo.full_name}
@@ -207,7 +207,7 @@ function GitHubDashboardPage() {
                         </span>
                       )}
                       {repo.private && (
-                        <span className="mt-2 rounded-full bg-(--foam) px-2 py-0.5 text-xs text-(--sea-ink-soft)">
+                        <span className="mt-2 rounded-sm px-2 py-0.5 text-xs font-semibold uppercase tracking-wide bg-(--foam) text-(--sea-ink-soft)">
                           Private
                         </span>
                       )}

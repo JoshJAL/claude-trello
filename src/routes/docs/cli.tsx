@@ -52,7 +52,7 @@ function CodeBlock({
 
   return (
     <div className="group relative">
-      <pre className="overflow-x-auto rounded-xl border border-(--line) bg-(--code-bg) p-5 text-sm leading-relaxed text-(--code-text)">
+      <pre className="overflow-x-auto rounded-md border border-(--line) bg-(--code-bg) p-5 text-sm leading-relaxed text-(--code-text)">
         <code>{children}</code>
       </pre>
       {text && <CopyButton text={text} />}
@@ -72,7 +72,7 @@ function StepCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="island-shell rounded-2xl p-6">
+    <div className="island-shell rounded-md p-6">
       <div className="mb-3 flex items-center gap-3">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-(--lagoon) text-sm font-bold text-white">
           {number}
@@ -99,7 +99,7 @@ function CommandRef({
   flags?: Array<{ flag: string; desc: string }>;
 }) {
   return (
-    <div className="island-shell rounded-xl p-5">
+    <div className="island-shell rounded-md p-5">
       <div className="flex flex-wrap items-baseline gap-3">
         <code className="rounded-md bg-(--code-bg) px-2.5 py-1 text-sm font-semibold text-(--code-text)">
           {command}
@@ -129,7 +129,7 @@ function CliIntroSection() {
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <div className="mb-10">
         <div className="mb-3 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--lagoon) text-white">
+          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-(--lagoon) text-white">
             <Terminal size={22} />
           </div>
           <div>
@@ -149,7 +149,7 @@ function CliIntroSection() {
           href="https://www.npmjs.com/package/taskpilot-cli"
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-(--shore-line) px-3 py-1.5 text-sm font-semibold text-(--sea-ink) no-underline transition hover:bg-(--foam)"
+          className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-(--shore-line) px-3 py-1.5 text-sm font-semibold text-(--sea-ink) no-underline transition hover:bg-(--foam)"
         >
           View on npm
           <ExternalLink size={14} />
@@ -157,7 +157,7 @@ function CliIntroSection() {
       </div>
 
       {/* ── Install ───────────────────────────────────────────────── */}
-      <section className="island-shell mb-6 rounded-2xl p-6">
+      <section className="island-shell mb-6 rounded-md p-6">
         <h2 className="mb-3 text-lg font-semibold text-(--sea-ink)">
           Install
         </h2>
@@ -182,7 +182,7 @@ function CliIntroSection() {
       </section>
 
       {/* ── Prerequisites ────────────────────────────────────────── */}
-      <section className="island-shell mb-6 rounded-2xl p-6">
+      <section className="island-shell mb-6 rounded-md p-6">
         <h2 className="mb-3 text-lg font-semibold text-(--sea-ink)">
           Prerequisites
         </h2>
@@ -537,7 +537,7 @@ function CliTechnicalSection() {
         <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
           How It Works
         </h2>
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <div className="space-y-4 text-sm text-(--sea-ink-soft)">
             <div className="flex items-start gap-3">
               <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--foam) text-xs font-bold text-(--lagoon)">
@@ -815,7 +815,7 @@ function CliFaqSection() {
           Troubleshooting
         </h2>
         <div className="space-y-3">
-          <details className="island-shell rounded-xl">
+          <details className="island-shell rounded-md">
             <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
               "Session expired" error
             </summary>
@@ -828,7 +828,7 @@ function CliFaqSection() {
             </div>
           </details>
 
-          <details className="island-shell rounded-xl">
+          <details className="island-shell rounded-md">
             <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
               "Source not connected" or "API key not configured"
             </summary>
@@ -840,7 +840,7 @@ function CliFaqSection() {
             </div>
           </details>
 
-          <details className="island-shell rounded-xl">
+          <details className="island-shell rounded-md">
             <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
               Can I use the CLI without the web server running?
             </summary>
@@ -858,7 +858,7 @@ function CliFaqSection() {
             </div>
           </details>
 
-          <details className="island-shell rounded-xl">
+          <details className="island-shell rounded-md">
             <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
               Where is my session stored?
             </summary>
@@ -879,7 +879,7 @@ function CliFaqSection() {
             </div>
           </details>
 
-          <details className="island-shell rounded-xl">
+          <details className="island-shell rounded-md">
             <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
               The agent asked me a question — what do I do?
             </summary>
@@ -901,7 +901,7 @@ function CliFaqSection() {
         <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
           Security
         </h2>
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <ul className="space-y-3 text-sm text-(--sea-ink-soft)">
             <li className="flex items-start gap-2">
               <CheckCircle2

@@ -100,7 +100,7 @@ export function RepoLinker({
 
       {linkedRepoKey ? (
         // Selected state — show chip with clear button
-        <div className="flex flex-1 items-center gap-2 rounded-lg border border-(--shore-line) bg-white px-2 py-1.5 dark:bg-[#1e1e1e]">
+        <div className="flex flex-1 items-center gap-2 rounded-md border border-(--shore-line) bg-white px-2 py-1.5 dark:bg-[#1e1e1e]">
           {selectedSource === "github" ? (
             <Github size={14} className="shrink-0 text-(--sea-ink-soft)" />
           ) : selectedSource === "gitlab" ? (
@@ -132,12 +132,12 @@ export function RepoLinker({
             }}
             onFocus={() => setOpen(true)}
             placeholder="Search repos and projects..."
-            className="w-full rounded-lg border border-(--shore-line) bg-white py-1.5 pl-8 pr-3 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
+            className="w-full rounded-md border border-(--shore-line) bg-white py-1.5 pl-8 pr-3 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
           />
 
           {/* Dropdown */}
           {open && (
-            <div className="absolute left-0 top-full z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border border-(--shore-line) bg-white shadow-lg dark:bg-[#1e1e1e]">
+            <div className="absolute left-0 top-full z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-(--shore-line) bg-white shadow-lg dark:bg-[#1e1e1e]">
               {/* None option */}
               <button
                 onClick={() => select("")}

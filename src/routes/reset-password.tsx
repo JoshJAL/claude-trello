@@ -88,7 +88,7 @@ function ResetPasswordPage() {
 
   return (
     <main className="page-wrap flex min-h-[80vh] items-center justify-center px-4">
-      <div className="island-shell w-full max-w-md rounded-2xl p-8">
+      <div className="island-shell w-full max-w-md rounded-md p-8">
         <h1 className="mb-2 text-center text-2xl font-bold text-(--sea-ink)">
           Reset password
         </h1>
@@ -98,7 +98,7 @@ function ResetPasswordPage() {
 
         {state.success ? (
           <div className="flex flex-col items-center gap-4">
-            <div className="rounded-lg border border-green-300 bg-green-100 px-4 py-3 text-sm text-green-900 dark:border-green-800 dark:bg-green-950/30 dark:text-green-300">
+            <div className="rounded-md border border-green-300 bg-green-100 px-4 py-3 text-sm text-green-900 dark:border-green-800 dark:bg-green-950/30 dark:text-green-300">
               Password reset successfully. Redirecting to sign in...
             </div>
           </div>
@@ -120,7 +120,7 @@ function ResetPasswordPage() {
                 onChange={(e) =>
                   dispatch({ type: "SET_FIELD", field: "password", value: e.target.value })
                 }
-                className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
+                className="rounded-md border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
                 placeholder="Min. 8 characters"
               />
             </div>
@@ -141,7 +141,7 @@ function ResetPasswordPage() {
                 onChange={(e) =>
                   dispatch({ type: "SET_FIELD", field: "confirm", value: e.target.value })
                 }
-                className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
+                className="rounded-md border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
                 placeholder="Repeat password"
               />
             </div>
@@ -153,7 +153,7 @@ function ResetPasswordPage() {
             <button
               type="submit"
               disabled={state.loading}
-              className="mt-2 rounded-lg bg-(--lagoon) px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+              className="mt-2 rounded-md bg-(--lagoon) px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
             >
               {state.loading ? "Resetting..." : "Reset password"}
             </button>

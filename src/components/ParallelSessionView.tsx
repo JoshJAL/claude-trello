@@ -27,7 +27,7 @@ export function ParallelSessionView({
   return (
     <div className="space-y-4">
       {/* Progress summary bar */}
-      <div className="island-shell rounded-xl p-4">
+      <div className="island-shell rounded-md p-4">
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium text-(--sea-ink)">
             Parallel Agents
@@ -81,7 +81,7 @@ export function ParallelSessionView({
         </div>
 
         {/* Log panel */}
-        <div className="island-shell min-h-[300px] overflow-hidden rounded-xl">
+        <div className="island-shell min-h-[300px] overflow-hidden rounded-md">
           {selectedCardId ? (
             <div className="flex h-full flex-col">
               <div className="border-b border-(--shore-line) px-4 py-2">
@@ -126,7 +126,7 @@ export function ParallelSessionView({
 
       {/* Summary panel */}
       {summary && (
-        <div className="island-shell rounded-xl p-4">
+        <div className="island-shell rounded-md p-4">
           <h3 className="text-sm font-semibold text-(--sea-ink)">
             Session Summary
           </h3>
@@ -159,7 +159,7 @@ export function ParallelSessionView({
           </div>
 
           {summary.mergeConflicts.length > 0 && (
-            <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-950/30">
+            <div className="mt-3 rounded-md border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-950/30">
               <p className="text-xs font-medium text-red-700 dark:text-red-300">
                 Merge conflicts ({summary.mergeConflicts.length})
               </p>

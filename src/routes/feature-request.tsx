@@ -64,7 +64,7 @@ function FeatureRequestPage() {
 
         <form
           onSubmit={handleSubmit}
-          className="island-shell space-y-5 rounded-2xl p-6"
+          className="island-shell space-y-5 rounded-md p-6"
         >
           <div>
             <label
@@ -80,7 +80,7 @@ function FeatureRequestPage() {
               onChange={(e) => setTitle(e.target.value)}
               placeholder='e.g. "Add Jira integration"'
               maxLength={200}
-              className="w-full rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
+              className="w-full rounded-md border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
             />
           </div>
 
@@ -95,7 +95,7 @@ function FeatureRequestPage() {
               id="fr-category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full rounded-lg border border-(--shore-line) bg-white px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
+              className="w-full rounded-md border border-(--shore-line) bg-white px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
             >
               {CATEGORIES.map((c) => (
                 <option key={c.value} value={c.value} className="bg-white text-black dark:bg-[#1e1e1e] dark:text-[#e0e0e0]">
@@ -119,7 +119,7 @@ function FeatureRequestPage() {
               placeholder="Describe what you'd like and why it would be useful..."
               rows={6}
               maxLength={2000}
-              className="w-full resize-none rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
+              className="w-full resize-none rounded-md border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
             />
             <p className="mt-1 text-xs text-(--shore-line)">
               {description.length}/2000
@@ -140,21 +140,21 @@ function FeatureRequestPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="For follow-up questions"
-              className="w-full rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
+              className="w-full rounded-md border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
             />
           </div>
 
           <button
             type="submit"
             disabled={!isValid}
-            className="flex items-center gap-2 rounded-lg bg-(--lagoon) px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-md bg-(--lagoon) px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
           >
             Submit on GitHub
             <ExternalLink size={14} />
           </button>
         </form>
 
-        <div className="island-shell rounded-2xl p-6 text-center">
+        <div className="island-shell rounded-md p-6 text-center">
           <p className="text-sm text-(--sea-ink-soft)">
             Found a bug instead?{" "}
             <a

@@ -76,7 +76,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
 
   return (
     <div
-      className={`flex items-center gap-3 rounded-xl border px-4 py-3 shadow-lg animate-in slide-in-from-right fade-in duration-200 ${COLORS[toast.type]}`}
+      className={`flex items-center gap-3 rounded-md border px-4 py-3 shadow-lg animate-in slide-in-from-right fade-in duration-200 ${COLORS[toast.type]}`}
       style={{ minWidth: 280, maxWidth: 420 }}
     >
       <Icon size={18} className={`shrink-0 ${ICON_COLORS[toast.type]}`} />

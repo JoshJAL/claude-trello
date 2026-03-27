@@ -159,7 +159,7 @@ export function PrAutomationSettings() {
                 updateField("branchNamingPattern", e.target.value)
               }
               placeholder={DEFAULT_PR_AUTOMATION_CONFIG.branchNamingPattern}
-              className="w-full rounded-lg border border-(--sea-ink-soft) bg-(--sea-bg) px-3 py-2 text-sm text-(--sea-ink) placeholder:text-(--sea-ink-soft) focus:border-(--sea-accent) focus:outline-none focus:ring-1 focus:ring-(--sea-accent)"
+              className="w-full rounded-md border border-(--sea-ink-soft) bg-(--sea-bg) px-3 py-2 text-sm text-(--sea-ink) placeholder:text-(--sea-ink-soft) focus:border-(--sea-accent) focus:outline-none focus:ring-1 focus:ring-(--sea-accent)"
             />
             <p className="mt-1 text-xs text-(--sea-ink-soft)">
               Variables: {"{source}"}, {"{id}"}, {"{slug}"}
@@ -179,7 +179,7 @@ export function PrAutomationSettings() {
         <button
           onClick={handleSave}
           disabled={mutation.isPending}
-          className="rounded-lg bg-(--sea-accent) px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded-md bg-(--sea-accent) px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
         >
           {mutation.isPending ? "Saving..." : "Save"}
         </button>

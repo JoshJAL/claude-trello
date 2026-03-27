@@ -41,7 +41,7 @@ function CopyButton({ text }: { text: string }) {
 function CodeBlock({ code }: { code: string }) {
   return (
     <div className="relative">
-      <pre className="overflow-x-auto rounded-lg bg-(--foam) p-4 font-mono text-xs leading-relaxed text-(--sea-ink)">
+      <pre className="overflow-x-auto rounded-md bg-(--foam) p-4 font-mono text-xs leading-relaxed text-(--sea-ink)">
         <code>{code}</code>
       </pre>
       <CopyButton text={code} />
@@ -59,7 +59,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="island-shell rounded-2xl p-6">
+    <section className="island-shell rounded-md p-6">
       <div className="mb-4 flex items-center gap-2">
         <Icon size={20} className="text-(--lagoon)" />
         <h2 className="text-lg font-semibold text-(--sea-ink)">{title}</h2>
@@ -109,7 +109,7 @@ function SelfHostingDocsPage() {
     <main className="page-wrap px-4 py-8">
       <div className="mx-auto max-w-3xl space-y-6">
         {/* Header */}
-        <div className="island-shell rounded-2xl p-8">
+        <div className="island-shell rounded-md p-8">
           <div className="mb-1 flex items-center gap-2">
             <Server size={24} className="text-(--lagoon)" />
             <h1 className="text-2xl font-bold text-(--sea-ink)">
@@ -124,7 +124,7 @@ function SelfHostingDocsPage() {
             href="https://github.com/JoshJAL/claude-trello"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[#24292f] px-4 py-2.5 text-sm font-semibold text-white no-underline transition hover:bg-[#1b1f23] dark:bg-[#f0f6fc] dark:text-[#24292f] dark:hover:bg-[#d0d7de]"
+            className="inline-flex items-center gap-1.5 rounded-md bg-[#24292f] px-4 py-2.5 text-sm font-semibold text-white no-underline transition hover:bg-[#1b1f23] dark:bg-[#f0f6fc] dark:text-[#24292f] dark:hover:bg-[#d0d7de]"
           >
             <Github size={16} />
             View Source on GitHub
@@ -341,7 +341,7 @@ node .output/server/index.mjs`}
               href="https://github.com/JoshJAL/claude-trello"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-(--shore-line) px-3 py-2 text-sm font-medium text-(--sea-ink) no-underline transition hover:border-(--lagoon)"
+              className="inline-flex items-center gap-1.5 rounded-md border border-(--shore-line) px-3 py-2 text-sm font-medium text-(--sea-ink) no-underline transition hover:border-(--lagoon)"
             >
               <Github size={16} />
               Web App (this repo)
@@ -351,7 +351,7 @@ node .output/server/index.mjs`}
               href="https://www.npmjs.com/package/taskpilot-cli"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-(--shore-line) px-3 py-2 text-sm font-medium text-(--sea-ink) no-underline transition hover:border-(--lagoon)"
+              className="inline-flex items-center gap-1.5 rounded-md border border-(--shore-line) px-3 py-2 text-sm font-medium text-(--sea-ink) no-underline transition hover:border-(--lagoon)"
             >
               <Terminal size={16} />
               CLI on npm

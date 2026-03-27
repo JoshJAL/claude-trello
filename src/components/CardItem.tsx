@@ -31,7 +31,7 @@ export function CardItem({ card, onCheckToggle, done, onWorkOnThis, isSessionRun
 
   return (
     <div
-      className={`island-shell rounded-xl p-4 ${done ? "opacity-60" : ""}`}
+      className={`island-shell rounded-md p-4 ${done ? "opacity-60" : ""}`}
     >
       <div className="mb-2 flex items-start justify-between gap-2">
         <h3
@@ -53,7 +53,7 @@ export function CardItem({ card, onCheckToggle, done, onWorkOnThis, isSessionRun
           )}
           {totalItems > 0 && (
             <span
-              className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
+              className={`shrink-0 rounded-sm px-2 py-0.5 text-xs font-semibold uppercase tracking-wide ${
                 done
                   ? "bg-green-100 text-green-900 dark:bg-green-900/40 dark:text-green-300"
                   : "bg-(--foam) text-(--sea-ink-soft)"

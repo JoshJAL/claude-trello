@@ -15,7 +15,7 @@ export const Route = createFileRoute("/register")({
 function RegisterPage() {
   return (
     <main className="page-wrap flex min-h-[80vh] items-center justify-center px-4">
-      <div className="island-shell w-full max-w-md rounded-2xl p-8">
+      <div className="island-shell w-full max-w-md rounded-md p-8">
         <h1 className="mb-2 text-center text-2xl font-bold text-(--sea-ink)">
           Create account
         </h1>

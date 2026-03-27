@@ -29,7 +29,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="island-shell rounded-2xl p-6">
+    <div className="island-shell rounded-md p-6">
       <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-(--sea-ink)">
         <Icon size={20} className="text-(--lagoon)" />
         {title}

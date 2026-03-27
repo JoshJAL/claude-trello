@@ -30,7 +30,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div id={id} className="island-shell scroll-mt-20 rounded-2xl p-6">
+    <div id={id} className="island-shell scroll-mt-20 rounded-md p-6">
       <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-(--sea-ink)">
         <Icon size={20} className="text-(--lagoon)" />
         {title}
@@ -55,7 +55,7 @@ function PrivacyPage() {
           </p>
         </div>
 
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <p className="text-sm leading-relaxed text-(--sea-ink-soft)">
             TaskPilot is an open-source tool that connects AI coding agents to
             task boards. We take your privacy seriously. This policy explains

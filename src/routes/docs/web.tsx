@@ -58,7 +58,7 @@ function CodeBlock({
 
   return (
     <div className="group relative">
-      <pre className="overflow-x-auto rounded-xl border border-(--line) bg-(--code-bg) p-5 text-sm leading-relaxed text-(--code-text)">
+      <pre className="overflow-x-auto rounded-md border border-(--line) bg-(--code-bg) p-5 text-sm leading-relaxed text-(--code-text)">
         <code>{children}</code>
       </pre>
       {text && <CopyButton text={text} />}
@@ -78,7 +78,7 @@ function StepCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="island-shell rounded-2xl p-6">
+    <div className="island-shell rounded-md p-6">
       <div className="mb-3 flex items-center gap-3">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-(--lagoon) text-sm font-bold text-white">
           {number}
@@ -105,7 +105,7 @@ function FeatureCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="island-shell rounded-xl p-5">
+    <div className="island-shell rounded-md p-5">
       <div className="mb-2 flex items-center gap-2">
         <Icon size={18} className="text-(--lagoon)" />
         <h3 className="text-sm font-semibold text-(--sea-ink)">
@@ -124,7 +124,7 @@ function WebIntroSection() {
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <div className="mb-10">
         <div className="mb-3 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--lagoon) text-white">
+          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-(--lagoon) text-white">
             <Globe size={22} />
           </div>
           <div>
@@ -142,7 +142,7 @@ function WebIntroSection() {
       </div>
 
       {/* ── Overview ────────────────────────────────────────────── */}
-      <section className="island-shell mb-6 rounded-2xl p-6">
+      <section className="island-shell mb-6 rounded-md p-6">
         <h2 className="mb-3 text-lg font-semibold text-(--sea-ink)">
           What You Can Do
         </h2>
@@ -225,7 +225,7 @@ function WebGettingStartedSection() {
               encrypted (AES-256-GCM) before being stored — they're never
               visible after saving.
             </p>
-            <div className="rounded-lg border border-(--line) p-3">
+            <div className="rounded-md border border-(--line) p-3">
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-(--line)">
@@ -321,7 +321,7 @@ function WebDashboardSection() {
           Dashboard
         </h2>
         <div className="space-y-4">
-          <div className="island-shell rounded-2xl p-6">
+          <div className="island-shell rounded-md p-6">
             <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-(--sea-ink)">
               <Trello size={18} className="text-(--lagoon)" />
               Trello
@@ -349,7 +349,7 @@ function WebDashboardSection() {
             </div>
           </div>
 
-          <div className="island-shell rounded-2xl p-6">
+          <div className="island-shell rounded-md p-6">
             <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-(--sea-ink)">
               <Github size={18} className="text-(--lagoon)" />
               GitHub
@@ -381,7 +381,7 @@ function WebDashboardSection() {
             </div>
           </div>
 
-          <div className="island-shell rounded-2xl p-6">
+          <div className="island-shell rounded-md p-6">
             <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-(--sea-ink)">
               <Gitlab size={18} className="text-(--lagoon)" />
               GitLab
@@ -413,7 +413,7 @@ function WebDashboardSection() {
         <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
           Running a Session
         </h2>
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <div className="space-y-4 text-sm text-(--sea-ink-soft)">
             <div className="flex items-start gap-3">
               <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--foam) text-xs font-bold text-(--lagoon)">
@@ -547,7 +547,7 @@ function WebFeaturesSection() {
         <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
           Parallel Mode
         </h2>
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <div className="space-y-3 text-sm text-(--sea-ink-soft)">
             <p>
               Parallel mode launches{" "}
@@ -557,7 +557,7 @@ function WebFeaturesSection() {
               , each in an isolated git worktree. This lets multiple tasks be
               worked on simultaneously without conflicts.
             </p>
-            <div className="rounded-lg border border-(--line) p-3">
+            <div className="rounded-md border border-(--line) p-3">
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-(--line)">
@@ -604,7 +604,7 @@ function WebFeaturesSection() {
         <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
           Settings
         </h2>
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <div className="space-y-4 text-sm text-(--sea-ink-soft)">
             <p>
               The{" "}
@@ -666,7 +666,7 @@ function WebFeaturesSection() {
         <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
           Cloud Storage Workspaces
         </h2>
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <div className="space-y-4 text-sm text-(--sea-ink-soft)">
             <p>
               TaskPilot isn't just for code. Connect{" "}
@@ -729,7 +729,7 @@ function WebTechnicalSection() {
         <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
           How It Works
         </h2>
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <CodeBlock>{`Browser                         Server                      Task Source API
         │                                │                              │
         │  1. Sign in (email/password)   │                              │
@@ -768,7 +768,7 @@ function WebTechnicalSection() {
           Task Format by Source
         </h2>
         <div className="space-y-4">
-          <div className="island-shell rounded-xl p-5">
+          <div className="island-shell rounded-md p-5">
             <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-(--sea-ink)">
               <Trello size={16} className="text-(--lagoon)" />
               Trello
@@ -793,7 +793,7 @@ function WebTechnicalSection() {
           └── (completed cards moved here)`}</CodeBlock>
           </div>
 
-          <div className="island-shell rounded-xl p-5">
+          <div className="island-shell rounded-md p-5">
             <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-(--sea-ink)">
               <Github size={16} className="text-(--lagoon)" />
               GitHub / <Gitlab size={16} className="text-(--lagoon)" />{" "}
@@ -822,7 +822,7 @@ function WebTechnicalSection() {
           Troubleshooting
         </h2>
         <div className="space-y-3">
-          <details className="island-shell rounded-xl">
+          <details className="island-shell rounded-md">
             <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
               I connected Trello/GitHub/GitLab but no boards or repos appear
             </summary>
@@ -835,7 +835,7 @@ function WebTechnicalSection() {
             </div>
           </details>
 
-          <details className="island-shell rounded-xl">
+          <details className="island-shell rounded-md">
             <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
               The session started but nothing is happening
             </summary>
@@ -852,7 +852,7 @@ function WebTechnicalSection() {
             </div>
           </details>
 
-          <details className="island-shell rounded-xl">
+          <details className="island-shell rounded-md">
             <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
               Can I run multiple sessions at the same time?
             </summary>
@@ -864,7 +864,7 @@ function WebTechnicalSection() {
             </div>
           </details>
 
-          <details className="island-shell rounded-xl">
+          <details className="island-shell rounded-md">
             <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
               Parallel mode has merge conflicts
             </summary>
@@ -876,7 +876,7 @@ function WebTechnicalSection() {
             </div>
           </details>
 
-          <details className="island-shell rounded-xl">
+          <details className="island-shell rounded-md">
             <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
               The provider dropdown only shows Claude
             </summary>
@@ -888,7 +888,7 @@ function WebTechnicalSection() {
             </div>
           </details>
 
-          <details className="island-shell rounded-xl">
+          <details className="island-shell rounded-md">
             <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-(--sea-ink)">
               Where is my data stored?
             </summary>
@@ -907,7 +907,7 @@ function WebTechnicalSection() {
         <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
           Security
         </h2>
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <ul className="space-y-3 text-sm text-(--sea-ink-soft)">
             <li className="flex items-start gap-2">
               <CheckCircle2
@@ -987,7 +987,7 @@ function WebHistorySection() {
         <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
           Session History
         </h2>
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <div className="space-y-4 text-sm text-(--sea-ink-soft)">
             <p>
               The{" "}
@@ -1055,7 +1055,7 @@ function WebHistorySection() {
         <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
           Cost Tracking &amp; Analytics
         </h2>
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <div className="space-y-4 text-sm text-(--sea-ink-soft)">
             <p>
               The{" "}
@@ -1068,7 +1068,7 @@ function WebHistorySection() {
               <h3 className="mb-2 font-semibold text-(--sea-ink)">
                 Summary Cards
               </h3>
-              <div className="rounded-lg border border-(--line) p-3">
+              <div className="rounded-md border border-(--line) p-3">
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="border-b border-(--line)">
@@ -1146,7 +1146,7 @@ function WebHistorySection() {
         <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
           Task Dependencies
         </h2>
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <div className="space-y-4 text-sm text-(--sea-ink-soft)">
             <p>
               TaskPilot automatically detects dependency markers in card
@@ -1223,7 +1223,7 @@ function WebAutomationSection() {
         <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
           PR/MR Automation
         </h2>
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <div className="space-y-4 text-sm text-(--sea-ink-soft)">
             <p>
               TaskPilot can automatically create pull requests (GitHub) or
@@ -1239,7 +1239,7 @@ function WebAutomationSection() {
               <h3 className="mb-2 font-semibold text-(--sea-ink)">
                 Configuration Options
               </h3>
-              <div className="rounded-lg border border-(--line) p-3">
+              <div className="rounded-md border border-(--line) p-3">
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="border-b border-(--line)">
@@ -1319,7 +1319,7 @@ function WebAutomationSection() {
         <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
           Real-Time Updates
         </h2>
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <div className="space-y-4 text-sm text-(--sea-ink-soft)">
             <p>
               TaskPilot uses webhooks to push task source changes to the UI
@@ -1362,18 +1362,18 @@ function WebAutomationSection() {
               </p>
               <ul className="list-inside list-disc space-y-1">
                 <li>
-                  <span className="inline-block h-2.5 w-2.5 rounded-full bg-green-500" />{" "}
+                  <span className="inline-block h-2.5 w-2.5 rounded-sm bg-green-500" />{" "}
                   <strong className="text-(--sea-ink)">Green</strong> —
                   webhook active, receiving events
                 </li>
                 <li>
-                  <span className="inline-block h-2.5 w-2.5 rounded-full bg-amber-500" />{" "}
+                  <span className="inline-block h-2.5 w-2.5 rounded-sm bg-amber-500" />{" "}
                   <strong className="text-(--sea-ink)">Amber</strong> —
                   connected but webhook not configured (polling fallback
                   active)
                 </li>
                 <li>
-                  <span className="inline-block h-2.5 w-2.5 rounded-full bg-gray-400" />{" "}
+                  <span className="inline-block h-2.5 w-2.5 rounded-sm bg-gray-400" />{" "}
                   <strong className="text-(--sea-ink)">Gray</strong> —
                   source not connected
                 </li>
@@ -1400,7 +1400,7 @@ function WebAutomationSection() {
         <h2 className="mb-4 text-xl font-bold text-(--sea-ink)">
           What's New
         </h2>
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <div className="space-y-4 text-sm text-(--sea-ink-soft)">
             <p>
               The{" "}

@@ -111,7 +111,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             required
             value={name}
             onChange={(e) => dispatch({ type: "SET_FIELD", field: "name", value: e.target.value })}
-            className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
+            className="rounded-md border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
             placeholder="Your name"
           />
         </div>
@@ -130,7 +130,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           required
           value={email}
           onChange={(e) => dispatch({ type: "SET_FIELD", field: "email", value: e.target.value })}
-          className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
+          className="rounded-md border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
           placeholder="you@example.com"
         />
       </div>
@@ -149,7 +149,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           minLength={8}
           value={password}
           onChange={(e) => dispatch({ type: "SET_FIELD", field: "password", value: e.target.value })}
-          className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
+          className="rounded-md border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
           placeholder="Min. 8 characters"
         />
       </div>
@@ -172,7 +172,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       <button
         type="submit"
         disabled={loading}
-        className="mt-2 rounded-lg bg-(--lagoon) px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+        className="mt-2 rounded-md bg-(--lagoon) px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
       >
         {loading
           ? isRegister

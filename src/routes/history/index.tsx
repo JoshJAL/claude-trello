@@ -63,25 +63,25 @@ function StatusBadge({ status }: { status: SessionStatus }) {
   switch (status) {
     case "completed":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+        <span className="inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-semibold uppercase tracking-wide bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
           <CheckCircle2 size={12} /> Completed
         </span>
       );
     case "failed":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400">
+        <span className="inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-semibold uppercase tracking-wide bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
           <XCircle size={12} /> Failed
         </span>
       );
     case "cancelled":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+        <span className="inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-semibold uppercase tracking-wide bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
           <Ban size={12} /> Cancelled
         </span>
       );
     case "running":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+        <span className="inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-semibold uppercase tracking-wide bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
           <Loader2 size={12} className="animate-spin" /> Running
         </span>
       );
@@ -120,7 +120,7 @@ function SessionRow({
   onDelete: (id: string) => void;
 }) {
   return (
-    <div className="flex items-center gap-4 rounded-xl border border-(--shore-line) bg-white/60 px-4 py-3 transition hover:border-(--lagoon) dark:bg-white/5">
+    <div className="flex items-center gap-4 rounded-md border border-(--shore-line) bg-white/60 px-4 py-3 transition hover:border-(--lagoon) dark:bg-white/5">
       <Link
         to="/history/$sessionId"
         params={{ sessionId: session.id }}
@@ -167,7 +167,7 @@ function SessionRow({
           e.stopPropagation();
           onDelete(session.id);
         }}
-        className="shrink-0 rounded-lg p-1.5 text-(--sea-ink-soft) transition hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
+        className="shrink-0 rounded-md p-1.5 text-(--sea-ink-soft) transition hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400"
         title="Delete session"
       >
         <Trash2 size={14} />
@@ -206,7 +206,7 @@ function HistoryPage() {
   return (
     <main className="page-wrap px-4 py-8">
       <div className="mx-auto max-w-4xl">
-        <div className="island-shell rounded-2xl p-8">
+        <div className="island-shell rounded-md p-8">
           <h1 className="mb-2 text-2xl font-bold text-(--sea-ink)">
             Session History
           </h1>
@@ -219,7 +219,7 @@ function HistoryPage() {
             <select
               value={source}
               onChange={(e) => { setSource(e.target.value); setPage(0); }}
-              className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-1.5 text-sm text-(--sea-ink) dark:bg-white/5"
+              className="rounded-md border border-(--shore-line) bg-white/60 px-3 py-1.5 text-sm text-(--sea-ink) dark:bg-white/5"
             >
               {SOURCE_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -231,7 +231,7 @@ function HistoryPage() {
             <select
               value={status}
               onChange={(e) => { setStatus(e.target.value); setPage(0); }}
-              className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-1.5 text-sm text-(--sea-ink) dark:bg-white/5"
+              className="rounded-md border border-(--shore-line) bg-white/60 px-3 py-1.5 text-sm text-(--sea-ink) dark:bg-white/5"
             >
               {STATUS_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -243,7 +243,7 @@ function HistoryPage() {
             <select
               value={sort}
               onChange={(e) => { setSort(e.target.value); setPage(0); }}
-              className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-1.5 text-sm text-(--sea-ink) dark:bg-white/5"
+              className="rounded-md border border-(--shore-line) bg-white/60 px-3 py-1.5 text-sm text-(--sea-ink) dark:bg-white/5"
             >
               {SORT_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -259,7 +259,7 @@ function HistoryPage() {
               {[1, 2, 3].map((n) => (
                 <div
                   key={`skeleton-${n}`}
-                  className="h-14 animate-pulse rounded-xl bg-(--foam)"
+                  className="h-14 animate-pulse rounded-md bg-(--foam)"
                 />
               ))}
             </div>
@@ -298,7 +298,7 @@ function HistoryPage() {
               <button
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
                 disabled={page === 0}
-                className="rounded-lg border border-(--shore-line) px-3 py-1.5 text-sm text-(--sea-ink) disabled:opacity-40"
+                className="rounded-md border border-(--shore-line) px-3 py-1.5 text-sm text-(--sea-ink) disabled:opacity-40"
               >
                 Previous
               </button>
@@ -308,7 +308,7 @@ function HistoryPage() {
               <button
                 onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                 disabled={page >= totalPages - 1}
-                className="rounded-lg border border-(--shore-line) px-3 py-1.5 text-sm text-(--sea-ink) disabled:opacity-40"
+                className="rounded-md border border-(--shore-line) px-3 py-1.5 text-sm text-(--sea-ink) disabled:opacity-40"
               >
                 Next
               </button>

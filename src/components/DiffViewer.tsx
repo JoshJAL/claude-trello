@@ -6,7 +6,7 @@ interface DiffViewerProps {
 
 export function DiffViewer({ diff }: DiffViewerProps) {
   return (
-    <div className="mt-2 rounded-lg bg-gray-900 p-3 text-sm font-mono">
+    <div className="mt-2 rounded-md bg-gray-900 p-3 text-sm font-mono">
       {/* File header */}
       <div className="mb-2 text-gray-400">
         {diff.isNewFile && (

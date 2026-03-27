@@ -25,7 +25,7 @@ function OnboardingSourcePage() {
 
   return (
     <main className="page-wrap flex min-h-[80vh] items-center justify-center px-4">
-      <div className="island-shell w-full max-w-md rounded-2xl p-8">
+      <div className="island-shell w-full max-w-md rounded-md p-8">
         <OnboardingSteps currentStep={1} />
         <h2 className="mt-6 mb-2 text-center text-xl font-bold text-(--sea-ink)">
           Connect a task source
@@ -70,7 +70,7 @@ function OnboardingSourcePage() {
         {hasTaskSource && (
           <button
             onClick={() => navigate({ to: "/onboarding/api-key" })}
-            className="mt-6 w-full rounded-lg bg-(--lagoon) px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-(--lagoon-deep)"
+            className="mt-6 w-full rounded-md bg-(--lagoon) px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-(--lagoon-deep)"
           >
             Continue
           </button>

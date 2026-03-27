@@ -46,7 +46,7 @@ function SummaryCard({
   subtext?: string;
 }) {
   return (
-    <div className="rounded-xl border border-(--shore-line) bg-white/60 p-4 dark:bg-white/5">
+    <div className="rounded-md border border-(--shore-line) bg-white/60 p-4 dark:bg-white/5">
       <div className="mb-1 flex items-center gap-2 text-(--sea-ink-soft)">
         <Icon size={16} />
         <span className="text-xs">{label}</span>
@@ -71,7 +71,7 @@ function BudgetBar({
   const isWarning = pct >= 80;
 
   return (
-    <div className="rounded-xl border border-(--shore-line) bg-white/60 p-4 dark:bg-white/5">
+    <div className="rounded-md border border-(--shore-line) bg-white/60 p-4 dark:bg-white/5">
       <div className="mb-2 flex items-center justify-between">
         <span className="text-xs text-(--sea-ink-soft)">Monthly Budget</span>
         <span className="text-xs font-medium text-(--sea-ink)">
@@ -169,7 +169,7 @@ function ProviderBreakdown({
       <div className="flex flex-wrap gap-4">
         {providers.map((p) => (
           <div key={p.providerId} className="flex items-center gap-2">
-            <div className={`h-2.5 w-2.5 rounded-full ${colors[p.providerId] ?? "bg-gray-400"}`} />
+            <div className={`h-2.5 w-2.5 rounded-sm ${colors[p.providerId] ?? "bg-gray-400"}`} />
             <span className="text-xs text-(--sea-ink)">
               {p.providerId} — {formatCents(p.costCents)} ({p.sessions} sessions)
             </span>
@@ -192,7 +192,7 @@ function AnalyticsPage() {
   return (
     <main className="page-wrap px-4 py-8">
       <div className="mx-auto max-w-4xl space-y-6">
-        <div className="island-shell rounded-2xl p-8">
+        <div className="island-shell rounded-md p-8">
           <h1 className="mb-2 text-2xl font-bold text-(--sea-ink)">
             Usage & Analytics
           </h1>
@@ -238,7 +238,7 @@ function AnalyticsPage() {
         </div>
 
         {/* Daily spend chart */}
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <h2 className="mb-4 text-sm font-semibold text-(--sea-ink)">
             Daily Spend (Last 30 Days)
           </h2>
@@ -246,7 +246,7 @@ function AnalyticsPage() {
         </div>
 
         {/* Provider breakdown */}
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <h2 className="mb-4 text-sm font-semibold text-(--sea-ink)">
             Spend by Provider
           </h2>

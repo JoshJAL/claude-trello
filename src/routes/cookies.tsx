@@ -19,7 +19,7 @@ function CookiesPage() {
           </p>
         </div>
 
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <p className="text-sm leading-relaxed text-(--sea-ink-soft)">
             TaskPilot uses only essential cookies required for the application to
             function. We do not use any tracking, analytics, or advertising
@@ -27,7 +27,7 @@ function CookiesPage() {
           </p>
         </div>
 
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-(--sea-ink)">
             <Cookie size={20} className="text-(--lagoon)" />
             Cookies
@@ -61,7 +61,7 @@ function CookiesPage() {
           </p>
         </div>
 
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-(--sea-ink)">
             <HardDrive size={20} className="text-(--lagoon)" />
             Local Storage
@@ -106,7 +106,7 @@ function CookiesPage() {
           </div>
         </div>
 
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <h2 className="mb-4 text-lg font-bold text-(--sea-ink)">
             Third-Party Cookies
           </h2>
@@ -117,7 +117,7 @@ function CookiesPage() {
           </p>
         </div>
 
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <p className="text-sm text-(--sea-ink-soft)">
             For more information about how we handle your data, see our{" "}
             <a

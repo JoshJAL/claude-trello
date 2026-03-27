@@ -1,7 +1,7 @@
 export function NotFound() {
   return (
     <main className="page-wrap flex min-h-[60vh] items-center justify-center px-4">
-      <div className="island-shell w-full max-w-md rounded-2xl p-8 text-center">
+      <div className="island-shell w-full max-w-md rounded-md p-8 text-center">
         <div className="mb-4 text-6xl font-bold text-(--sea-ink-soft)">
           404
         </div>
@@ -13,7 +13,7 @@ export function NotFound() {
         </p>
         <a
           href="/"
-          className="inline-block rounded-lg bg-(--lagoon) px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+          className="inline-block rounded-md bg-(--lagoon) px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
         >
           Go home
         </a>

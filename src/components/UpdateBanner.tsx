@@ -24,7 +24,7 @@ export function UpdateBanner() {
 
   return (
     <div className="mx-auto mb-4 max-w-4xl px-4">
-      <div className="flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 dark:border-blue-800 dark:bg-blue-950/30">
+      <div className="flex items-center gap-3 rounded-md border border-blue-200 bg-blue-50 px-4 py-3 dark:border-blue-800 dark:bg-blue-950/30">
         <Sparkles size={18} className="shrink-0 text-blue-600 dark:text-blue-400" />
         <div className="flex-1 min-w-0">
           <p className="text-sm text-blue-800 dark:text-blue-300">
@@ -46,7 +46,7 @@ export function UpdateBanner() {
         </div>
         <button
           onClick={handleDismiss}
-          className="shrink-0 rounded-lg p-1 text-blue-400 transition hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-blue-900/40 dark:hover:text-blue-300"
+          className="shrink-0 rounded-md p-1 text-blue-400 transition hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-blue-900/40 dark:hover:text-blue-300"
           title="Dismiss"
         >
           <X size={16} />

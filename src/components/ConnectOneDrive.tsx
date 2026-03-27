@@ -42,7 +42,7 @@ export function ConnectOneDrive({
 
   if (isConnected) {
     return (
-      <div className="flex items-center justify-between rounded-lg border border-green-300 bg-green-200 px-4 py-3 dark:border-green-800 dark:bg-green-950/30">
+      <div className="flex items-center justify-between rounded-md border border-green-300 bg-green-200 px-4 py-3 dark:border-green-800 dark:bg-green-950/30">
         <div className="flex items-center gap-2">
           <span className="text-green-900 dark:text-green-400">&#10003;</span>
           <span className="text-sm font-medium text-green-900 dark:text-green-300">
@@ -65,7 +65,7 @@ export function ConnectOneDrive({
       <button
         onClick={handleConnect}
         disabled={loading}
-        className="flex items-center justify-center gap-2 rounded-lg bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#106ebe] disabled:opacity-50"
+        className="flex items-center justify-center gap-2 rounded-md bg-[#0078d4] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#106ebe] disabled:opacity-50"
       >
         {loading ? "Connecting..." : "Connect OneDrive"}
       </button>

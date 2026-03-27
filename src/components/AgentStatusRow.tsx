@@ -46,7 +46,7 @@ export function AgentStatusRow({
   return (
     <button
       onClick={onClick}
-      className={`w-full rounded-lg border p-3 text-left transition ${
+      className={`w-full rounded-md border p-3 text-left transition ${
         isSelected
           ? "border-(--lagoon) bg-(--lagoon)/5"
           : "border-(--shore-line) hover:border-(--lagoon)/50"
@@ -55,7 +55,7 @@ export function AgentStatusRow({
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <span
-            className={`h-2 w-2 shrink-0 rounded-full ${stateDots[status.state]}`}
+            className={`h-2 w-2 shrink-0 rounded-sm ${stateDots[status.state]}`}
           />
           <span className="truncate text-sm font-medium text-(--sea-ink)">
             {status.cardName}

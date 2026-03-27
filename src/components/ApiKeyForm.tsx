@@ -102,7 +102,7 @@ export function ApiKeyForm({
   return (
     <div className="flex flex-col gap-4">
       {saved ? (
-        <div className="flex items-center justify-between rounded-lg border border-green-300 bg-green-200 px-4 py-3 dark:border-green-800 dark:bg-green-950/30">
+        <div className="flex items-center justify-between rounded-md border border-green-300 bg-green-200 px-4 py-3 dark:border-green-800 dark:bg-green-950/30">
           <div className="flex items-center gap-2">
             <span className="text-green-900 dark:text-green-400">&#10003;</span>
             <span className="text-sm font-medium text-green-900 dark:text-green-300">
@@ -131,13 +131,13 @@ export function ApiKeyForm({
             required
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
-            className="rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
+            className="rounded-md border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
             placeholder={config.placeholder}
           />
           <button
             type="submit"
             disabled={loading}
-            className="rounded-lg bg-(--lagoon) px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+            className="rounded-md bg-(--lagoon) px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
           >
             {loading ? "Saving..." : "Save API Key"}
           </button>

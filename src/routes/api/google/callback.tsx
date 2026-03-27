@@ -41,7 +41,7 @@ function GoogleCallbackPage() {
   if (connectMutation.isError) {
     return (
       <main className="page-wrap flex min-h-[80vh] items-center justify-center px-4">
-        <div className="island-shell w-full max-w-md rounded-2xl p-8 text-center">
+        <div className="island-shell w-full max-w-md rounded-md p-8 text-center">
           <p className="text-sm text-red-600 dark:text-red-400">
             {connectMutation.error.message}
           </p>
@@ -59,7 +59,7 @@ function GoogleCallbackPage() {
   if (!new URLSearchParams(window.location.search).get("code")) {
     return (
       <main className="page-wrap flex min-h-[80vh] items-center justify-center px-4">
-        <div className="island-shell w-full max-w-md rounded-2xl p-8 text-center">
+        <div className="island-shell w-full max-w-md rounded-md p-8 text-center">
           <p className="text-sm text-red-600 dark:text-red-400">
             No authorization code received from Google
           </p>
@@ -76,7 +76,7 @@ function GoogleCallbackPage() {
 
   return (
     <main className="page-wrap flex min-h-[80vh] items-center justify-center px-4">
-      <div className="island-shell w-full max-w-md rounded-2xl p-8 text-center">
+      <div className="island-shell w-full max-w-md rounded-md p-8 text-center">
         <p className="text-sm text-(--sea-ink-soft)">
           Connecting your Google Drive...
         </p>

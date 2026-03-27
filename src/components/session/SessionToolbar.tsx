@@ -31,7 +31,7 @@ function ToggleGroup({
   return (
     <div className="flex items-center gap-2">
       <span className="text-xs text-(--sea-ink-soft)">{label}:</span>
-      <div className="inline-flex rounded-lg border border-(--shore-line) p-0.5">
+      <div className="inline-flex rounded-md border border-(--shore-line) p-0.5">
         {options.map((opt) => (
           <button
             key={opt.value}
@@ -73,7 +73,7 @@ export function SessionToolbar({
           <select
             value={providerId}
             onChange={(e) => onProviderChange(e.target.value as AiProviderId)}
-            className="rounded-lg border border-(--shore-line) bg-white px-2 py-1 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
+            className="rounded-md border border-(--shore-line) bg-white px-2 py-1 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
           >
             {configuredProviders.map((p) => (
               <option key={p} value={p}>
@@ -89,7 +89,7 @@ export function SessionToolbar({
         <select
           value={modelId}
           onChange={(e) => onModelChange(e.target.value)}
-          className="rounded-lg border border-(--shore-line) bg-white px-2 py-1 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
+          className="rounded-md border border-(--shore-line) bg-white px-2 py-1 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
         >
           {PROVIDER_MODELS[providerId].map((m) => (
             <option key={m.id} value={m.id}>

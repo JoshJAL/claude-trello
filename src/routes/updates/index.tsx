@@ -14,19 +14,19 @@ function TypeBadge({ type }: { type: UpdateType }) {
   switch (type) {
     case "feature":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+        <span className="inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-semibold uppercase tracking-wide bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
           <Sparkles size={12} /> Feature
         </span>
       );
     case "improvement":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
+        <span className="inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-semibold uppercase tracking-wide bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
           <Wrench size={12} /> Improvement
         </span>
       );
     case "fix":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+        <span className="inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-semibold uppercase tracking-wide bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
           <Bug size={12} /> Fix
         </span>
       );
@@ -44,7 +44,7 @@ function UpdateCard({
     <Link
       to="/updates/$updateId"
       params={{ updateId: update.id }}
-      className={`group block rounded-xl border p-4 no-underline transition hover:-translate-y-0.5 hover:shadow-md ${
+      className={`group block rounded-md border p-4 no-underline transition hover:-translate-y-0.5 hover:shadow-md ${
         isNew
           ? "border-blue-200 bg-blue-50/50 hover:border-blue-300 dark:border-blue-800 dark:bg-blue-950/20 dark:hover:border-blue-700"
           : "border-(--shore-line) bg-white/60 hover:border-(--lagoon) dark:bg-white/5"
@@ -100,7 +100,7 @@ function UpdatesPage() {
   return (
     <main className="page-wrap px-4 py-8">
       <div className="mx-auto max-w-3xl">
-        <div className="island-shell rounded-2xl p-8">
+        <div className="island-shell rounded-md p-8">
           <div className="mb-1 flex items-center gap-2">
             <Sparkles size={20} className="text-blue-600 dark:text-blue-400" />
             <h1 className="text-2xl font-bold text-(--sea-ink)">

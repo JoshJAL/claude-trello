@@ -184,7 +184,7 @@ export function SessionControls({
 
   return (
     <div className="sticky top-0 z-40 -mx-4 bg-(--sand) px-4 py-3">
-      <div className="island-shell flex flex-col gap-3 rounded-xl p-4">
+      <div className="island-shell flex flex-col gap-3 rounded-md p-4">
         {state.webMode && !isRunning && (
           <WebModeBanner
             source={source}
@@ -230,7 +230,7 @@ export function SessionControls({
                 onChange={(e) => dispatch({ type: "SET_CWD", value: e.target.value })}
                 disabled={isRunning}
                 placeholder="/home/user/my-project"
-                className="w-full rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 disabled:opacity-50 dark:bg-white/5"
+                className="w-full rounded-md border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 disabled:opacity-50 dark:bg-white/5"
               />
             </div>
           )}
@@ -247,7 +247,7 @@ export function SessionControls({
                 onChange={(e) => dispatch({ type: "SET_MESSAGE", value: e.target.value })}
                 placeholder='e.g. "Focus on the API issues first"'
                 rows={2}
-                className="w-full resize-none rounded-lg border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
+                className="w-full resize-none rounded-md border border-(--shore-line) bg-white/60 px-3 py-2 text-sm text-(--sea-ink) outline-none transition focus:border-(--lagoon) focus:ring-2 focus:ring-(--lagoon)/20 dark:bg-white/5"
               />
             </div>
           )}
@@ -255,7 +255,7 @@ export function SessionControls({
           {isRunning ? (
             <button
               onClick={onStop}
-              className="shrink-0 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
+              className="shrink-0 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
             >
               Stop Session
             </button>
@@ -263,7 +263,7 @@ export function SessionControls({
             <button
               onClick={handleStart}
               disabled={!canStart || (!state.webMode && !state.cwd.trim())}
-              className="shrink-0 rounded-lg bg-(--lagoon) px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+              className="shrink-0 rounded-md bg-(--lagoon) px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
             >
               Start Session
             </button>
@@ -290,7 +290,7 @@ export function SessionControls({
 
         {isRunning && (
           <p className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+            <span className="h-1.5 w-1.5 animate-pulse rounded-sm bg-green-500" />
             {runningLabel ?? "Session running"}
           </p>
         )}

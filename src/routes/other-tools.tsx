@@ -33,7 +33,7 @@ function OtherToolsPage() {
           {tools.map((tool) => (
             <div
               key={tool.name}
-              className="island-shell rounded-2xl p-6 space-y-3"
+              className="island-shell rounded-md p-6 space-y-3"
             >
               <h2 className="text-lg font-bold text-(--sea-ink)">
                 {tool.name}
@@ -46,7 +46,7 @@ function OtherToolsPage() {
                   href={tool.appUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-(--lagoon) px-4 py-2 text-sm font-semibold text-white no-underline hover:opacity-90"
+                  className="inline-flex items-center gap-1.5 rounded-md bg-(--lagoon) px-4 py-2 text-sm font-semibold text-white no-underline hover:opacity-90"
                 >
                   Open App
                   <ExternalLink size={14} />
@@ -55,7 +55,7 @@ function OtherToolsPage() {
                   href={tool.docsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-(--shore-line) bg-(--foam) px-4 py-2 text-sm font-semibold text-(--sea-ink) no-underline hover:bg-(--sand)"
+                  className="inline-flex items-center gap-1.5 rounded-md border border-(--shore-line) bg-(--foam) px-4 py-2 text-sm font-semibold text-(--sea-ink) no-underline hover:bg-(--sand)"
                 >
                   Documentation
                   <ExternalLink size={14} />

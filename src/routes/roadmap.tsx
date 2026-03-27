@@ -39,7 +39,7 @@ function StatusBadge({ status }: { status: RoadmapStatus }) {
   const Icon = config.icon;
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${config.color} ${config.bg}`}
+      className={`inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-semibold uppercase tracking-wide ${config.color} ${config.bg}`}
     >
       <Icon size={12} />
       {config.label}
@@ -61,7 +61,7 @@ function RoadmapPage() {
         </div>
 
         {/* Progress bar */}
-        <div className="island-shell rounded-2xl p-6">
+        <div className="island-shell rounded-md p-6">
           <div className="mb-3 flex items-baseline justify-between">
             <span className="text-sm font-semibold text-(--sea-ink)">
               Overall progress
@@ -78,15 +78,15 @@ function RoadmapPage() {
           </div>
           <div className="mt-3 flex gap-4 text-xs text-(--sea-ink-soft)">
             <span className="flex items-center gap-1">
-              <span className="inline-block h-2 w-2 rounded-full bg-green-500" />
+              <span className="inline-block h-2 w-2 rounded-sm bg-green-500" />
               {progress.done} done
             </span>
             <span className="flex items-center gap-1">
-              <span className="inline-block h-2 w-2 rounded-full bg-amber-500" />
+              <span className="inline-block h-2 w-2 rounded-sm bg-amber-500" />
               {progress.inProgress} in progress
             </span>
             <span className="flex items-center gap-1">
-              <span className="inline-block h-2 w-2 rounded-full bg-(--shore-line)" />
+              <span className="inline-block h-2 w-2 rounded-sm bg-(--shore-line)" />
               {progress.planned} planned
             </span>
           </div>
@@ -102,7 +102,7 @@ function RoadmapPage() {
               {category.items.map((item) => (
                 <div
                   key={item.id}
-                  className="island-shell flex items-start gap-4 rounded-xl p-4"
+                  className="island-shell flex items-start gap-4 rounded-md p-4"
                 >
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -121,7 +121,7 @@ function RoadmapPage() {
           </div>
         ))}
 
-        <div className="island-shell rounded-2xl p-6 text-center">
+        <div className="island-shell rounded-md p-6 text-center">
           <p className="text-sm text-(--sea-ink-soft)">
             Have a feature request?{" "}
             <a

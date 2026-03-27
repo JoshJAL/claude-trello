@@ -37,7 +37,7 @@ export default function ConsentBanner() {
         <div className="flex items-center gap-2">
           <button
             onClick={accept}
-            className="rounded-lg bg-(--lagoon) px-4 py-1.5 text-xs font-semibold text-white hover:opacity-90"
+            className="rounded-md bg-(--lagoon) px-4 py-1.5 text-xs font-semibold text-white hover:opacity-90"
           >
             Got it
           </button>

@@ -34,7 +34,7 @@ export function BoardPanel({
         {["skeleton-1", "skeleton-2", "skeleton-3"].map((id) => (
           <div
             key={id}
-            className="island-shell h-24 animate-pulse rounded-xl"
+            className="island-shell h-24 animate-pulse rounded-md"
           />
         ))}
       </div>
@@ -43,7 +43,7 @@ export function BoardPanel({
 
   if (error) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">
+      <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">
         Failed to load cards: {error.message}
       </div>
     );
@@ -51,7 +51,7 @@ export function BoardPanel({
 
   if (!data || data.cards.length === 0) {
     return (
-      <div className="island-shell rounded-xl p-6 text-center text-sm text-(--sea-ink-soft)">
+      <div className="island-shell rounded-md p-6 text-center text-sm text-(--sea-ink-soft)">
         No cards found on &ldquo;{boardName}&rdquo;.
       </div>
     );

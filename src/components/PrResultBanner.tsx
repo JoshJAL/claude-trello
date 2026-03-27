@@ -11,7 +11,7 @@ export function PrResultBanner({ prResult }: PrResultBannerProps) {
     : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
 
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-purple-200 bg-purple-50 p-4 dark:border-purple-800 dark:bg-purple-950/30">
+    <div className="flex items-center gap-3 rounded-md border border-purple-200 bg-purple-50 p-4 dark:border-purple-800 dark:bg-purple-950/30">
       <div className="flex items-center gap-2">
         <svg
           className="h-5 w-5 text-purple-600 dark:text-purple-400"
@@ -30,7 +30,7 @@ export function PrResultBanner({ prResult }: PrResultBannerProps) {
           PR: #{prResult.number}
         </span>
         <span
-          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColor}`}
+          className={`inline-flex items-center rounded-sm px-2 py-0.5 text-xs font-semibold uppercase tracking-wide ${statusColor}`}
         >
           {statusLabel}
         </span>

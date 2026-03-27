@@ -27,7 +27,7 @@ function OnboardingApiKeyPage() {
 
   return (
     <main className="page-wrap flex min-h-[80vh] items-center justify-center px-4">
-      <div className="island-shell w-full max-w-md rounded-2xl p-8">
+      <div className="island-shell w-full max-w-md rounded-md p-8">
         <OnboardingSteps currentStep={2} />
         <h2 className="mt-6 mb-2 text-center text-xl font-bold text-(--sea-ink)">
           Configure an AI Provider

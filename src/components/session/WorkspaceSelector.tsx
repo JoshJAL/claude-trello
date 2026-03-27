@@ -113,7 +113,7 @@ export function WorkspaceSelector({
       </label>
 
       {workspaceKey ? (
-        <div className="flex flex-1 items-center gap-2 rounded-lg border border-(--shore-line) bg-white px-2 py-1.5 dark:bg-[#1e1e1e]">
+        <div className="flex flex-1 items-center gap-2 rounded-md border border-(--shore-line) bg-white px-2 py-1.5 dark:bg-[#1e1e1e]">
           <ProviderIcon size={14} className="shrink-0 text-(--sea-ink-soft)" />
           <span className="flex-1 truncate text-xs text-(--sea-ink)">
             {selectedLabel}
@@ -142,11 +142,11 @@ export function WorkspaceSelector({
             }}
             onFocus={() => setOpen(true)}
             placeholder="Search folders..."
-            className="w-full rounded-lg border border-(--shore-line) bg-white py-1.5 pl-8 pr-3 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
+            className="w-full rounded-md border border-(--shore-line) bg-white py-1.5 pl-8 pr-3 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
           />
 
           {open && (
-            <div className="absolute left-0 top-full z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border border-(--shore-line) bg-white shadow-lg dark:bg-[#1e1e1e]">
+            <div className="absolute left-0 top-full z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-(--shore-line) bg-white shadow-lg dark:bg-[#1e1e1e]">
               <button
                 onClick={() => select("")}
                 className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-(--sea-ink-soft) hover:bg-(--foam)"

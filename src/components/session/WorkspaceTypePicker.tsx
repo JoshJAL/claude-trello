@@ -98,7 +98,7 @@ export function WorkspaceTypePicker({
         <span className="shrink-0 text-xs font-medium text-(--sea-ink-soft)">
           Workspace:
         </span>
-        <div className="flex flex-1 items-center gap-2 rounded-lg border border-(--shore-line) bg-white px-2 py-1.5 dark:bg-[#1e1e1e]">
+        <div className="flex flex-1 items-center gap-2 rounded-md border border-(--shore-line) bg-white px-2 py-1.5 dark:bg-[#1e1e1e]">
           <TypeIcon size={14} className="shrink-0 text-(--sea-ink-soft)" />
           <span className="text-xs text-(--sea-ink-soft)">{typeLabel}:</span>
           <span className="flex-1 truncate text-xs text-(--sea-ink)">
@@ -127,7 +127,7 @@ export function WorkspaceTypePicker({
           <div className="relative flex-1">
             <button
               onClick={() => setTypePickerOpen(!typePickerOpen)}
-              className="flex w-full items-center justify-between rounded-lg border border-(--shore-line) bg-white px-3 py-1.5 text-xs text-(--sea-ink-soft) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
+              className="flex w-full items-center justify-between rounded-md border border-(--shore-line) bg-white px-3 py-1.5 text-xs text-(--sea-ink-soft) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
             >
               Select workspace type...
               <ChevronDown size={14} />
@@ -199,7 +199,7 @@ function TypeDropdown({
   }, [onClose]);
 
   return (
-    <div ref={ref} className="absolute left-0 top-full z-50 mt-1 w-full overflow-hidden rounded-lg border border-(--shore-line) bg-white shadow-lg dark:bg-[#1e1e1e]">
+    <div ref={ref} className="absolute left-0 top-full z-50 mt-1 w-full overflow-hidden rounded-md border border-(--shore-line) bg-white shadow-lg dark:bg-[#1e1e1e]">
       <button
         onClick={() => { onSelect("github" as WorkspaceType); onClose(); }}
         className="hidden"
@@ -256,10 +256,10 @@ function RepoSearch({
         onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
         onFocus={() => setOpen(true)}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-(--shore-line) bg-white py-1.5 pl-8 pr-3 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
+        className="w-full rounded-md border border-(--shore-line) bg-white py-1.5 pl-8 pr-3 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
       />
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border border-(--shore-line) bg-white shadow-lg dark:bg-[#1e1e1e]">
+        <div className="absolute left-0 top-full z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-(--shore-line) bg-white shadow-lg dark:bg-[#1e1e1e]">
           {filtered.length === 0 && (
             <p className="px-3 py-2 text-xs text-(--sea-ink-soft)">
               {query.trim() ? `No results for "${query}"` : "No items available"}
@@ -368,12 +368,12 @@ function FolderSearch({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={`Search in ${currentName}...`}
-            className="w-full rounded-lg border border-(--shore-line) bg-white py-1.5 pl-8 pr-3 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
+            className="w-full rounded-md border border-(--shore-line) bg-white py-1.5 pl-8 pr-3 text-xs text-(--sea-ink) outline-none focus:border-(--lagoon) dark:bg-[#1e1e1e] dark:text-[#e0e0e0]"
           />
         </div>
         <button
           onClick={selectCurrentFolder}
-          className="shrink-0 rounded-lg bg-(--lagoon) px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90"
+          className="shrink-0 rounded-md bg-(--lagoon) px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90"
         >
           Use this folder
         </button>
@@ -444,7 +444,7 @@ function FolderAndFileList({
   const hasContent = folders.length > 0 || filteredFiles.length > 0;
 
   return (
-    <div className="max-h-56 overflow-y-auto rounded-lg border border-(--shore-line) bg-white dark:bg-[#1e1e1e]">
+    <div className="max-h-56 overflow-y-auto rounded-md border border-(--shore-line) bg-white dark:bg-[#1e1e1e]">
       {isLoadingFolders && (
         <p className="px-3 py-2 text-xs text-(--sea-ink-soft)">Loading...</p>
       )}

@@ -13,19 +13,19 @@ function TypeBadge({ type }: { type: UpdateType }) {
   switch (type) {
     case "feature":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+        <span className="inline-flex items-center gap-1 rounded-sm px-2.5 py-1 text-xs font-semibold uppercase tracking-wide bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
           <Sparkles size={14} /> Feature
         </span>
       );
     case "improvement":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-purple-100 px-2.5 py-1 text-xs font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
+        <span className="inline-flex items-center gap-1 rounded-sm px-2.5 py-1 text-xs font-semibold uppercase tracking-wide bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
           <Wrench size={14} /> Improvement
         </span>
       );
     case "fix":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+        <span className="inline-flex items-center gap-1 rounded-sm px-2.5 py-1 text-xs font-semibold uppercase tracking-wide bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
           <Bug size={14} /> Fix
         </span>
       );
@@ -58,7 +58,7 @@ function DetailSection({ section }: { section: UpdateDetailSection }) {
         ))}
       </div>
       {section.code && (
-        <pre className="overflow-x-auto rounded-lg bg-(--foam) p-4 font-mono text-xs leading-relaxed text-(--sea-ink)">
+        <pre className="overflow-x-auto rounded-md bg-(--foam) p-4 font-mono text-xs leading-relaxed text-(--sea-ink)">
           <code>{section.code}</code>
         </pre>
       )}
@@ -74,7 +74,7 @@ function UpdateDetailPage() {
     return (
       <main className="page-wrap px-4 py-8">
         <div className="mx-auto max-w-3xl">
-          <div className="island-shell rounded-2xl p-8">
+          <div className="island-shell rounded-md p-8">
             <p className="text-sm text-(--sea-ink-soft)">Update not found.</p>
             <Link to="/updates" className="mt-2 inline-block text-sm text-(--lagoon)">
               Back to Updates
@@ -89,11 +89,11 @@ function UpdateDetailPage() {
     <main className="page-wrap px-4 py-8">
       <div className="mx-auto max-w-3xl space-y-6">
         {/* Header */}
-        <div className="island-shell rounded-2xl p-8">
+        <div className="island-shell rounded-md p-8">
           <div className="mb-4 flex items-center gap-3">
             <Link
               to="/updates"
-              className="rounded-lg p-1.5 text-(--sea-ink-soft) transition hover:bg-(--foam)"
+              className="rounded-md p-1.5 text-(--sea-ink-soft) transition hover:bg-(--foam)"
               title="Back to Updates"
             >
               <ArrowLeft size={18} />
@@ -123,7 +123,7 @@ function UpdateDetailPage() {
 
         {/* Detail sections */}
         {update.details && update.details.length > 0 && (
-          <div className="island-shell rounded-2xl p-8">
+          <div className="island-shell rounded-md p-8">
             <div className="space-y-8">
               {update.details.map((section) => (
                 <DetailSection key={section.heading} section={section} />
@@ -134,7 +134,7 @@ function UpdateDetailPage() {
 
         {/* No details fallback */}
         {(!update.details || update.details.length === 0) && (
-          <div className="island-shell rounded-2xl p-8">
+          <div className="island-shell rounded-md p-8">
             <p className="text-sm text-(--sea-ink-soft)">
               No additional details available for this update.
             </p>
