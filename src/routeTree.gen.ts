@@ -15,6 +15,7 @@ import { Route as RoadmapRouteImport } from './routes/roadmap'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as OtherToolsRouteImport } from './routes/other-tools'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FeatureRequestRouteImport } from './routes/feature-request'
 import { Route as CookiesRouteImport } from './routes/cookies'
@@ -86,6 +87,7 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiAnalyticsSummaryRouteImport } from './routes/api/analytics/summary'
 import { Route as ApiAnalyticsProvidersRouteImport } from './routes/api/analytics/providers'
 import { Route as ApiAnalyticsDailyRouteImport } from './routes/api/analytics/daily'
+import { Route as ApiAccountDeleteRouteImport } from './routes/api/account/delete'
 import { Route as DashboardGithubOwnerRepoRouteImport } from './routes/dashboard/github/$owner.$repo'
 import { Route as ApiSessionsSessionIdRetryRouteImport } from './routes/api/sessions/$sessionId.retry'
 import { Route as ApiSessionsSessionIdEventsRouteImport } from './routes/api/sessions/$sessionId.events'
@@ -118,6 +120,11 @@ const RegisterRoute = RegisterRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OtherToolsRoute = OtherToolsRouteImport.update({
+  id: '/other-tools',
+  path: '/other-tools',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -476,6 +483,11 @@ const ApiAnalyticsDailyRoute = ApiAnalyticsDailyRouteImport.update({
   path: '/api/analytics/daily',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAccountDeleteRoute = ApiAccountDeleteRouteImport.update({
+  id: '/api/account/delete',
+  path: '/api/account/delete',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardGithubOwnerRepoRoute =
   DashboardGithubOwnerRepoRouteImport.update({
     id: '/dashboard/github/$owner/$repo',
@@ -502,6 +514,7 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/feature-request': typeof FeatureRequestRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/other-tools': typeof OtherToolsRoute
   '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -521,6 +534,7 @@ export interface FileRoutesByFullPath {
   '/history/': typeof HistoryIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/updates/': typeof UpdatesIndexRoute
+  '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/analytics/daily': typeof ApiAnalyticsDailyRoute
   '/api/analytics/providers': typeof ApiAnalyticsProvidersRoute
   '/api/analytics/summary': typeof ApiAnalyticsSummaryRoute
@@ -584,6 +598,7 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/feature-request': typeof FeatureRequestRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/other-tools': typeof OtherToolsRoute
   '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -602,6 +617,7 @@ export interface FileRoutesByTo {
   '/history': typeof HistoryIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/updates': typeof UpdatesIndexRoute
+  '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/analytics/daily': typeof ApiAnalyticsDailyRoute
   '/api/analytics/providers': typeof ApiAnalyticsProvidersRoute
   '/api/analytics/summary': typeof ApiAnalyticsSummaryRoute
@@ -666,6 +682,7 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/feature-request': typeof FeatureRequestRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/other-tools': typeof OtherToolsRoute
   '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -685,6 +702,7 @@ export interface FileRoutesById {
   '/history/': typeof HistoryIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/updates/': typeof UpdatesIndexRoute
+  '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/analytics/daily': typeof ApiAnalyticsDailyRoute
   '/api/analytics/providers': typeof ApiAnalyticsProvidersRoute
   '/api/analytics/summary': typeof ApiAnalyticsSummaryRoute
@@ -750,6 +768,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/feature-request'
     | '/forgot-password'
+    | '/other-tools'
     | '/privacy'
     | '/register'
     | '/reset-password'
@@ -769,6 +788,7 @@ export interface FileRouteTypes {
     | '/history/'
     | '/settings/'
     | '/updates/'
+    | '/api/account/delete'
     | '/api/analytics/daily'
     | '/api/analytics/providers'
     | '/api/analytics/summary'
@@ -832,6 +852,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/feature-request'
     | '/forgot-password'
+    | '/other-tools'
     | '/privacy'
     | '/register'
     | '/reset-password'
@@ -850,6 +871,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/settings'
     | '/updates'
+    | '/api/account/delete'
     | '/api/analytics/daily'
     | '/api/analytics/providers'
     | '/api/analytics/summary'
@@ -913,6 +935,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/feature-request'
     | '/forgot-password'
+    | '/other-tools'
     | '/privacy'
     | '/register'
     | '/reset-password'
@@ -932,6 +955,7 @@ export interface FileRouteTypes {
     | '/history/'
     | '/settings/'
     | '/updates/'
+    | '/api/account/delete'
     | '/api/analytics/daily'
     | '/api/analytics/providers'
     | '/api/analytics/summary'
@@ -996,6 +1020,7 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   FeatureRequestRoute: typeof FeatureRequestRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  OtherToolsRoute: typeof OtherToolsRoute
   PrivacyRoute: typeof PrivacyRoute
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -1013,6 +1038,7 @@ export interface RootRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
   HistoryIndexRoute: typeof HistoryIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
+  ApiAccountDeleteRoute: typeof ApiAccountDeleteRoute
   ApiAnalyticsDailyRoute: typeof ApiAnalyticsDailyRoute
   ApiAnalyticsProvidersRoute: typeof ApiAnalyticsProvidersRoute
   ApiAnalyticsSummaryRoute: typeof ApiAnalyticsSummaryRoute
@@ -1110,6 +1136,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/other-tools': {
+      id: '/other-tools'
+      path: '/other-tools'
+      fullPath: '/other-tools'
+      preLoaderRoute: typeof OtherToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -1609,6 +1642,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAnalyticsDailyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/account/delete': {
+      id: '/api/account/delete'
+      path: '/api/account/delete'
+      fullPath: '/api/account/delete'
+      preLoaderRoute: typeof ApiAccountDeleteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/github/$owner/$repo': {
       id: '/dashboard/github/$owner/$repo'
       path: '/dashboard/github/$owner/$repo'
@@ -1666,6 +1706,7 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   FeatureRequestRoute: FeatureRequestRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  OtherToolsRoute: OtherToolsRoute,
   PrivacyRoute: PrivacyRoute,
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRoute,
@@ -1683,6 +1724,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
   HistoryIndexRoute: HistoryIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
+  ApiAccountDeleteRoute: ApiAccountDeleteRoute,
   ApiAnalyticsDailyRoute: ApiAnalyticsDailyRoute,
   ApiAnalyticsProvidersRoute: ApiAnalyticsProvidersRoute,
   ApiAnalyticsSummaryRoute: ApiAnalyticsSummaryRoute,
